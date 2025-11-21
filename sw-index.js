@@ -7,6 +7,8 @@ const urlsToCacheIndex = [
     './manifest.json',
     './Pag - Reportería.html',
     './Pag - Residuos.html',
+    './Registro de Residuos.html',
+    './Registro de Trazabilidad & Volumen de Residuos.html',   
     'Imágenes/Icono.png',
     // Librerías externas usadas en index.html
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
