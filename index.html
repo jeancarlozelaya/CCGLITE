@@ -268,7 +268,7 @@
         }
         .close-modal:hover { color: var(--secondary); transform: rotate(90deg); }
 
-        /* Listas */
+        /* Estilos Lista de Notificaciones */
         .notification-list { list-style-type: none; padding: 0; margin: 0; }
         .notification-item {
             background: var(--gray-100);
@@ -298,7 +298,7 @@
         }
         .refresh-button:hover { background: var(--primary); color: white; transform: rotate(180deg); }
 
-        /* Info Creador */
+        /* Estilos Info Creador */
         .creator-info { text-align: center; }
         .creator-info img {
             width: 100px; height: 100px;
@@ -310,7 +310,7 @@
         .creator-info a { color: var(--primary); text-decoration: none; transition: var(--transition); }
         .creator-info a:hover { color: var(--primary-dark); text-decoration: underline; }
 
-        /* Pantalla de Carga */
+        /* --- ESTILOS PANTALLA DE CARGA (OVERLAY) --- */
         #overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: rgba(255, 255, 255, 0.95); 
@@ -330,10 +330,8 @@
         #loadingMessage h4 { margin: 0 0 10px; font-size: 1.3rem; font-weight: bold; }
         #loadingMessage p { margin: 0; color: #7f8c8d; font-weight: normal; }
 
-        /* Lista de Archivos (Bloques) */
-        #file-list-container {
-            display: flex; flex-direction: column; gap: 15px;
-        }
+        /* --- ESTILOS LISTA DE ARCHIVOS --- */
+        #file-list-container { display: flex; flex-direction: column; gap: 15px; }
         .file-block {
             background: white;
             border: 1px solid var(--gray-200);
@@ -416,6 +414,8 @@
                 <span><i class="fas fa-calendar-alt"></i></span>
                 <p>Planificación Semana <span id="week-display" style="font-size: inherit;">#</span></p>
             </div>
+
+            <div class="separator"></div>
            
             <div class="menu-item" onclick="mostrarInfo()">
                 <span><i class="fas fa-info-circle"></i></span>
@@ -467,8 +467,7 @@
                 <h2 id="file-modal-title">Planificación</h2>
                 <button class="close-modal" onclick="cerrarFileList()">&times;</button>
             </div>
-            <div id="file-list-container">
-                </div>
+            <div id="file-list-container"></div>
         </div>
     </div>
 
@@ -477,14 +476,27 @@
     </footer>
 
     <script>
-        // --- UTILIDADES ---
         document.getElementById('current-year').textContent = new Date().getFullYear();
         document.addEventListener('contextmenu', e => e.preventDefault());
 
         function mostrarInfo() { document.getElementById('info-modal').classList.add('active'); }
         function cerrarInfo() { document.getElementById('info-modal').classList.remove('active'); }
 
-        // --- NOTIFICACIONES ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('install-button');
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                });
+            });
+        });
+
         const SCRIPT_URL = ""; 
         const NOTIFICACIONES_VISTAS_KEY = `notificacionesVistas_${window.location.pathname}`;
         let notificacionesCache = null;
@@ -503,7 +515,7 @@
                 ultimaActualizacion = ahora;
                 return notificaciones;
             } catch (error) {
-                console.error("Error notificaciones:", error);
+                console.error("Error al obtener notificaciones:", error);
                 return [];
             }
         }
@@ -522,7 +534,8 @@
             const notificaciones = await obtenerNotificaciones();
             const list = document.getElementById("notification-list");
             list.innerHTML = "";
-            
+            const notifVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
+
             if (notificaciones.length === 0) {
                 list.innerHTML = '<li class="notification-item">Sin notificaciones</li>';
             } else {
@@ -536,7 +549,6 @@
                     }
                 });
             }
-            
             const nuevasVistas = notificaciones.map(n => JSON.stringify({ fecha: n[0]?.trim(), hora: n[1]?.trim(), mensaje: n[2]?.trim() }));
             localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasVistas));
             document.getElementById("notification-modal").classList.add("active");
@@ -560,11 +572,10 @@
 
         function cerrarNotificaciones() { document.getElementById("notification-modal").classList.remove('active'); }
         function actualizarNotificaciones() { notificacionesCache = null; verificarNotificaciones(); mostrarNotificaciones(); }
-        
+
         window.addEventListener("load", verificarNotificaciones);
         setInterval(verificarNotificaciones, 10000);
 
-        // --- SEGURIDAD (RRHH y Actualización) ---
         function promptForRRHH() {
             const sessionKey = 'passwordSessionTimestamp';
             const sessionStart = localStorage.getItem(sessionKey);
@@ -573,15 +584,9 @@
                 return;
             }
             Swal.fire({
-                title: 'Acceso Restringido', html: 'Ingrese contraseña RRHH.', input: 'password',
-                confirmButtonText: 'Ingresar', showCancelButton: true,
-                preConfirm: (pass) => { if (pass !== 'macdel1') { Swal.showValidationMessage('Incorrecta'); return false; } return pass; }
-            }).then((res) => {
-                if (res.isConfirmed) {
-                    localStorage.setItem(sessionKey, new Date().getTime().toString());
-                    window.location.href = 'Pag - RRHH.html';
-                }
-            });
+                title: 'Acceso Restringido', html: 'Ingrese la contraseña para RRHH.', input: 'password', confirmButtonText: 'Ingresar', showCancelButton: true, cancelButtonText: 'Cancelar', backdrop: `rgba(43, 62, 80, 0.8)`,
+                preConfirm: (pass) => { if (pass !== 'macdel1') { Swal.showValidationMessage('Contraseña incorrecta'); return false; } return pass; }
+            }).then((res) => { if (res.isConfirmed) { localStorage.setItem(sessionKey, new Date().getTime().toString()); window.location.href = 'Pag - RRHH.html'; } });
         }
 
         function promptForActualizacion() {
@@ -592,18 +597,11 @@
                 return;
             }
             Swal.fire({
-                title: 'Acceso Restringido', html: 'Ingrese contraseña Datos.', input: 'password',
-                confirmButtonText: 'Ingresar', showCancelButton: true,
-                preConfirm: (pass) => { if (pass !== 'pisos123') { Swal.showValidationMessage('Incorrecta'); return false; } return pass; }
-            }).then((res) => {
-                if (res.isConfirmed) {
-                    localStorage.setItem(sessionKey, new Date().getTime().toString());
-                    window.location.href = 'Actualización de Datos.html';
-                }
-            });
+                title: 'Acceso Restringido', html: 'Ingrese la contraseña para Actualizar Datos.', input: 'password', confirmButtonText: 'Ingresar', showCancelButton: true, cancelButtonText: 'Cancelar', backdrop: `rgba(43, 62, 80, 0.8)`,
+                preConfirm: (pass) => { if (pass !== 'pisos123') { Swal.showValidationMessage('Contraseña incorrecta'); return false; } return pass; }
+            }).then((res) => { if (res.isConfirmed) { localStorage.setItem(sessionKey, new Date().getTime().toString()); window.location.href = 'Actualización de Datos.html'; } });
         }
 
-        // --- PLANIFICACIÓN SEMANAL (IMÁGENES) ---
         const PLANIFICACION_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygzRsx6xQ3ETEN_zfpqqz8XHWetIqklRJmR35_b-ippTXcercaq14-aTJRDBrwLxLDrA/exec";
         let imagenesGlobales = [];
 
@@ -615,7 +613,8 @@
         }
 
         const semanaActual = getWeekNumber(new Date());
-        document.getElementById('week-display').textContent = "#" + semanaActual;
+        const weekDisplay = document.getElementById('week-display');
+        if(weekDisplay) weekDisplay.textContent = "#" + semanaActual;
 
         async function cargarPlanificacion() {
             document.getElementById('overlay').style.display = 'flex';
@@ -673,35 +672,17 @@
             setTimeout(() => { document.getElementById('file-list-container').innerHTML = ''; imagenesGlobales = []; }, 300);
         }
 
-        // --- SERVICE WORKER (Registro) ---
-        // Este código habilita el modo offline registrando el archivo service-worker.js
+        // --- REGISTRO DE SERVICE WORKER ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('service-worker.js')
+                navigator.serviceWorker.register('sw-index.js')
                     .then(function(registration) {
-                        console.log('✅ Service Worker Menú registrado con éxito:', registration.scope);
-                    })
-                    .catch(function(error) {
-                        console.log('❌ Error al registrar Service Worker Menú:', error);
+                        console.log('Service Worker Index registrado con éxito:', registration.scope);
+                    }, function(err) {
+                        console.log('Fallo al registrar Service Worker Index:', err);
                     });
             });
         }
-
-        // Lógica Botón Instalar PWA (Opcional)
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installButton = document.getElementById('install-button');
-            installButton.style.display = 'block';
-            installButton.addEventListener('click', () => {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
-                    installButton.style.display = 'none';
-                });
-            });
-        });
     </script>
 </body>
 </html>
