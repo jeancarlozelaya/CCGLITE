@@ -6,6 +6,7 @@ const urlsToCacheIndex = [
     './index.html',
     './manifest.json',
     './Pag - Reportería.html',
+    './Control de Llaves.html',
     './Pag - Residuos.html',
     './Registro de Residuos.html',
     './Registro de Trazabilidad & Volumen de Residuos.html',   
