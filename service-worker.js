@@ -1,11 +1,707 @@
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then((registration) => {
-        console.log('Service Worker registrado con éxito:', registration);
-      })
-      .catch((error) => {
-        console.log('Error al registrar el Service Worker:', error);
-      });
-  });
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PIBRISA - Pisos Brillantes</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.js"></script>
+    
+    <link rel="icon" href="Imágenes/Icono.png" type="image/png">
+    <link rel="manifest" href="/CCG/manifest.json">
+
+    <style>
+        :root {
+            --primary: #2C73D2;
+            --primary-dark: #1A56B2;
+            --secondary: #FF6B6B;
+            --accent: #4ECDC4;
+            --light: #F8F9FA;
+            --dark: #343A40;
+            --success: #28A745;
+            --warning: #FFC107;
+            --gray-100: #F8F9FA;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --gray-600: #6C757D;
+            --gray-800: #343A40;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            user-select: none;
+        }
+
+        /* Botón de instalación PWA */
+        #install-button {
+            display: none;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        #install-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(44, 115, 210, 0.25);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 1.5em;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            min-height: 120px;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .menu-item:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .menu-item:hover::before { transform: scaleX(1); }
+
+        .menu-item span {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+
+        .menu-item:hover span { transform: scale(1.1); }
+        .menu-item p { margin: 0; font-size: 1em; font-weight: 500; color: var(--dark); }
+
+        .separator {
+            grid-column: 1 / -1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+            margin: 10px 0;
+        }
+
+        /* Notificaciones */
+        #notification-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        #notification-icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(44, 115, 210, 0.3); }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            padding: 5px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            display: none;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Modales */
+        .notification-modal, .info-modal, .file-list-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .notification-modal.active, .info-modal.active, .file-list-modal.active { opacity: 1; visibility: visible; }
+
+        .notification-modal-content, .info-modal-content, .file-list-modal-content {
+            background: white;
+            width: 85%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 25px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .notification-modal.active .notification-modal-content, 
+        .info-modal.active .info-modal-content,
+        .file-list-modal.active .file-list-modal-content { transform: translateY(0); }
+
+        .notification-header, .info-header, .file-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .notification-header h2, .info-header h2, .file-list-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .close-modal:hover { color: var(--secondary); transform: rotate(90deg); }
+
+        /* Listas */
+        .notification-list { list-style-type: none; padding: 0; margin: 0; }
+        .notification-item {
+            background: var(--gray-100);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border-left: 3px solid var(--primary);
+        }
+        .notification-item:hover { transform: translateX(3px); box-shadow: var(--shadow-md); }
+        .notification-item strong { display: block; font-size: 0.9em; color: var(--primary); margin-bottom: 5px; }
+        .notification-item p { margin: 0; font-size: 0.9em; color: var(--gray-800); }
+
+        .refresh-button {
+            background: var(--gray-200);
+            border: none;
+            color: var(--primary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .refresh-button:hover { background: var(--primary); color: white; transform: rotate(180deg); }
+
+        /* Info Creador */
+        .creator-info { text-align: center; }
+        .creator-info img {
+            width: 100px; height: 100px;
+            border-radius: 50%; object-fit: cover;
+            margin-bottom: 15px; border: 3px solid var(--primary);
+        }
+        .creator-info h3 { margin: 0 0 5px 0; color: var(--primary); }
+        .creator-info p { margin: 5px 0; color: var(--gray-800); }
+        .creator-info a { color: var(--primary); text-decoration: none; transition: var(--transition); }
+        .creator-info a:hover { color: var(--primary-dark); text-decoration: underline; }
+
+        /* Pantalla de Carga */
+        #overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: rgba(255, 255, 255, 0.95); 
+            display: none; justify-content: center; align-items: center; 
+            z-index: 9999; flex-direction: column; 
+        }
+        .spinner { 
+            width: 60px; height: 60px; 
+            border: 5px solid rgba(52, 152, 219, 0.2); 
+            border-radius: 50%; 
+            border-top-color: var(--primary); 
+            animation: spin 1s ease-in-out infinite; 
+            margin-bottom: 20px; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loadingMessage { text-align: center; color: var(--dark); }
+        #loadingMessage h4 { margin: 0 0 10px; font-size: 1.3rem; font-weight: bold; }
+        #loadingMessage p { margin: 0; color: #7f8c8d; font-weight: normal; }
+
+        /* Lista de Archivos (Bloques) */
+        #file-list-container {
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .file-block {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex; align-items: center; gap: 20px;
+            cursor: pointer; transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+        .file-block:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+            background-color: var(--light);
+        }
+        .file-icon { font-size: 2.5em; color: #28a745; }
+        .file-name { font-size: 1.2em; font-weight: 600; color: var(--dark); }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray-600);
+            font-size: 0.9em;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        @media screen and (max-width: 768px) {
+            .menu-container { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .menu-item { padding: 15px 10px; min-height: 100px; }
+            .menu-item span { font-size: 1.8em; }
+            .menu-item p { font-size: 0.9em; }
+            .header { font-size: 1.2em; padding: 15px 0; }
+        }
+        @media screen and (max-width: 480px) {
+            .menu-container { grid-template-columns: 1fr 1fr; }
+            .app-container { padding: 15px; }
+        }
+        @media screen and (display-mode: standalone) {
+            body { margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+            .header { padding-top: calc(20px + env(safe-area-inset-top)); }
+            footer { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+        }
+    </style>
+</head>
+
+<button id="install-button">
+  <i class="fas fa-download"></i> Instalar App
+</button>
+
+<div id="overlay">
+    <div class="spinner"></div>
+    <div id="loadingMessage">
+        <h4>Buscando Planificación...</h4>
+        <p>Por favor espera un momento...</p>
+    </div>
+</div>
+
+<body>
+    <div class="header">Menú Principal</div>
+    
+    <div class="app-container">
+        <div class="menu-container">
+
+            <div class="menu-item" onclick="window.location.href='Control de Llaves.html';">
+                <span><i class="fa-solid fa-key"></i></span>
+                <p>Control de Llaves</p>
+            </div>  
+
+            <div class="menu-item" onclick="window.location.href='Pag - Reportería.html';">
+                <span><i class="fas fa-chart-line"></i></span>
+                <p>Reportería</p>
+            </div>
+
+            <div class="menu-item" onclick="cargarPlanificacion()">
+                <span><i class="fas fa-calendar-alt"></i></span>
+                <p>Planificación Semana <span id="week-display" style="font-size: inherit;">#</span></p>
+            </div>
+           
+            <div class="menu-item" onclick="mostrarInfo()">
+                <span><i class="fas fa-info-circle"></i></span>
+                <p>Acerca de</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-icon" onclick="mostrarNotificaciones()">
+        <i class="fas fa-bell"></i>
+        <span id="notification-badge" class="notification-badge"></span>
+    </div>
+
+    <div id="notification-modal" class="notification-modal">
+        <div class="notification-modal-content">
+            <div class="notification-header">
+                <h2>Notificaciones 
+                    <button class="refresh-button" onclick="actualizarNotificaciones()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </h2>
+                <button class="close-modal" onclick="cerrarNotificaciones()">&times;</button>
+            </div>
+            <ul class="notification-list" id="notification-list"></ul>
+        </div>
+    </div>
+
+    <div id="info-modal" class="info-modal">
+        <div class="info-modal-content">
+            <div class="info-header">
+                <h2>Información de la Aplicación</h2>
+                <button class="close-modal" onclick="cerrarInfo()">&times;</button>
+            </div>
+            <div class="creator-info">
+                <div style="background-color: #2C73D2; color: white; width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; font-size: 2.5em;">
+                    JZ
+                </div>
+                <h3>Jeancarlo Zelaya</h3>
+                <p>Ingeniero Industrial</p>
+                <p><a>Jz.92@live.com</a></p>
+                <p>Desarrollador de la APP</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="file-list-modal" class="file-list-modal">
+        <div class="file-list-modal-content">
+            <div class="file-list-header">
+                <h2 id="file-modal-title">Planificación</h2>
+                <button class="close-modal" onclick="cerrarFileList()">&times;</button>
+            </div>
+            <div id="file-list-container">
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        JZ © <span id="current-year"></span> - Sistema de Gestión
+    </footer>
+
+    <script>
+        // --- UTILIDADES ---
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        function mostrarInfo() { document.getElementById('info-modal').classList.add('active'); }
+        function cerrarInfo() { document.getElementById('info-modal').classList.remove('active'); }
+
+        // --- NOTIFICACIONES ---
+        const SCRIPT_URL = ""; 
+        const NOTIFICACIONES_VISTAS_KEY = `notificacionesVistas_${window.location.pathname}`;
+        let notificacionesCache = null;
+        let ultimaActualizacion = null;
+
+        async function obtenerNotificaciones() {
+            const ahora = Date.now();
+            if (notificacionesCache && ultimaActualizacion && (ahora - ultimaActualizacion < 30000)) {
+                return notificacionesCache;
+            }
+            try {
+                if (!SCRIPT_URL) return [];
+                const response = await fetch(SCRIPT_URL);
+                const notificaciones = await response.json();
+                notificacionesCache = notificaciones;
+                ultimaActualizacion = ahora;
+                return notificaciones;
+            } catch (error) {
+                console.error("Error notificaciones:", error);
+                return [];
+            }
+        }
+
+        function formatearHora(hora24) {
+            const [hora, minutos] = hora24.split(":");
+            const horaNum = parseInt(hora, 10);
+            const ampm = horaNum >= 12 ? "PM" : "AM";
+            const hora12 = horaNum % 12 || 12;
+            return `${hora12}:${minutos} ${ampm}`;
+        }
+
+        async function mostrarNotificaciones() {
+            const notifIcon = document.getElementById("notification-icon");
+            notifIcon.style.pointerEvents = "none";
+            const notificaciones = await obtenerNotificaciones();
+            const list = document.getElementById("notification-list");
+            list.innerHTML = "";
+            
+            if (notificaciones.length === 0) {
+                list.innerHTML = '<li class="notification-item">Sin notificaciones</li>';
+            } else {
+                notificaciones.forEach(n => {
+                    const [fecha, hora, mensaje] = n;
+                    if (fecha && hora && mensaje) {
+                        const li = document.createElement("li");
+                        li.className = "notification-item";
+                        li.innerHTML = `<strong>${fecha} ${formatearHora(hora)}</strong><p>${mensaje.replace(/\n/g, "<br>")}</p>`;
+                        list.appendChild(li);
+                    }
+                });
+            }
+            
+            const nuevasVistas = notificaciones.map(n => JSON.stringify({ fecha: n[0]?.trim(), hora: n[1]?.trim(), mensaje: n[2]?.trim() }));
+            localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasVistas));
+            document.getElementById("notification-modal").classList.add("active");
+            document.getElementById("notification-badge").style.display = "none";
+            notifIcon.style.pointerEvents = "auto";
+        }
+
+        async function verificarNotificaciones() {
+            if (!SCRIPT_URL) return;
+            const notificaciones = await obtenerNotificaciones();
+            const notifVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
+            let contador = 0;
+            notificaciones.forEach(n => {
+                const s = JSON.stringify({ fecha: n[0]?.trim(), hora: n[1]?.trim(), mensaje: n[2]?.trim() });
+                if (!notifVistas.includes(s)) contador++;
+            });
+            const badge = document.getElementById("notification-badge");
+            badge.textContent = contador;
+            badge.style.display = contador > 0 ? "block" : "none";
+        }
+
+        function cerrarNotificaciones() { document.getElementById("notification-modal").classList.remove('active'); }
+        function actualizarNotificaciones() { notificacionesCache = null; verificarNotificaciones(); mostrarNotificaciones(); }
+        
+        window.addEventListener("load", verificarNotificaciones);
+        setInterval(verificarNotificaciones, 10000);
+
+        // --- SEGURIDAD (RRHH y Actualización) ---
+        function promptForRRHH() {
+            const sessionKey = 'passwordSessionTimestamp';
+            const sessionStart = localStorage.getItem(sessionKey);
+            if (sessionStart && (new Date().getTime() - parseInt(sessionStart, 10) < 86400000)) {
+                window.location.href = 'Pag - RRHH.html';
+                return;
+            }
+            Swal.fire({
+                title: 'Acceso Restringido', html: 'Ingrese contraseña RRHH.', input: 'password',
+                confirmButtonText: 'Ingresar', showCancelButton: true,
+                preConfirm: (pass) => { if (pass !== 'macdel1') { Swal.showValidationMessage('Incorrecta'); return false; } return pass; }
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    localStorage.setItem(sessionKey, new Date().getTime().toString());
+                    window.location.href = 'Pag - RRHH.html';
+                }
+            });
+        }
+
+        function promptForActualizacion() {
+            const sessionKey = 'actualizacionDatosSessionTimestamp';
+            const sessionStart = localStorage.getItem(sessionKey);
+            if (sessionStart && (new Date().getTime() - parseInt(sessionStart, 10) < 86400000)) {
+                window.location.href = 'Actualización de Datos.html';
+                return;
+            }
+            Swal.fire({
+                title: 'Acceso Restringido', html: 'Ingrese contraseña Datos.', input: 'password',
+                confirmButtonText: 'Ingresar', showCancelButton: true,
+                preConfirm: (pass) => { if (pass !== 'pisos123') { Swal.showValidationMessage('Incorrecta'); return false; } return pass; }
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    localStorage.setItem(sessionKey, new Date().getTime().toString());
+                    window.location.href = 'Actualización de Datos.html';
+                }
+            });
+        }
+
+        // --- PLANIFICACIÓN SEMANAL (IMÁGENES) ---
+        const PLANIFICACION_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygzRsx6xQ3ETEN_zfpqqz8XHWetIqklRJmR35_b-ippTXcercaq14-aTJRDBrwLxLDrA/exec";
+        let imagenesGlobales = [];
+
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+        }
+
+        const semanaActual = getWeekNumber(new Date());
+        document.getElementById('week-display').textContent = "#" + semanaActual;
+
+        async function cargarPlanificacion() {
+            document.getElementById('overlay').style.display = 'flex';
+            try {
+                const response = await fetch(PLANIFICACION_SCRIPT_URL);
+                const data = await response.json();
+                document.getElementById('overlay').style.display = 'none';
+
+                if (data.success) {
+                    imagenesGlobales = data.files;
+                    document.getElementById('file-modal-title').textContent = `Planificación Semanal #${semanaActual}`;
+                    mostrarListaBotones();
+                    document.getElementById('file-list-modal').classList.add('active');
+                } else {
+                    Swal.fire({ icon: 'info', title: 'No disponible', text: data.message || `Aún no se ha subido la planificación de la semana ${semanaActual}.` });
+                }
+            } catch (error) {
+                document.getElementById('overlay').style.display = 'none';
+                console.error(error);
+                Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+            }
+        }
+
+        function mostrarListaBotones() {
+            const container = document.getElementById('file-list-container');
+            container.innerHTML = ''; 
+            if(imagenesGlobales.length === 0) {
+                container.innerHTML = '<p style="text-align:center; margin-top:20px;">No hay imágenes.</p>';
+                return;
+            }
+            imagenesGlobales.forEach(file => {
+                const nombreLimpio = file.name.replace(/\.[^/.]+$/, "");
+                const block = document.createElement('div');
+                block.className = 'file-block';
+                block.innerHTML = `<div class="file-icon"><i class="fas fa-file-image"></i></div><div class="file-name">${nombreLimpio}</div>`;
+                block.onclick = () => verImagenConZoom(file);
+                container.appendChild(block);
+            });
+        }
+
+        function verImagenConZoom(file) {
+            const image = new Image();
+            image.src = file.data; 
+            image.alt = file.name;
+            const viewer = new Viewer(image, {
+                hidden: function () { viewer.destroy(); },
+                toolbar: { zoomIn: 1, zoomOut: 1, oneToOne: 1, reset: 1, prev: 0, play: 0, next: 0, rotateLeft: 0, rotateRight: 0, flipHorizontal: 0, flipVertical: 0 },
+                navbar: false, title: false
+            });
+            viewer.show();
+        }
+
+        function cerrarFileList() {
+            document.getElementById('file-list-modal').classList.remove('active');
+            setTimeout(() => { document.getElementById('file-list-container').innerHTML = ''; imagenesGlobales = []; }, 300);
+        }
+
+        // --- SERVICE WORKER (Registro) ---
+        // Este código habilita el modo offline registrando el archivo service-worker.js
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker Menú registrado con éxito:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('❌ Error al registrar Service Worker Menú:', error);
+                    });
+            });
+        }
+
+        // Lógica Botón Instalar PWA (Opcional)
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('install-button');
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
