@@ -1,0 +1,16 @@
+{
+  "name": "PIBRISA LITE",
+  "short_name": "PIBRISA LITE",
+  "description": "Accede a la página web de PIBRISA como una app.",
+  "start_url": "/CCGLITE/",
+  "display": "standalone",
+  "background_color": "#f4f4f4",
+  "theme_color": "#007BFF",
+  "icons": [
+    {
+      "src": "Imágenes/Icono.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
