@@ -7,7 +7,10 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.js"></script>
     
     <link rel="icon" href="Imágenes/Icono.png" type="image/png">
     <link rel="manifest" href="/CCG/manifest.json">
@@ -200,8 +203,8 @@
             100% { transform: scale(1); }
         }
 
-        /* Modales (Notificaciones, Info y PDF) */
-        .notification-modal, .info-modal, .pdf-modal {
+        /* Modales (Notificaciones, Info y Lista Archivos) */
+        .notification-modal, .info-modal, .file-list-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -217,9 +220,9 @@
             transition: opacity 0.3s, visibility 0.3s;
         }
 
-        .notification-modal.active, .info-modal.active, .pdf-modal.active { opacity: 1; visibility: visible; }
+        .notification-modal.active, .info-modal.active, .file-list-modal.active { opacity: 1; visibility: visible; }
 
-        .notification-modal-content, .info-modal-content, .pdf-modal-content {
+        .notification-modal-content, .info-modal-content, .file-list-modal-content {
             background: white;
             width: 85%;
             max-width: 500px;
@@ -232,31 +235,21 @@
             transform: translateY(20px);
             transition: transform 0.3s ease-in-out;
         }
-        
-        /* Ajuste especial para el modal de PDF para que sea más ancho */
-        .pdf-modal-content {
-            max-width: 800px;
-            width: 95%;
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-        }
 
         .notification-modal.active .notification-modal-content, 
         .info-modal.active .info-modal-content,
-        .pdf-modal.active .pdf-modal-content { transform: translateY(0); }
+        .file-list-modal.active .file-list-modal-content { transform: translateY(0); }
 
-        .notification-header, .info-header, .pdf-header {
+        .notification-header, .info-header, .file-list-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--gray-200);
-            flex-shrink: 0;
         }
 
-        .notification-header h2, .info-header h2, .pdf-header h2 {
+        .notification-header h2, .info-header h2, .file-list-header h2 {
             margin: 0;
             font-size: 1.5em;
             color: var(--primary);
@@ -317,9 +310,7 @@
         .creator-info a { color: var(--primary); text-decoration: none; transition: var(--transition); }
         .creator-info a:hover { color: var(--primary-dark); text-decoration: underline; }
 
-        /* --- NUEVOS ESTILOS AGREGADOS PARA LA FUNCIONALIDAD DE PLANIFICACIÓN --- */
-        
-        /* Overlay de carga (Copiado de Actualización de Datos) */
+        /* --- ESTILOS NUEVOS: PANTALLA DE CARGA (OVERLAY) --- */
         #overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: rgba(255, 255, 255, 0.95); 
@@ -339,26 +330,17 @@
         #loadingMessage h4 { margin: 0 0 10px; font-size: 1.3rem; font-weight: bold; }
         #loadingMessage p { margin: 0; color: #7f8c8d; font-weight: normal; }
 
-        /* Contenedor de Bloques de Archivos */
-        #pdf-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        /* --- ESTILOS NUEVOS: LISTA DE ARCHIVOS --- */
+        #file-list-container {
+            display: flex; flex-direction: column; gap: 15px;
         }
-
-        /* Bloques de Archivo (Botones grandes) */
         .file-block {
             background: white;
             border: 1px solid var(--gray-200);
             border-radius: 12px;
             padding: 25px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            cursor: pointer;
-            transition: var(--transition);
+            display: flex; align-items: center; gap: 20px;
+            cursor: pointer; transition: var(--transition);
             box-shadow: var(--shadow-sm);
         }
         .file-block:hover {
@@ -367,47 +349,8 @@
             border-color: var(--primary);
             background-color: var(--light);
         }
-        .file-icon {
-            font-size: 2.5em;
-            color: #e74c3c; /* Rojo PDF */
-        }
-        .file-name {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        /* Visor PDF */
-        .pdf-viewer-wrapper {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        .pdf-embed {
-            flex-grow: 1;
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            height: 100%;
-        }
-        .btn-back {
-            align-self: flex-start;
-            margin-bottom: 15px;
-            background: var(--gray-200);
-            color: var(--dark);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition);
-        }
-        .btn-back:hover { background: var(--gray-300); }
+        .file-icon { font-size: 2.5em; color: #28a745; /* Verde Imagen */ }
+        .file-name { font-size: 1.2em; font-weight: 600; color: var(--dark); }
 
         footer {
             text-align: center;
@@ -474,11 +417,12 @@
                 <span><i class="fas fa-calendar-alt"></i></span>
                 <p>Planificación Semana <span id="week-display" style="font-size: inherit;">#</span></p>
             </div>
-          
+
             <div class="menu-item" onclick="mostrarInfo()">
                 <span><i class="fas fa-info-circle"></i></span>
                 <p>Acerca de</p>
-            </div>
+            </div>         
+
         </div>
     </div>
 
@@ -501,17 +445,6 @@
         </div>
     </div>
 
-    <div id="pdf-modal" class="pdf-modal">
-        <div class="pdf-modal-content">
-            <div class="pdf-header">
-                <h2 id="pdf-modal-title">Planificación</h2>
-                <button class="close-modal" onclick="cerrarPDF()">&times;</button>
-            </div>
-            <div id="pdf-container">
-                </div>
-        </div>
-    </div>
-
     <div id="info-modal" class="info-modal">
         <div class="info-modal-content">
             <div class="info-header">
@@ -527,6 +460,17 @@
                 <p><a>Jz.92@live.com</a></p>
                 <p>Desarrollador de la APP</p>
             </div>
+        </div>
+    </div>
+
+    <div id="file-list-modal" class="file-list-modal">
+        <div class="file-list-modal-content">
+            <div class="file-list-header">
+                <h2 id="file-modal-title">Planificación</h2>
+                <button class="close-modal" onclick="cerrarFileList()">&times;</button>
+            </div>
+            <div id="file-list-container">
+                </div>
         </div>
     </div>
 
@@ -571,7 +515,6 @@
         });
 
         // --- NOTIFICACIONES ---
-        // IMPORTANTE: Recuerda poner tu URL del Script de Google aquí abajo
         const SCRIPT_URL = ""; 
         const NOTIFICACIONES_VISTAS_KEY = `notificacionesVistas_${window.location.pathname}`;
         let notificacionesCache = null;
@@ -583,7 +526,7 @@
                 return notificacionesCache;
             }
             try {
-                if (!SCRIPT_URL) return []; // Evita error si no hay URL
+                if (!SCRIPT_URL) return [];
                 const response = await fetch(SCRIPT_URL);
                 const notificaciones = await response.json();
                 notificacionesCache = notificaciones;
@@ -626,7 +569,6 @@
                 });
             }
 
-            // Marcar como vistas
             const nuevasVistas = notificaciones.map(n => JSON.stringify({ fecha: n[0]?.trim(), hora: n[1]?.trim(), mensaje: n[2]?.trim() }));
             localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasVistas));
 
@@ -663,10 +605,7 @@
         window.addEventListener("load", verificarNotificaciones);
         setInterval(verificarNotificaciones, 10000);
 
-        // --- SEGURIDAD / CONTRASEÑAS ---
-        // Estas funciones están listas, pero necesitas agregar los botones en el menú HTML para usarlas.
-        
-        // 1. Para RRHH
+        // --- SEGURIDAD / CONTRASEÑAS (RRHH y Actualización) ---
         function promptForRRHH() {
             const sessionKey = 'passwordSessionTimestamp';
             const sessionStart = localStorage.getItem(sessionKey);
@@ -699,7 +638,6 @@
             });
         }
 
-        // 2. Para Actualización de Datos
         function promptForActualizacion() {
             const sessionKey = 'actualizacionDatosSessionTimestamp';
             const sessionStart = localStorage.getItem(sessionKey);
@@ -732,12 +670,13 @@
             });
         }
 
-        // --- NUEVA FUNCIONALIDAD: PLANIFICACIÓN SEMANAL ---
+        // --- PLANIFICACIÓN SEMANAL (IMÁGENES CON ZOOM) ---
         
+        // URL de tu Script (ACTUALIZADA PARA IMÁGENES)
         const PLANIFICACION_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygzRsx6xQ3ETEN_zfpqqz8XHWetIqklRJmR35_b-ippTXcercaq14-aTJRDBrwLxLDrA/exec";
-        let archivosGlobales = []; // Guardar temporalmente los archivos descargados
+        let imagenesGlobales = [];
 
-        // Función para obtener el número de semana actual
+        // Obtener semana actual
         function getWeekNumber(d) {
             d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
             d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
@@ -745,36 +684,32 @@
             return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
         }
 
-        // Actualizar el botón con la semana actual al iniciar
         const semanaActual = getWeekNumber(new Date());
         const weekDisplay = document.getElementById('week-display');
-        if(weekDisplay) {
-            weekDisplay.textContent = "#" + semanaActual;
-        }
+        if(weekDisplay) weekDisplay.textContent = "#" + semanaActual;
 
         async function cargarPlanificacion() {
-            // 1. Mostrar PANTALLA DE CARGA (Overlay)
+            // Mostrar Overlay de Carga
             document.getElementById('overlay').style.display = 'flex';
 
             try {
-                // Llamar al Script de Google
                 const response = await fetch(PLANIFICACION_SCRIPT_URL);
                 const data = await response.json();
                 
-                // 2. Ocultar PANTALLA DE CARGA
+                // Ocultar Overlay
                 document.getElementById('overlay').style.display = 'none';
 
                 if (data.success) {
-                    archivosGlobales = data.files;
+                    imagenesGlobales = data.files;
                     
-                    // Configurar Título
-                    document.getElementById('pdf-modal-title').textContent = `Planificación Semanal #${semanaActual}`;
+                    // Título del Modal
+                    document.getElementById('file-modal-title').textContent = `Planificación Semanal #${semanaActual}`;
                     
-                    // Renderizar botones (bloques)
-                    mostrarListaArchivos();
-
-                    // Abrir Modal
-                    document.getElementById('pdf-modal').classList.add('active');
+                    // Generar botones (bloques)
+                    mostrarListaBotones();
+                    
+                    // Abrir Modal de Lista
+                    document.getElementById('file-list-modal').classList.add('active');
                 } else {
                     Swal.fire({
                         icon: 'info',
@@ -785,68 +720,73 @@
             } catch (error) {
                 document.getElementById('overlay').style.display = 'none';
                 console.error(error);
-                Swal.fire('Error', 'No se pudo conectar con el servidor de archivos.', 'error');
+                Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
             }
         }
 
-        function mostrarListaArchivos() {
-            const container = document.getElementById('pdf-container');
-            container.innerHTML = ''; // Limpiar
+        function mostrarListaBotones() {
+            const container = document.getElementById('file-list-container');
+            container.innerHTML = ''; 
 
-            if(archivosGlobales.length === 0) {
-                container.innerHTML = '<p style="text-align:center; margin-top:20px;">No hay archivos disponibles.</p>';
+            if(imagenesGlobales.length === 0) {
+                container.innerHTML = '<p style="text-align:center; margin-top:20px;">No hay imágenes.</p>';
                 return;
             }
 
-            archivosGlobales.forEach(file => {
-                // Limpiar nombre (quitar .pdf)
-                const nombreLimpio = file.name.replace(/\.pdf$/i, '');
+            imagenesGlobales.forEach(file => {
+                // Limpiar extensión para el nombre visual
+                const nombreLimpio = file.name.replace(/\.[^/.]+$/, "");
 
                 const block = document.createElement('div');
                 block.className = 'file-block';
                 block.innerHTML = `
-                    <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+                    <div class="file-icon"><i class="fas fa-file-image"></i></div>
                     <div class="file-name">${nombreLimpio}</div>
                 `;
-                // Al dar clic, abre el visor
-                block.onclick = () => verPDFIndividual(file);
+                // AL HACER CLIC: Abrir visor con zoom
+                block.onclick = () => verImagenConZoom(file);
                 
                 container.appendChild(block);
             });
         }
 
-        function verPDFIndividual(file) {
-            const container = document.getElementById('pdf-container');
-            container.innerHTML = ''; // Limpiar lista de bloques
+        function verImagenConZoom(file) {
+            // Creamos una imagen en memoria
+            const image = new Image();
+            image.src = file.data; // Data Base64
+            image.alt = file.name;
 
-            // Botón Volver
-            const btnVolver = document.createElement('button');
-            btnVolver.className = 'btn-back';
-            btnVolver.innerHTML = '<i class="fas fa-arrow-left"></i> Volver a la lista';
-            btnVolver.onclick = mostrarListaArchivos; 
+            // CONFIGURACIÓN DEL VISOR (Solo botones pedidos)
+            const viewer = new Viewer(image, {
+                hidden: function () {
+                    viewer.destroy(); // Limpiar al cerrar
+                },
+                toolbar: {
+                    zoomIn: 1,
+                    zoomOut: 1,
+                    oneToOne: 1,
+                    reset: 1,
+                    // Ocultamos todo lo demás explícitamente
+                    prev: 0,
+                    play: 0,
+                    next: 0,
+                    rotateLeft: 0,
+                    rotateRight: 0,
+                    flipHorizontal: 0,
+                    flipVertical: 0,
+                },
+                navbar: false,
+                title: false
+            });
 
-            // Contenedor visor
-            const viewerWrapper = document.createElement('div');
-            viewerWrapper.className = 'pdf-viewer-wrapper';
-            
-            // Embed PDF
-            const embed = document.createElement('embed');
-            embed.className = 'pdf-embed';
-            embed.src = file.data; // Data URI Base64
-            embed.type = 'application/pdf';
-
-            viewerWrapper.appendChild(embed);
-            
-            container.appendChild(btnVolver);
-            container.appendChild(viewerWrapper);
+            viewer.show();
         }
 
-        function cerrarPDF() {
-            document.getElementById('pdf-modal').classList.remove('active');
-            // Limpiar contenido despues de cerrar
+        function cerrarFileList() {
+            document.getElementById('file-list-modal').classList.remove('active');
             setTimeout(() => { 
-                document.getElementById('pdf-container').innerHTML = ''; 
-                archivosGlobales = []; 
+                document.getElementById('file-list-container').innerHTML = ''; 
+                imagenesGlobales = []; 
             }, 300);
         }
     </script>
