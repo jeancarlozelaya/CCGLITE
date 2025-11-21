@@ -13,7 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.js"></script>
     
     <link rel="icon" href="Imágenes/Icono.png" type="image/png">
-    <link rel="manifest" href="/CCGLITE/manifest.json">
+    <link rel="manifest" href="/CCG/manifest.json">
 
     <style>
         :root {
@@ -203,7 +203,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Modales (Notificaciones, Info y Lista Archivos) */
+        /* Modales */
         .notification-modal, .info-modal, .file-list-modal {
             position: fixed;
             top: 0;
@@ -268,7 +268,7 @@
         }
         .close-modal:hover { color: var(--secondary); transform: rotate(90deg); }
 
-        /* Estilos Lista de Notificaciones */
+        /* Listas */
         .notification-list { list-style-type: none; padding: 0; margin: 0; }
         .notification-item {
             background: var(--gray-100);
@@ -298,7 +298,7 @@
         }
         .refresh-button:hover { background: var(--primary); color: white; transform: rotate(180deg); }
 
-        /* Estilos Info Creador */
+        /* Info Creador */
         .creator-info { text-align: center; }
         .creator-info img {
             width: 100px; height: 100px;
@@ -310,7 +310,7 @@
         .creator-info a { color: var(--primary); text-decoration: none; transition: var(--transition); }
         .creator-info a:hover { color: var(--primary-dark); text-decoration: underline; }
 
-        /* --- ESTILOS NUEVOS: PANTALLA DE CARGA (OVERLAY) --- */
+        /* Pantalla de Carga */
         #overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: rgba(255, 255, 255, 0.95); 
@@ -330,7 +330,7 @@
         #loadingMessage h4 { margin: 0 0 10px; font-size: 1.3rem; font-weight: bold; }
         #loadingMessage p { margin: 0; color: #7f8c8d; font-weight: normal; }
 
-        /* --- ESTILOS NUEVOS: LISTA DE ARCHIVOS --- */
+        /* Lista de Archivos (Bloques) */
         #file-list-container {
             display: flex; flex-direction: column; gap: 15px;
         }
@@ -349,7 +349,7 @@
             border-color: var(--primary);
             background-color: var(--light);
         }
-        .file-icon { font-size: 2.5em; color: #28a745; /* Verde Imagen */ }
+        .file-icon { font-size: 2.5em; color: #28a745; }
         .file-name { font-size: 1.2em; font-weight: 600; color: var(--dark); }
 
         footer {
@@ -365,7 +365,6 @@
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Responsive */
         @media screen and (max-width: 768px) {
             .menu-container { grid-template-columns: 1fr 1fr; gap: 12px; }
             .menu-item { padding: 15px 10px; min-height: 100px; }
@@ -417,12 +416,11 @@
                 <span><i class="fas fa-calendar-alt"></i></span>
                 <p>Planificación Semana <span id="week-display" style="font-size: inherit;">#</span></p>
             </div>
-
+           
             <div class="menu-item" onclick="mostrarInfo()">
                 <span><i class="fas fa-info-circle"></i></span>
                 <p>Acerca de</p>
-            </div>         
-
+            </div>
         </div>
     </div>
 
@@ -483,36 +481,8 @@
         document.getElementById('current-year').textContent = new Date().getFullYear();
         document.addEventListener('contextmenu', e => e.preventDefault());
 
-        function mostrarInfo() {
-            document.getElementById('info-modal').classList.add('active');
-        }
-        function cerrarInfo() {
-            document.getElementById('info-modal').classList.remove('active');
-        }
-
-        // --- PWA / SERVICE WORKER ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('SW registrado:', reg))
-                    .catch(err => console.log('Error SW:', err));
-            });
-        }
-
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installButton = document.getElementById('install-button');
-            installButton.style.display = 'block';
-            installButton.addEventListener('click', () => {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
-                    installButton.style.display = 'none';
-                });
-            });
-        });
+        function mostrarInfo() { document.getElementById('info-modal').classList.add('active'); }
+        function cerrarInfo() { document.getElementById('info-modal').classList.remove('active'); }
 
         // --- NOTIFICACIONES ---
         const SCRIPT_URL = ""; 
@@ -533,7 +503,7 @@
                 ultimaActualizacion = ahora;
                 return notificaciones;
             } catch (error) {
-                console.error("Error al obtener notificaciones:", error);
+                console.error("Error notificaciones:", error);
                 return [];
             }
         }
@@ -549,12 +519,10 @@
         async function mostrarNotificaciones() {
             const notifIcon = document.getElementById("notification-icon");
             notifIcon.style.pointerEvents = "none";
-
             const notificaciones = await obtenerNotificaciones();
             const list = document.getElementById("notification-list");
             list.innerHTML = "";
-            const notifVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
-
+            
             if (notificaciones.length === 0) {
                 list.innerHTML = '<li class="notification-item">Sin notificaciones</li>';
             } else {
@@ -568,10 +536,9 @@
                     }
                 });
             }
-
+            
             const nuevasVistas = notificaciones.map(n => JSON.stringify({ fecha: n[0]?.trim(), hora: n[1]?.trim(), mensaje: n[2]?.trim() }));
             localStorage.setItem(NOTIFICACIONES_VISTAS_KEY, JSON.stringify(nuevasVistas));
-
             document.getElementById("notification-modal").classList.add("active");
             document.getElementById("notification-badge").style.display = "none";
             notifIcon.style.pointerEvents = "auto";
@@ -582,54 +549,33 @@
             const notificaciones = await obtenerNotificaciones();
             const notifVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
             let contador = 0;
-
             notificaciones.forEach(n => {
                 const s = JSON.stringify({ fecha: n[0]?.trim(), hora: n[1]?.trim(), mensaje: n[2]?.trim() });
                 if (!notifVistas.includes(s)) contador++;
             });
-
             const badge = document.getElementById("notification-badge");
             badge.textContent = contador;
             badge.style.display = contador > 0 ? "block" : "none";
         }
 
-        function cerrarNotificaciones() {
-            document.getElementById("notification-modal").classList.remove('active');
-        }
-        function actualizarNotificaciones() {
-            notificacionesCache = null;
-            verificarNotificaciones();
-            mostrarNotificaciones();
-        }
-
+        function cerrarNotificaciones() { document.getElementById("notification-modal").classList.remove('active'); }
+        function actualizarNotificaciones() { notificacionesCache = null; verificarNotificaciones(); mostrarNotificaciones(); }
+        
         window.addEventListener("load", verificarNotificaciones);
         setInterval(verificarNotificaciones, 10000);
 
-        // --- SEGURIDAD / CONTRASEÑAS (RRHH y Actualización) ---
+        // --- SEGURIDAD (RRHH y Actualización) ---
         function promptForRRHH() {
             const sessionKey = 'passwordSessionTimestamp';
             const sessionStart = localStorage.getItem(sessionKey);
-
             if (sessionStart && (new Date().getTime() - parseInt(sessionStart, 10) < 86400000)) {
                 window.location.href = 'Pag - RRHH.html';
                 return;
             }
-
             Swal.fire({
-                title: 'Acceso Restringido',
-                html: 'Ingrese la contraseña para RRHH.',
-                input: 'password',
-                confirmButtonText: 'Ingresar',
-                showCancelButton: true,
-                cancelButtonText: 'Cancelar',
-                backdrop: `rgba(43, 62, 80, 0.8)`,
-                preConfirm: (pass) => {
-                    if (pass !== 'macdel1') {
-                        Swal.showValidationMessage('Contraseña incorrecta');
-                        return false;
-                    }
-                    return pass;
-                }
+                title: 'Acceso Restringido', html: 'Ingrese contraseña RRHH.', input: 'password',
+                confirmButtonText: 'Ingresar', showCancelButton: true,
+                preConfirm: (pass) => { if (pass !== 'macdel1') { Swal.showValidationMessage('Incorrecta'); return false; } return pass; }
             }).then((res) => {
                 if (res.isConfirmed) {
                     localStorage.setItem(sessionKey, new Date().getTime().toString());
@@ -641,27 +587,14 @@
         function promptForActualizacion() {
             const sessionKey = 'actualizacionDatosSessionTimestamp';
             const sessionStart = localStorage.getItem(sessionKey);
-
             if (sessionStart && (new Date().getTime() - parseInt(sessionStart, 10) < 86400000)) {
                 window.location.href = 'Actualización de Datos.html';
                 return;
             }
-
             Swal.fire({
-                title: 'Acceso Restringido',
-                html: 'Ingrese la contraseña para Actualizar Datos.',
-                input: 'password',
-                confirmButtonText: 'Ingresar',
-                showCancelButton: true,
-                cancelButtonText: 'Cancelar',
-                backdrop: `rgba(43, 62, 80, 0.8)`,
-                preConfirm: (pass) => {
-                    if (pass !== 'pisos123') {
-                        Swal.showValidationMessage('Contraseña incorrecta');
-                        return false;
-                    }
-                    return pass;
-                }
+                title: 'Acceso Restringido', html: 'Ingrese contraseña Datos.', input: 'password',
+                confirmButtonText: 'Ingresar', showCancelButton: true,
+                preConfirm: (pass) => { if (pass !== 'pisos123') { Swal.showValidationMessage('Incorrecta'); return false; } return pass; }
             }).then((res) => {
                 if (res.isConfirmed) {
                     localStorage.setItem(sessionKey, new Date().getTime().toString());
@@ -670,13 +603,10 @@
             });
         }
 
-        // --- PLANIFICACIÓN SEMANAL (IMÁGENES CON ZOOM) ---
-        
-        // URL de tu Script (ACTUALIZADA PARA IMÁGENES)
+        // --- PLANIFICACIÓN SEMANAL (IMÁGENES) ---
         const PLANIFICACION_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygzRsx6xQ3ETEN_zfpqqz8XHWetIqklRJmR35_b-ippTXcercaq14-aTJRDBrwLxLDrA/exec";
         let imagenesGlobales = [];
 
-        // Obtener semana actual
         function getWeekNumber(d) {
             d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
             d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
@@ -685,37 +615,22 @@
         }
 
         const semanaActual = getWeekNumber(new Date());
-        const weekDisplay = document.getElementById('week-display');
-        if(weekDisplay) weekDisplay.textContent = "#" + semanaActual;
+        document.getElementById('week-display').textContent = "#" + semanaActual;
 
         async function cargarPlanificacion() {
-            // Mostrar Overlay de Carga
             document.getElementById('overlay').style.display = 'flex';
-
             try {
                 const response = await fetch(PLANIFICACION_SCRIPT_URL);
                 const data = await response.json();
-                
-                // Ocultar Overlay
                 document.getElementById('overlay').style.display = 'none';
 
                 if (data.success) {
                     imagenesGlobales = data.files;
-                    
-                    // Título del Modal
                     document.getElementById('file-modal-title').textContent = `Planificación Semanal #${semanaActual}`;
-                    
-                    // Generar botones (bloques)
                     mostrarListaBotones();
-                    
-                    // Abrir Modal de Lista
                     document.getElementById('file-list-modal').classList.add('active');
                 } else {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'No disponible',
-                        text: data.message || `Aún no se ha subido la planificación de la semana ${semanaActual}.`
-                    });
+                    Swal.fire({ icon: 'info', title: 'No disponible', text: data.message || `Aún no se ha subido la planificación de la semana ${semanaActual}.` });
                 }
             } catch (error) {
                 document.getElementById('overlay').style.display = 'none';
@@ -727,69 +642,66 @@
         function mostrarListaBotones() {
             const container = document.getElementById('file-list-container');
             container.innerHTML = ''; 
-
             if(imagenesGlobales.length === 0) {
                 container.innerHTML = '<p style="text-align:center; margin-top:20px;">No hay imágenes.</p>';
                 return;
             }
-
             imagenesGlobales.forEach(file => {
-                // Limpiar extensión para el nombre visual
                 const nombreLimpio = file.name.replace(/\.[^/.]+$/, "");
-
                 const block = document.createElement('div');
                 block.className = 'file-block';
-                block.innerHTML = `
-                    <div class="file-icon"><i class="fas fa-file-image"></i></div>
-                    <div class="file-name">${nombreLimpio}</div>
-                `;
-                // AL HACER CLIC: Abrir visor con zoom
+                block.innerHTML = `<div class="file-icon"><i class="fas fa-file-image"></i></div><div class="file-name">${nombreLimpio}</div>`;
                 block.onclick = () => verImagenConZoom(file);
-                
                 container.appendChild(block);
             });
         }
 
         function verImagenConZoom(file) {
-            // Creamos una imagen en memoria
             const image = new Image();
-            image.src = file.data; // Data Base64
+            image.src = file.data; 
             image.alt = file.name;
-
-            // CONFIGURACIÓN DEL VISOR (Solo botones pedidos)
             const viewer = new Viewer(image, {
-                hidden: function () {
-                    viewer.destroy(); // Limpiar al cerrar
-                },
-                toolbar: {
-                    zoomIn: 1,
-                    zoomOut: 1,
-                    oneToOne: 1,
-                    reset: 1,
-                    // Ocultamos todo lo demás explícitamente
-                    prev: 0,
-                    play: 0,
-                    next: 0,
-                    rotateLeft: 0,
-                    rotateRight: 0,
-                    flipHorizontal: 0,
-                    flipVertical: 0,
-                },
-                navbar: false,
-                title: false
+                hidden: function () { viewer.destroy(); },
+                toolbar: { zoomIn: 1, zoomOut: 1, oneToOne: 1, reset: 1, prev: 0, play: 0, next: 0, rotateLeft: 0, rotateRight: 0, flipHorizontal: 0, flipVertical: 0 },
+                navbar: false, title: false
             });
-
             viewer.show();
         }
 
         function cerrarFileList() {
             document.getElementById('file-list-modal').classList.remove('active');
-            setTimeout(() => { 
-                document.getElementById('file-list-container').innerHTML = ''; 
-                imagenesGlobales = []; 
-            }, 300);
+            setTimeout(() => { document.getElementById('file-list-container').innerHTML = ''; imagenesGlobales = []; }, 300);
         }
+
+        // --- SERVICE WORKER (Registro) ---
+        // Este código habilita el modo offline registrando el archivo service-worker.js
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker Menú registrado con éxito:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('❌ Error al registrar Service Worker Menú:', error);
+                    });
+            });
+        }
+
+        // Lógica Botón Instalar PWA (Opcional)
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('install-button');
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                });
+            });
+        });
     </script>
 </body>
 </html>
-
