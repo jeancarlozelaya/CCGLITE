@@ -4,9 +4,9 @@ const CACHE_NAME_INDEX = 'pibrisa-index-v1.0.1';
 const urlsToCacheIndex = [
     './',
     './index.html',
-    '/CCG/manifest.json',
-    '/CCG/Pag - Reportería.html',
-    '/CCG/Pag - Residuos.html',
+    './manifest.json',
+    './Pag - Reportería.html',
+    './Pag - Residuos.html',
     'Imágenes/Icono.png',
     // Librerías externas usadas en index.html
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
