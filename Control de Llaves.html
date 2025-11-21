@@ -880,7 +880,7 @@
 // Nuevo código para el Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw-llaves.js')
+                navigator.serviceWorker.register('sw-index.js')
                     .then(function(registration) {
                         console.log('✅ Service Worker de Llaves registrado con éxito:', registration.scope);
                     })
@@ -894,3 +894,4 @@
 </script>
 </body>
 </html>
+
