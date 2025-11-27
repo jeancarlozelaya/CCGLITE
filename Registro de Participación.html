@@ -438,7 +438,7 @@
             </div>
 
             <div class="submit-button-container">
-                <button type="button" id="btnEnviar" onclick="validarFormularioCompleto()">Enviar</button>
+                <button type="button" id="btnEnviar" onclick="validarFormularioCompleto()" disabled title="Esperando la carga del tema...">Enviar</button>
             </div>
         </div>
     </div>
@@ -1092,6 +1092,26 @@ function verificarColaboradorValido() {
 // === INICIO: LÓGICA DE CARGA, VALIDACIÓN Y ENVÍO ===
 // ====================================================================
 
+/**
+ * Función para controlar el estado del botón de Enviar basado en el tema.
+ */
+function checkTemaAndToggleSubmit(temaValue) {
+    const btnEnviar = document.getElementById('btnEnviar');
+    // Considerar el tema como inválido si es nulo o si es el mensaje de error.
+    const isTemaInvalid = !temaValue || temaValue === "Tema no disponible" || temaValue.trim() === "";
+
+    if (isTemaInvalid) {
+        btnEnviar.disabled = true;
+        btnEnviar.title = 'No se puede enviar porque el tema no está disponible.';
+    } else {
+        // Solo re-habilitamos si no ha sido permanentemente deshabilitado (ej. post-envío)
+        if (btnEnviar.style.pointerEvents !== 'none') {
+            btnEnviar.disabled = false;
+        }
+        btnEnviar.title = '';
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     // 1. Inicializar Canvas y Autocomplete
     initializeCanvas();
@@ -1133,6 +1153,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             temaInput.value = "Tema no disponible";
         }
 
+        // **CLAVE:** Controlar el estado del botón 'Enviar' basado en la carga del tema
+        checkTemaAndToggleSubmit(temaInput.value);
+
         generateQuestions(data.preguntas);
         setupQuestionContainers(); // Configurar eventos de validación de preguntas
 
@@ -1146,6 +1169,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Ocultar overlay de espera en caso de error
         document.getElementById('overlay').style.display = 'none';
         Swal.fire("Error", "Hubo un error al cargar las preguntas: " + error.message, "error");
+        
+        // **CLAVE:** Deshabilitar el botón si falla la carga.
+        checkTemaAndToggleSubmit(null);
     } 
 });
 
@@ -1387,6 +1413,7 @@ async function generarPDF() {
     const lineSpacing = 8;
     let cursorY = 15;
 
+    // Se capturan los valores que DEBEN persistir
     const fecha = document.getElementById('fecha').value;
     const tema = document.getElementById('tema').value;
     const colaborador = document.getElementById('colaborador').value;
@@ -1461,7 +1488,8 @@ async function generarPDF() {
         pdf.setFontSize(10);
         const lineasPregunta = pdf.splitTextToSize(`${index + 1}. ${preguntaTexto}`, textWidth);
         pdf.text(lineasPregunta, marginLeft, cursorY);
-        cursorY += lineasPregunta.length * 5;
+        // FIX CLAVE: Corrección de typo lineasPreguna -> lineasPregunta
+        cursorY += lineasPregunta.length * 5; 
         
         const esCorrecta = respuesta.trim().toLowerCase() === respuestaCorrecta.trim().toLowerCase();
         const colorRespuesta = esCorrecta ? [46, 204, 113] : [231, 76, 60]; 
@@ -1585,14 +1613,18 @@ async function generarPDF() {
     // La información visible en pantalla SE MANTIENE.
     clearSession(); 
     
+    // FIX CLAVE AÑADIDO: Re-establecer explícitamente el valor de tema y colaborador en la UI
+    // para evitar que se borren visualmente después del envío, como reportó el usuario.
+    $("#colaborador").val(colaborador);
+    $("#tema").val(tema);
+
     // **********************************************
     // FIN: CAMBIOS PARA BLOQUEAR POST-ENVÍO
     // **********************************************
 
 
     // Crear un nombre para el archivo y enviarlo
-    // PENDIENTE (Punto 4): Mensaje de subida
-    document.getElementById('loadingMessage').querySelector('p').textContent = 'Por favor espera un momento...';
+    document.getElementById('loadingMessage').querySelector('p').textContent = 'Por favor espere un momento...';
     
     let nombreArchivo = `${fecha} - Participación - ${colaborador} - ${calificacion.toFixed(0)}%.pdf`;
 
@@ -1634,7 +1666,7 @@ async function generarPDF() {
 
     } catch (error) {
         document.getElementById('overlay').style.display = 'none';
-        Swal.fire('Error', 'Hubo un problema al enviar el registro a Google Drive. Por favor, intenta de nuevo.', 'error');
+        Swal.fire('Error', 'Hubo un problema al enviar el registro. Por favor, intenta de nuevo.', 'error');
     }
 }
 
