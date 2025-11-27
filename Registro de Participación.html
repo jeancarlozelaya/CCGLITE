@@ -273,10 +273,16 @@
         text-align: center;
         color: var(--dark-color);
     }
-    
+ 
+   
     #loadingMessage p {
         margin: 0;
         color: #7f8c8d;
+    }
+
+    #loadingMessage h4 {
+        margin: 0 0 10px;
+        font-size: 1.3rem;
     }
 
     .respuesta-correcta-texto {
@@ -446,6 +452,7 @@
     <div id="overlay" style="display: none;">
         <div class="spinner"></div>
         <div id="loadingMessage">
+            <h4>Por favor espera un momento...</h4>
             <p></p>
         </div>
     </div>
@@ -557,11 +564,11 @@ let filteredColaboradores = [];
 
 function saveSession() {
     const colaboradorVal = $('#colaborador').val();
-    const temaVal = $('#tema').val();
+    // NOTA: Se elimina la captura de temaVal aquí, ya que el tema es de solo lectura y debe ser cargado por el servidor.
     const fechaVal = $('#fecha').val();
     
     // Si no hay campos clave, limpiamos la sesión de autoguardado para evitar recuperación de formularios vacíos.
-    if (!colaboradorVal && !temaVal) {
+    if (!colaboradorVal) { // Ya no dependemos del tema para decidir si hay progreso
          localStorage.removeItem(SESSION_KEY);
          return; 
     }
@@ -581,7 +588,7 @@ function saveSession() {
     const sessionData = {
         fecha: fechaVal,
         colaborador: colaboradorVal,
-        tema: temaVal,
+        // Eliminamos el tema de la sesión: tema: temaVal, 
         respuestas: respuestas,
         
         firmaData: firmaData,
@@ -605,7 +612,7 @@ function loadSession() {
         // 1. Cargar datos de formulario
         $('#fecha').val(data.fecha); 
         $('#colaborador').val(data.colaborador);
-        $('#tema').val(data.tema);
+        // Eliminamos la carga del tema de la sesión: $('#tema').val(data.tema); 
         
         // 2. Cargar respuestas de preguntas
         if (data.respuestas) {
@@ -1097,7 +1104,7 @@ function verificarColaboradorValido() {
  */
 function checkTemaAndToggleSubmit(temaValue) {
     const btnEnviar = document.getElementById('btnEnviar');
-    // Considerar el tema como inválido si es nulo o si es el mensaje de error.
+    // Considerar el tema como inválido si es nulo, si es el mensaje de error o está vacío.
     const isTemaInvalid = !temaValue || temaValue === "Tema no disponible" || temaValue.trim() === "";
 
     if (isTemaInvalid) {
@@ -1123,7 +1130,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     setTodayDate();
     
     // PENDIENTE (Punto 4): Mostrar el mensaje de carga de la página
-    document.getElementById('loadingMessage').querySelector('p').textContent = 'Cargando la lista de preguntas desde el servidor...';
+    document.getElementById('loadingMessage').querySelector('p').textContent = '';
 
 
     try {
@@ -1413,9 +1420,9 @@ async function generarPDF() {
     const lineSpacing = 8;
     let cursorY = 15;
 
-    // Se capturan los valores que DEBEN persistir
+    // Se capturan los valores que DEBEN persistir y usar
     const fecha = document.getElementById('fecha').value;
-    const tema = document.getElementById('tema').value;
+    const tema = document.getElementById('tema').value; // Usamos el valor actual del DOM (el correcto)
     const colaborador = document.getElementById('colaborador').value;
     const firmaDataUrl = canvas.toDataURL("image/png");
     const preguntasContainer = document.getElementById("preguntas");
@@ -1488,7 +1495,6 @@ async function generarPDF() {
         pdf.setFontSize(10);
         const lineasPregunta = pdf.splitTextToSize(`${index + 1}. ${preguntaTexto}`, textWidth);
         pdf.text(lineasPregunta, marginLeft, cursorY);
-        // FIX CLAVE: Corrección de typo lineasPreguna -> lineasPregunta
         cursorY += lineasPregunta.length * 5; 
         
         const esCorrecta = respuesta.trim().toLowerCase() === respuestaCorrecta.trim().toLowerCase();
@@ -1609,12 +1615,11 @@ async function generarPDF() {
     document.getElementById("redo").disabled = true;
     document.getElementById("clearSignature").disabled = true;
     
-    // 4. CLAVE: Borrar solo la llave de autoguardado de localStorage para evitar la recuperación en la próxima carga.
-    // La información visible en pantalla SE MANTIENE.
+    // 4. CLAVE: Borrar solo la llave de autoguardado de localStorage (la información visible se mantiene).
     clearSession(); 
     
     // FIX CLAVE AÑADIDO: Re-establecer explícitamente el valor de tema y colaborador en la UI
-    // para evitar que se borren visualmente después del envío, como reportó el usuario.
+    // para asegurar que se muestren correctamente después de deshabilitarlos.
     $("#colaborador").val(colaborador);
     $("#tema").val(tema);
 
@@ -1624,7 +1629,7 @@ async function generarPDF() {
 
 
     // Crear un nombre para el archivo y enviarlo
-    document.getElementById('loadingMessage').querySelector('p').textContent = 'Por favor espere un momento...';
+    document.getElementById('loadingMessage').querySelector('p').textContent = '';
     
     let nombreArchivo = `${fecha} - Participación - ${colaborador} - ${calificacion.toFixed(0)}%.pdf`;
 
@@ -1655,7 +1660,6 @@ async function generarPDF() {
 
         Swal.fire({
             title: '¡Envío exitoso! 🥳🎉',
-            // Mensaje modificado para indicar que el formulario está bloqueado para revisión
             html: `<p>Se ha registrado la participación, su nota final es de: <strong>${calificacion.toFixed(2)}%</strong>.</p>`,
             icon: 'success',
             confirmButtonText: 'Aceptar',
