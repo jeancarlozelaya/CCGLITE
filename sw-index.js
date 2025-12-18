@@ -1,16 +1,24 @@
 // Archivo: sw-index.js
 
-const CACHE_NAME_INDEX = 'pibrisa-index-v1.7.0';
+const CACHE_NAME_INDEX = 'pibrisa-index-v1.7.1';
 const urlsToCacheIndex = [
     './',
     './index.html',
     './manifest.json',
     './Pag - Reportería.html',
+    './Liberación.html',
     './Control de Llaves.html',
     './Pag - Residuos.html',
     './Registro de Residuos.html',
     './Registro de Trazabilidad & Volumen de Residuos.html',   
     'Imágenes/Icono.png',
+
+    // 1. LA IMAGEN DEL PDF (Asegúrate que la ruta sea exacta, mayúsculas y acentos importan)
+    'https://raw.githubusercontent.com/jeancarlozelaya/CCG/refs/heads/main/Im%C3%A1genes/Otros/HojadeLiberaci%C3%B3n.jpg', 
+
+    // 2. LIBRERÍA DEXIE (¡IMPORTANTE PARA QUE NO FALLE OFFLINE!)
+    'https://unpkg.com/dexie/dist/dexie.js',
+    
     // Librerías externas usadas en index.html
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
     'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap',
