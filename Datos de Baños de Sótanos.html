@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard - Gestión de Baños Sótanos</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* ESTILOS BASE - MISMOS COLORES QUE EL ORIGINAL */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --warning-color: #f39c12;
+            --success-color: #2ecc71;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --light-bg: #f5f7fa;
+        }
+
+        html, body {
+            touch-action: manipulation;
+            overflow-x: hidden;
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-color);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            text-align: center;
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .container-custom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px 50px 15px;
+        }
+
+        .card-custom {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: none;
+            margin-bottom: 25px;
+            border-top: 5px solid var(--secondary-color);
+            padding: 20px;
+            height: 100%;
+        }
+
+        .btn-custom {
+            border: none;
+            font-weight: 600;
+            padding: 10px 25px;
+            font-size: 0.95rem;
+            border-radius: 50px;
+            transition: var(--transition);
+            color: white !important;
+            background: linear-gradient(45deg, var(--secondary-color), #5dade2);
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .btn-custom:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
+        .form-control, .form-select {
+            border-radius: 8px; padding: 10px 15px; border: 1px solid var(--border-color);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color); box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        .table-responsive { border-radius: 8px; overflow: hidden; }
+        .table thead { background-color: var(--primary-color); color: white; }
+        
+        /* BOTONES DE ACCIÓN */
+        .btn-action {
+            border: none; border-radius: 50px;
+            width: 35px; height: 35px;
+            font-size: 0.85rem; margin: 0 2px;
+            transition: var(--transition);
+            display: inline-flex; justify-content: center; align-items: center;
+            color: white;
+        }
+        .btn-action:hover { transform: translateY(-2px); color: white; }
+
+        .btn-pdf { background: linear-gradient(45deg, var(--accent-color), #e74c3c); }
+        .btn-share { background: linear-gradient(45deg, #1abc9c, #16a085); }
+        .btn-download { background: linear-gradient(45deg, #27ae60, #2ecc71); }
+        .btn-delete { background: #7f8c8d; }
+        .btn-delete:hover { background: #c0392b; }
+        
+        /* BOTÓN PARA ELIMINAR DUPLICADOS */
+        .btn-danger-custom {
+            background: linear-gradient(45deg, var(--accent-color), #c0392b);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .btn-danger-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        /* PANEL DE CUMPLIMIENTO */
+        .panel-cumplimiento {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .cumplimiento-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .meta-info {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .meta-titulo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .meta-descripcion {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .meta-valor {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+            line-height: 1;
+        }
+        
+        .meta-unidad {
+            font-size: 1.2rem;
+            color: #999;
+            margin-left: 5px;
+        }
+        
+        .meta-porcentaje {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .dias-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .dia-item {
+            text-align: center;
+            padding: 10px 5px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .dia-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .dia-item.cumplido {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .dia-item.parcial {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .dia-item.no-cumplido {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .dia-item.no-laborable {
+            background-color: #e9ecef;
+            color: #6c757d;
+            border: 2px solid #dee2e6;
+            cursor: default;
+        }
+        
+        .dia-item.futuro {
+            background-color: #f8f9fa;
+            color: #adb5bd;
+            border: 2px dashed #dee2e6;
+            opacity: 0.7;
+            cursor: default;
+        }
+        
+        .dia-numero {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .dia-nombre {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .dia-conteo {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .estado-meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .estado-cumplida {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .estado-parcial {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .estado-no-cumplida {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .resumen-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .resumen-item {
+            padding: 10px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
+        
+        .resumen-valor {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .resumen-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* MODAL DETALLE DÍA */
+        .modal-dia-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+        }
+        
+        .badge-estado {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 50px;
+        }
+        
+        .badge-cumplido {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .badge-parcial {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .badge-no-cumplido {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .reporte-item {
+            border-left: 4px solid var(--secondary-color);
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            border-radius: 0 6px 6px 0;
+            transition: var(--transition);
+        }
+        
+        .reporte-item:hover {
+            background-color: #e9ecef;
+            transform: translateX(2px);
+        }
+        
+        .reporte-hora {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .reporte-observaciones {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .sin-reportes {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+        
+        /* CONTENEDOR CON SCROLL PARA REPORTES */
+        .reportes-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        /* Estilos para la barra de desplazamiento */
+        .reportes-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .reportes-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .reportes-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        .reportes-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* BADGE PARA DUPLICADOS */
+        .badge-duplicate {
+            background-color: var(--warning-color);
+            color: white;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 50px;
+            margin-left: 8px;
+        }
+
+        /* OVERLAY CARGA */
+        #overlay {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: none; 
+            justify-content: center; 
+            align-items: center;
+            z-index: 9999; 
+            flex-direction: column;
+        }
+        .spinner {
+            width: 60px; 
+            height: 60px;
+            border: 5px solid rgba(52, 152, 219, 0.2);
+            border-radius: 50%; 
+            border-top-color: var(--secondary-color);
+            animation: spin 1s ease-in-out infinite; 
+            margin-bottom: 20px;
+        }
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
+        
+        #loadingMessage { 
+            text-align: center; 
+            color: var(--dark-color); 
+        }
+        #loadingMessage h4 { 
+            margin: 0 0 10px; 
+            font-size: 1.3rem; 
+            font-weight: bold; 
+        }
+        #loadingMessage p { 
+            margin: 0; 
+            color: #7f8c8d; 
+            font-weight: normal; 
+        }
+        
+        /* MODAL PDF - AUMENTAR Z-INDEX PARA QUE SE VEA AL FRENTE */
+        .modal-pdf-body {
+            height: calc(100vh - 56px); 
+            padding: 0;
+            overflow: hidden;
+            background-color: #525659;
+        }
+        .modal-pdf-iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            display: block; 
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .btn-custom { padding: 8px 15px; font-size: 0.9rem; }
+            .dias-lista {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+            .meta-valor {
+                font-size: 2.5rem;
+            }
+            .resumen-meta {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .reportes-container {
+                max-height: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header { font-size: 1.2rem; padding: 15px 0; }
+            .dias-lista {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            .meta-valor {
+                font-size: 2rem;
+            }
+            .resumen-meta {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .cumplimiento-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .estado-meta {
+                margin-top: 10px;
+                width: 100%;
+            }
+            .reportes-container {
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <div class="spinner"></div>
+        <div id="loadingMessage">
+            <h4>Cargando...</h4>
+            <p></p>
+        </div>
+    </div>
+
+    <!-- MODAL PDF - CON Z-INDEX ALTO -->
+    <div class="modal fade" id="modalPDF" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" style="z-index: 1060;">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-secondary">
+                        <i class="fas fa-file-pdf me-2"></i>Vista Previa del Reporte
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body modal-pdf-body">
+                    <iframe id="iframePDF" class="modal-pdf-iframe" src=""></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETALLE DÍA -->
+    <div class="modal fade" id="modalDetalleDia" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-dia-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-calendar-day me-2"></i>Detalle de Reportes
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-secondary">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                <span id="modalFechaTitulo"></span>
+                            </h6>
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="me-3">
+                                    <span class="badge-estado" id="modalEstadoDia">Cargando...</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted" id="modalResumenDia">Reportes: 0/0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="mb-2">
+                                <span class="text-muted">
+                                    <i class="fas fa-location-dot me-1"></i>
+                                    <span id="modalUbicacionDia"></span>
+                                </span>
+                            </div>
+                            <div>
+                                <span class="text-muted">
+                                    <i class="fas fa-broom me-1"></i>
+                                    <span id="modalTipoDia"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="fas fa-clipboard-list me-2"></i>Reportes del Día
+                                <span class="badge bg-primary ms-2" id="modalTotalReportes">0</span>
+                            </h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="reportes-container" id="modalListaReportes">
+                                <!-- Los reportes se cargarán aquí -->
+                            </div>
+                            <div id="modalSinReportes" class="sin-reportes" style="display: none;">
+                                <i class="fas fa-inbox fa-3x mb-3 text-muted"></i>
+                                <h6 class="text-muted">No hay reportes para este día</h6>
+                                <p class="small text-muted">No se registraron limpiezas en esta fecha</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-chart-pie me-2"></i>Resumen del Día
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div class="text-primary fw-bold fs-4" id="modalReportesRealizados">0</div>
+                                            <div class="small text-muted">Realizados</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="text-success fw-bold fs-4" id="modalMetaDiaria">0</div>
+                                            <div class="small text-muted">Meta</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="fw-bold fs-4" id="modalPorcentajeDia">0%</div>
+                                            <div class="small text-muted">Cumplimiento</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ELIMINADO: <div class="modal-footer"> con botones -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CABECERA -->
+    <div class="header">
+        Pisos Brillantes
+    </div>
+
+    <div class="container-custom">
+        
+        <!-- PANEL DE CONTROL -->
+        <div class="card-custom">
+            <h5 class="mb-3 text-secondary border-bottom pb-2">
+                <i class="fas fa-filter me-2"></i>Panel de Control
+            </h5>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Ubicación</label>
+                    <select id="filtroUbicacion" class="form-select">
+                        <option value="" selected disabled>Seleccionar ubicación</option>
+                        <option value="Sótano 0B">Sótano 0B</option>
+                        <option value="Sótano 0D">Sótano 0D</option>
+                        <option value="Sótano 1A">Sótano 1A</option>
+                        <option value="Sótano 1C">Sótano 1C</option>
+                        <option value="Sótano 1H">Sótano 1H</option>
+                        <option value="Sótano 2C">Sótano 2C</option>
+                        <option value="Sótano 2H">Sótano 2H</option>
+                        <option value="Sótano 3C">Sótano 3C</option>
+                        <option value="Sótano 3H">Sótano 3H</option>
+                        <option value="Sótano 4C">Sótano 4C</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Tipo de Limpieza</label>
+                    <select id="filtroTipo" class="form-select">
+                        <option value="" selected disabled>Seleccionar tipo</option>
+                        <option value="Repaso">Repaso</option>
+                        <option value="Profundo">Profundo</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Mes</label>
+                    <select id="filtroMes" class="form-select"></select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Año</label>
+                    <select id="filtroAnio" class="form-select"></select>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-12 text-center">
+                    <button class="btn-custom" onclick="consultarDatos()" style="max-width: 300px;">
+                        <i class="fas fa-chart-bar me-1"></i> Consultar Reportes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO DEL DASHBOARD -->
+        <div id="dashboardContent" style="display: none;">
+            
+            <!-- PANEL DE CUMPLIMIENTO (OCUPA TODA LA FILA) -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card-custom panel-cumplimiento">
+                        <div class="cumplimiento-header">
+                            <h4 class="mb-0 text-secondary">
+                                <i class="fas fa-bullseye me-2"></i>Cumplimiento de Meta - 
+                                <span id="mesTitulo"></span> <span id="anioTitulo"></span>
+                            </h4>
+                            <div id="estadoGeneralMeta" class="estado-meta estado-parcial" style="display: none;">
+                                <i class="fas fa-chart-line me-2"></i>Analizando...
+                            </div>
+                        </div>
+                        
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="meta-info">
+                                    <div class="meta-titulo" id="metaTitulo">Meta del Mes</div>
+                                    <div class="meta-descripcion" id="metaDescripcion">
+                                        Cargando información de cumplimiento...
+                                    </div>
+                                    <div class="d-flex align-items-baseline justify-content-center">
+                                        <span class="meta-valor" id="metaValor">0</span>
+                                        <span class="meta-unidad" id="metaUnidad">/ día</span>
+                                    </div>
+                                    <div class="meta-porcentaje" id="metaPorcentaje">0%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <h6 class="text-secondary mb-3">
+                                    <i class="fas fa-calendar-check me-2"></i>Cumplimiento por Día del Mes
+                                    <small class="text-muted ms-2">(Haz clic en cualquier día para ver detalles)</small>
+                                </h6>
+                                <div class="dias-lista" id="diasCumplimiento">
+                                    <!-- Los días se generarán dinámicamente aquí -->
+                                </div>
+                                
+                                <div class="resumen-meta mt-4" id="resumenMeta" style="display: none;">
+                                    <!-- Resumen se generará dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 border-top pt-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center me-4">
+                                            <div style="width: 20px; height: 20px; background-color: #d4edda; border: 2px solid #c3e6cb; border-radius: 4px; margin-right: 8px;"></div>
+                                            <span class="small">Cumplido</span>
+                                        </div>
+                                        <div class="d-flex align-items-center me-4">
+                                            <div style="width: 20px; height: 20px; background-color: #fff3cd; border: 2px solid #ffeaa7; border-radius: 4px; margin-right: 8px;"></div>
+                                            <span class="small">Parcial</span>
+                                        </div>
+                                        <div class="d-flex align-items-center me-4">
+                                            <div style="width: 20px; height: 20px; background-color: #f8d7da; border: 2px solid #f5c6cb; border-radius: 4px; margin-right: 8px;"></div>
+                                            <span class="small">No Cumplido</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <small class="text-muted" id="metaDetalle">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Las metas se calculan considerando solo días laborables (lunes a viernes).
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN DUPLICADOS -->
+            <div class="row" id="seccionDuplicados" style="display: none;">
+                <div class="col-12">
+                    <div class="card-custom border-warning" style="border-top: 5px solid var(--warning-color);">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 border-bottom pb-2">
+                            <h5 class="text-warning mb-2 mb-md-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Reportes Duplicados Detectados
+                                <span class="badge bg-warning text-dark ms-2" id="contadorDuplicados">0</span>
+                            </h5>
+                            <button class="btn btn-danger-custom" onclick="confirmarEliminarDuplicados()">
+                                <i class="fas fa-trash-alt me-1"></i> Eliminar Todos los Duplicados
+                            </button>
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th style="width: 120px;">Fecha</th>
+                                        <th>Hora Inicio</th>
+                                        <th>Hora Cierre</th>
+                                        <th>Tipo</th>
+                                        <th class="text-center" style="width: 100px;">Repeticiones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaDuplicadosCuerpo"></tbody>
+                            </table>
+                            <div id="sinDuplicados" class="text-center p-4 text-muted" style="display:none;">
+                                No se encontraron reportes duplicados.
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 text-muted small">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Se consideran duplicados aquellos reportes con misma fecha, ubicación, tipo y horario.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA DETALLADA -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card-custom">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 border-bottom pb-2">
+                            <h5 class="text-secondary mb-2 mb-md-0">
+                                <i class="fas fa-history me-2"></i>Historial de Reportes - 
+                                <span class="text-primary" id="ubicacionTitulo"></span>
+                            </h5>
+                            <div class="input-group" style="max-width: 400px; width: 100%;">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" id="filtroTabla" class="form-control border-start-0" placeholder="Buscar por fecha (dd/mm) o observaciones...">
+                            </div>
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 100px;">Fecha</th>
+                                        <th style="width: 90px;">Hora Inicio</th>
+                                        <th style="width: 90px;">Hora Cierre</th>
+                                        <th style="width: 150px;">Ubicación</th>
+                                        <th>Observaciones</th>
+                                        <th class="text-center" style="width: 130px;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaCuerpo"></tbody>
+                            </table>
+                            <div id="sinResultadosFiltro" class="text-center p-4 text-muted" style="display:none;">
+                                No se encontraron reportes con ese filtro.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- FIN DASHBOARD CONTENT -->
+        
+        <!-- MENSAJE SIN DATOS -->
+        <div id="alertNoData" class="alert alert-info text-center mt-4 shadow-sm" style="display:none;">
+            <i class="fas fa-database me-2"></i> No existen registros para la selección actual.
+        </div>
+
+    </div>
+
+    <script>
+        // =========================================================================
+        // CONFIGURACIÓN Y VARIABLES GLOBALES
+        // =========================================================================
+        const URL_SCRIPT_GOOGLE = "https://script.google.com/macros/s/AKfycbyYwNFdAvncYqNgRtCvD98fe9xZWQ5hii7i9xbis9IUMeGW3-7ka0lBWWzjjg3YS4sHgw/exec";
+        const CONTRASENA_ELIMINAR = "pisos2026";
+        
+        // METAS DE LIMPIEZA (MISMAS QUE ELEVADORES)
+        const METAS = {
+            "Repaso": 4,   // 4 repasos por día por baño (lunes a viernes)
+            "Profundo": 1  // 1 profundo por día por baño (lunes a viernes)
+        };
+        
+        let datosTablaGlobal = [];
+        let datosFiltrados = [];
+        let duplicadosDetectados = [];
+        let ubicacionActual = '';
+        let tipoActual = '';
+        let mesActual = '';
+        let anioActual = '';
+        let modalPDF = null;
+        let modalDetalleDia = null;
+        let cumplimientoData = null; // Para almacenar datos de cumplimiento
+        
+        const mesesNombres = [
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        ];
+        
+        // Días de la semana en español
+        const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+        const diasSemanaCorto = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+        
+        // =========================================================================
+        // FUNCIONES DE INICIALIZACIÓN
+        // =========================================================================
+        
+        function focusPDF() {
+            const iframe = document.getElementById('iframePDF');
+            if (iframe) {
+                iframe.focus();
+                try {
+                    iframe.contentWindow.focus();
+                } catch(e) {
+                    // Si falla por política de seguridad
+                }
+            }
+        }
+        
+        window.onload = function() {
+            // Inicializar modales
+            const modalElPDF = document.getElementById('modalPDF');
+            modalPDF = new bootstrap.Modal(modalElPDF);
+            
+            const modalElDetalle = document.getElementById('modalDetalleDia');
+            modalDetalleDia = new bootstrap.Modal(modalElDetalle);
+            
+            modalElPDF.addEventListener('shown.bs.modal', function() {
+                setTimeout(focusPDF, 100);
+            });
+            
+            // Llenar select de mes
+            const selectMes = document.getElementById('filtroMes');
+            const currentMonth = new Date().getMonth(); // 0 = Enero, 11 = Diciembre
+            
+            mesesNombres.forEach((m, i) => {
+                let opt = document.createElement('option');
+                opt.value = (i + 1).toString().padStart(2, '0');
+                opt.text = m;
+                // Seleccionar el mes actual por defecto
+                if (i === currentMonth) {
+                    opt.selected = true;
+                }
+                selectMes.appendChild(opt);
+            });
+            
+            // Llenar select de año
+            const selectAnio = document.getElementById('filtroAnio');
+            const currentYear = new Date().getFullYear();
+            
+            // Solo añadir año actual
+            let optCurr = document.createElement('option');
+            optCurr.value = currentYear;
+            optCurr.text = currentYear;
+            optCurr.selected = true;
+            selectAnio.appendChild(optCurr);
+            
+            // Evento para filtro de tabla
+            document.getElementById('filtroTabla').addEventListener('keyup', function() {
+                filtrarTabla();
+            });
+        };
+        
+        // =========================================================================
+        // FUNCIONES DE INTERFAZ
+        // =========================================================================
+        
+        function showLoading(mensaje, submensaje = "") {
+            const overlay = document.getElementById('overlay');
+            const msgTitle = document.querySelector('#loadingMessage h4');
+            const msgSub = document.querySelector('#loadingMessage p');
+            if(msgTitle) msgTitle.textContent = mensaje;
+            if(msgSub) msgSub.textContent = submensaje;
+            overlay.style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA DETECTAR DUPLICADOS
+        // =========================================================================
+        
+        function detectarDuplicados(listaReportes) {
+            const mapaDuplicados = new Map();
+            
+            // Crear clave única con fecha + ubicación + tipo + horaInicio
+            listaReportes.forEach((item, index) => {
+                const clave = `${item.fecha}|${item.ubicacion}|${item.tipo}|${item.horaInicio}`;
+                
+                if (!mapaDuplicados.has(clave)) {
+                    mapaDuplicados.set(clave, {
+                        clave: clave,
+                        items: [item],
+                        indices: [index]
+                    });
+                } else {
+                    const grupo = mapaDuplicados.get(clave);
+                    grupo.items.push(item);
+                    grupo.indices.push(index);
+                }
+            });
+            
+            // Filtrar solo los que tienen más de un elemento
+            const duplicados = [];
+            for (const [clave, grupo] of mapaDuplicados.entries()) {
+                if (grupo.items.length > 1) {
+                    // Separar por /
+                    const partes = clave.split('|');
+                    duplicados.push({
+                        fecha: partes[0],
+                        ubicacion: partes[1],
+                        tipo: partes[2],
+                        horaInicio: partes[3],
+                        items: grupo.items,
+                        indices: grupo.indices,
+                        count: grupo.items.length
+                    });
+                }
+            }
+            
+            return duplicados;
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA MOSTRAR TABLA DE DUPLICADOS
+        // =========================================================================
+        
+        function mostrarTablaDuplicados(duplicados) {
+            const seccionDuplicados = document.getElementById('seccionDuplicados');
+            const tablaCuerpo = document.getElementById('tablaDuplicadosCuerpo');
+            const sinDuplicados = document.getElementById('sinDuplicados');
+            const contador = document.getElementById('contadorDuplicados');
+            
+            if (duplicados.length === 0) {
+                seccionDuplicados.style.display = 'none';
+                return;
+            }
+            
+            seccionDuplicados.style.display = 'block';
+            contador.textContent = duplicados.length;
+            tablaCuerpo.innerHTML = '';
+            sinDuplicados.style.display = 'none';
+            
+            duplicados.forEach((dup, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold">${index + 1}</td>
+                    <td class="fw-bold">${dup.fecha}</td>
+                    <td>${dup.horaInicio}</td>
+                    <td>${dup.items[0].horaCierre || 'N/A'}</td>
+                    <td><span class="badge bg-info">${dup.tipo}</span></td>
+                    <td class="text-center">
+                        <span class="badge bg-danger">${dup.count} reportes</span>
+                    </td>
+                `;
+                tablaCuerpo.appendChild(tr);
+            });
+            
+            // Guardar duplicados en variable global
+            duplicadosDetectados = duplicados;
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA CALCULAR CUMPLIMIENTO DE METAS
+        // =========================================================================
+        
+        function calcularCumplimientoMetas(listaReportes, tipo, mes, anio) {
+            // Obtener días del mes
+            const diasEnMes = new Date(anio, mes, 0).getDate();
+            const metaDiaria = METAS[tipo] || 0;
+            
+            // Inicializar objeto para conteo por día
+            const conteoPorDia = {};
+            const fechaHoy = new Date();
+            const mesActual = fechaHoy.getMonth() + 1;
+            const anioActual = fechaHoy.getFullYear();
+            const diaHoy = fechaHoy.getDate();
+            
+            // Determinar si estamos en el mes actual
+            const esMesActual = (parseInt(mes) === mesActual && parseInt(anio) === anioActual);
+            
+            // Inicializar conteo para todos los días del mes
+            for (let dia = 1; dia <= diasEnMes; dia++) {
+                const fecha = new Date(anio, mes - 1, dia);
+                const diaSemana = fecha.getDay(); // 0 = domingo, 1 = lunes, ...
+                const esLaborable = (diaSemana >= 1 && diaSemana <= 5); // Lunes a Viernes
+                const esFuturo = esMesActual && dia > diaHoy;
+                
+                conteoPorDia[dia] = {
+                    fecha: fecha,
+                    diaSemana: diaSemana,
+                    esLaborable: esLaborable,
+                    conteo: 0,
+                    meta: esLaborable ? metaDiaria : 0,
+                    cumplido: false,
+                    parcial: false,
+                    futuro: esFuturo,
+                    reportes: [] // Array para almacenar reportes de este día
+                };
+            }
+            
+            // Contar reportes por día y almacenarlos
+            listaReportes.forEach(reporte => {
+                if (reporte.fechaOrden) {
+                    try {
+                        const fechaReporte = new Date(reporte.fechaOrden);
+                        const dia = fechaReporte.getDate();
+                        
+                        if (dia >= 1 && dia <= diasEnMes) {
+                            conteoPorDia[dia].conteo++;
+                            // Almacenar el reporte completo
+                            conteoPorDia[dia].reportes.push(reporte);
+                        }
+                    } catch (e) {
+                        console.error("Error procesando fecha:", e);
+                    }
+                }
+            });
+            
+            // Calcular cumplimiento para cada día
+            let diasLaborables = 0;
+            let diasCumplidos = 0;
+            let diasParciales = 0;
+            let diasNoCumplidos = 0;
+            let diasFuturos = 0;
+            let diasNoLaborables = 0;
+            let totalReportes = 0;
+            let totalMeta = 0;
+            
+            for (let dia = 1; dia <= diasEnMes; dia++) {
+                const diaInfo = conteoPorDia[dia];
+                
+                if (diaInfo.futuro) {
+                    diasFuturos++;
+                } else if (diaInfo.esLaborable) {
+                    diasLaborables++;
+                    totalMeta += diaInfo.meta;
+                    totalReportes += diaInfo.conteo;
+                    
+                    // Evaluar cumplimiento
+                    if (diaInfo.conteo >= diaInfo.meta) {
+                        diaInfo.cumplido = true;
+                        diasCumplidos++;
+                    } else if (diaInfo.conteo > 0 && diaInfo.conteo < diaInfo.meta) {
+                        diaInfo.parcial = true;
+                        diasParciales++;
+                    } else {
+                        diasNoCumplidos++;
+                    }
+                } else {
+                    diasNoLaborables++;
+                }
+            }
+            
+            // Calcular porcentaje de cumplimiento
+            const porcentajeCumplido = diasLaborables > 0 ? 
+                Math.round((diasCumplidos / diasLaborables) * 100) : 0;
+            
+            // Calcular porcentaje de reportes vs meta
+            const porcentajeReportes = totalMeta > 0 ?
+                Math.round((totalReportes / totalMeta) * 100) : 0;
+            
+            // Determinar estado general
+            let estadoGeneral = "no-cumplida";
+            let estadoClase = "estado-no-cumplida";
+            let estadoIcono = "fas fa-times-circle";
+            
+            if (porcentajeCumplido >= 90) {
+                estadoGeneral = "cumplida";
+                estadoClase = "estado-cumplida";
+                estadoIcono = "fas fa-check-circle";
+            } else if (porcentajeCumplido >= 60) {
+                estadoGeneral = "parcial";
+                estadoClase = "estado-parcial";
+                estadoIcono = "fas fa-exclamation-circle";
+            }
+            
+            return {
+                dias: conteoPorDia,
+                resumen: {
+                    diasTotales: diasEnMes,
+                    diasLaborables: diasLaborables,
+                    diasCumplidos: diasCumplidos,
+                    diasParciales: diasParciales,
+                    diasNoCumplidos: diasNoCumplidos,
+                    diasNoLaborables: diasNoLaborables,
+                    diasFuturos: diasFuturos,
+                    totalReportes: totalReportes,
+                    totalMeta: totalMeta,
+                    porcentajeCumplido: porcentajeCumplido,
+                    porcentajeReportes: porcentajeReportes,
+                    estadoGeneral: estadoGeneral,
+                    estadoClase: estadoClase,
+                    estadoIcono: estadoIcono,
+                    metaDiaria: metaDiaria
+                }
+            };
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA MOSTRAR DETALLES DE UN DÍA ESPECÍFICO
+        // =========================================================================
+        
+        function mostrarDetalleDia(diaNumero) {
+            if (!cumplimientoData || !cumplimientoData.dias[diaNumero]) {
+                Swal.fire("Error", "No se encontraron datos para este día.", "error");
+                return;
+            }
+            
+            const diaInfo = cumplimientoData.dias[diaNumero];
+            const resumen = cumplimientoData.resumen;
+            const nombreMes = mesesNombres[parseInt(mesActual) - 1];
+            
+            // Actualizar información del modal
+            document.getElementById('modalFechaTitulo').textContent = 
+                `${diasSemana[diaInfo.diaSemana]} ${diaNumero} de ${nombreMes} ${anioActual}`;
+            
+            document.getElementById('modalUbicacionDia').textContent = ubicacionActual;
+            document.getElementById('modalTipoDia').textContent = tipoActual;
+            
+            // Determinar estado del día
+            let estadoTexto = "No Laborable";
+            let estadoClase = "badge-estado";
+            let resumenTexto = `Reportes: ${diaInfo.conteo}/${diaInfo.meta}`;
+            
+            if (diaInfo.futuro) {
+                estadoTexto = "Día Futuro";
+                estadoClase += " badge-no-cumplido";
+                resumenTexto = "Día aún no transcurrido";
+            } else if (diaInfo.esLaborable) {
+                if (diaInfo.cumplido) {
+                    estadoTexto = "Cumplido";
+                    estadoClase += " badge-cumplido";
+                } else if (diaInfo.parcial) {
+                    estadoTexto = "Parcial";
+                    estadoClase += " badge-parcial";
+                } else {
+                    estadoTexto = "No Cumplido";
+                    estadoClase += " badge-no-cumplido";
+                }
+            } else {
+                estadoClase += " badge-no-cumplido";
+                resumenTexto = "Día no laborable";
+            }
+            
+            document.getElementById('modalEstadoDia').textContent = estadoTexto;
+            document.getElementById('modalEstadoDia').className = estadoClase;
+            document.getElementById('modalResumenDia').textContent = resumenTexto;
+            
+            // Actualizar estadísticas
+            document.getElementById('modalReportesRealizados').textContent = diaInfo.conteo;
+            document.getElementById('modalMetaDiaria').textContent = diaInfo.meta;
+            
+            const porcentajeDia = diaInfo.meta > 0 ? 
+                Math.round((diaInfo.conteo / diaInfo.meta) * 100) : 0;
+            document.getElementById('modalPorcentajeDia').textContent = `${porcentajeDia}%`;
+            
+            // Colorear el porcentaje según cumplimiento
+            const porcentajeElement = document.getElementById('modalPorcentajeDia');
+            porcentajeElement.style.color = 
+                porcentajeDia >= 100 ? "#155724" : 
+                porcentajeDia >= 50 ? "#856404" : "#721c24";
+            
+            // Mostrar lista de reportes CON SCROLL
+            const listaReportes = document.getElementById('modalListaReportes');
+            const sinReportes = document.getElementById('modalSinReportes');
+            const totalReportes = document.getElementById('modalTotalReportes');
+            
+            listaReportes.innerHTML = '';
+            totalReportes.textContent = diaInfo.reportes.length;
+            
+            if (diaInfo.reportes.length === 0) {
+                listaReportes.style.display = 'none';
+                sinReportes.style.display = 'block';
+            } else {
+                listaReportes.style.display = 'block';
+                sinReportes.style.display = 'none';
+                
+                // Ordenar reportes por hora
+                const reportesOrdenados = [...diaInfo.reportes].sort((a, b) => {
+                    const horaA = a.horaInicio || "00:00";
+                    const horaB = b.horaInicio || "00:00";
+                    return horaA.localeCompare(horaB);
+                });
+                
+                reportesOrdenados.forEach((reporte, index) => {
+                    const reporteItem = document.createElement('div');
+                    reporteItem.className = 'reporte-item';
+                    
+                    // Verificar si es duplicado
+                    const esDuplicado = duplicadosDetectados.some(dup => 
+                        dup.fecha === reporte.fecha && 
+                        dup.ubicacion === reporte.ubicacion && 
+                        dup.tipo === reporte.tipo && 
+                        dup.horaInicio === reporte.horaInicio
+                    );
+                    
+                    const badgeDuplicado = esDuplicado ? 
+                        `<span class="badge-duplicate small ms-2"><i class="fas fa-copy me-1"></i>Duplicado</span>` : '';
+                    
+                    // Botones de acción - CON FUNCIÓN QUE CIERRA EL MODAL ACTUAL PRIMERO
+                    let botonesHTML = '';
+                    if (reporte.url && reporte.url.includes('http')) {
+                        botonesHTML = `
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="verPDFDesdeModal('${reporte.url}')">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="descargarPDFDesdeModal('${reporte.url}')">
+                                    <i class="fas fa-download"></i> Descargar
+                                </button>
+                            </div>
+                        `;
+                    }
+                    
+                    reporteItem.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="reporte-hora">
+                                    <i class="fas fa-clock me-2"></i>
+                                    ${reporte.horaInicio || 'N/A'} - ${reporte.horaCierre || 'N/A'}
+                                    ${badgeDuplicado}
+                                </div>
+                                <div class="reporte-observaciones">
+                                    ${reporte.observaciones || 'Sin observaciones'}
+                                </div>
+                                ${botonesHTML}
+                            </div>
+                            <div>
+                                <span class="badge ${reporte.tipo === 'Repaso' ? 'bg-info' : 'bg-success'}">
+                                    ${reporte.tipo}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    listaReportes.appendChild(reporteItem);
+                });
+            }
+            
+            // Mostrar el modal
+            modalDetalleDia.show();
+        }
+        
+        // =========================================================================
+        // FUNCIONES ESPECIALES PARA MANEJAR PDF DESDE EL MODAL
+        // =========================================================================
+        
+        function verPDFDesdeModal(url) {
+            // Cerrar primero el modal de detalle
+            if (modalDetalleDia) {
+                modalDetalleDia.hide();
+            }
+            
+            // Esperar un momento para que se cierre el modal
+            setTimeout(function() {
+                verPDF(url);
+            }, 300);
+        }
+        
+        function descargarPDFDesdeModal(url) {
+            // Cerrar primero el modal de detalle
+            if (modalDetalleDia) {
+                modalDetalleDia.hide();
+            }
+            
+            // Esperar un momento para que se cierre el modal
+            setTimeout(function() {
+                descargarPDF(url);
+            }, 300);
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA MOSTRAR PANEL DE CUMPLIMIENTO
+        // =========================================================================
+        
+        function mostrarPanelCumplimiento(cumplimiento, tipo, mes, anio) {
+            // Guardar datos de cumplimiento para uso posterior
+            cumplimientoData = cumplimiento;
+            
+            const resumen = cumplimiento.resumen;
+            const dias = cumplimiento.dias;
+            const diasEnMes = Object.keys(dias).length;
+            const nombreMes = mesesNombres[parseInt(mes) - 1];
+            
+            // Actualizar títulos
+            document.getElementById('mesTitulo').textContent = nombreMes;
+            document.getElementById('anioTitulo').textContent = anio;
+            
+            // Actualizar información de meta
+            document.getElementById('metaTitulo').textContent = `Meta: ${tipo}`;
+            document.getElementById('metaDescripcion').innerHTML = `
+                <strong>${resumen.totalReportes}</strong> reportes de <strong>${resumen.totalMeta}</strong> requeridos
+            `;
+            document.getElementById('metaValor').textContent = resumen.metaDiaria;
+            document.getElementById('metaUnidad').textContent = tipo === "Repaso" ? " repasos/día" : " profundo/día";
+            document.getElementById('metaPorcentaje').textContent = `${resumen.porcentajeCumplido}%`;
+            document.getElementById('metaPorcentaje').style.color = 
+                resumen.porcentajeCumplido >= 90 ? "#155724" : 
+                resumen.porcentajeCumplido >= 60 ? "#856404" : "#721c24";
+            
+            // Mostrar estado general
+            const estadoGeneral = document.getElementById('estadoGeneralMeta');
+            estadoGeneral.className = `estado-meta ${resumen.estadoClase}`;
+            estadoGeneral.innerHTML = `
+                <i class="${resumen.estadoIcono} me-2"></i>
+                ${resumen.estadoGeneral === "cumplida" ? "Meta Cumplida" : 
+                  resumen.estadoGeneral === "parcial" ? "Cumplimiento Parcial" : 
+                  "Meta No Cumplida"}
+            `;
+            estadoGeneral.style.display = 'flex';
+            
+            // Actualizar detalle
+            const metaDetalle = document.getElementById('metaDetalle');
+            if (tipo === "Repaso") {
+                metaDetalle.innerHTML = `<i class="fas fa-info-circle me-1"></i> Meta: 4 repasos diarios por baño (lunes a viernes)`;
+            } else {
+                metaDetalle.innerHTML = `<i class="fas fa-info-circle me-1"></i> Meta: 1 limpieza profunda diaria por baño (lunes a viernes)`;
+            }
+            
+            // Generar lista de días
+            const diasLista = document.getElementById('diasCumplimiento');
+            diasLista.innerHTML = '';
+            
+            for (let dia = 1; dia <= diasEnMes; dia++) {
+                const diaInfo = dias[dia];
+                const diaItem = document.createElement('div');
+                
+                // Determinar clase según cumplimiento
+                let claseDia = 'no-laborable';
+                let tooltipText = `${diasSemana[diaInfo.diaSemana]} ${dia} - No laborable`;
+                
+                if (diaInfo.futuro) {
+                    claseDia = 'futuro';
+                    tooltipText = `${diasSemana[diaInfo.diaSemana]} ${dia} - Día futuro`;
+                } else if (diaInfo.esLaborable) {
+                    if (diaInfo.cumplido) {
+                        claseDia = 'cumplido';
+                        tooltipText = `${diasSemana[diaInfo.diaSemana]} ${dia} - Cumplido (${diaInfo.conteo}/${diaInfo.meta})`;
+                    } else if (diaInfo.parcial) {
+                        claseDia = 'parcial';
+                        tooltipText = `${diasSemana[diaInfo.diaSemana]} ${dia} - Parcial (${diaInfo.conteo}/${diaInfo.meta})`;
+                    } else {
+                        claseDia = 'no-cumplido';
+                        tooltipText = `${diasSemana[diaInfo.diaSemana]} ${dia} - No cumplido (${diaInfo.conteo}/${diaInfo.meta})`;
+                    }
+                }
+                
+                diaItem.className = `dia-item ${claseDia}`;
+                diaItem.title = tooltipText;
+                
+                // Agregar evento de clic (solo si no es día no laborable o futuro)
+                if (!diaInfo.futuro && diaInfo.esLaborable) {
+                    diaItem.style.cursor = 'pointer';
+                    diaItem.onclick = function() {
+                        mostrarDetalleDia(dia);
+                    };
+                }
+                
+                // Contenido del día
+                const conteoTexto = diaInfo.esLaborable && !diaInfo.futuro ? 
+                    `${diaInfo.conteo}/${diaInfo.meta}` : '-';
+                
+                diaItem.innerHTML = `
+                    <div class="dia-numero">${dia}</div>
+                    <div class="dia-nombre">${diasSemanaCorto[diaInfo.diaSemana]}</div>
+                    <div class="dia-conteo">${conteoTexto}</div>
+                `;
+                
+                diasLista.appendChild(diaItem);
+            }
+            
+            // Mostrar resumen
+            const resumenMeta = document.getElementById('resumenMeta');
+            resumenMeta.innerHTML = `
+                <div class="resumen-item">
+                    <div class="resumen-valor">${resumen.diasCumplidos}</div>
+                    <div class="resumen-label">Días Cumplidos</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="resumen-valor">${resumen.diasParciales}</div>
+                    <div class="resumen-label">Días Parciales</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="resumen-valor">${resumen.diasNoCumplidos}</div>
+                    <div class="resumen-label">Días No Cumplidos</div>
+                </div>
+            `;
+            resumenMeta.style.display = 'grid';
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PRINCIPAL PARA CONSULTAR DATOS
+        // =========================================================================
+        
+        function consultarDatos() {
+            const ubicacion = document.getElementById('filtroUbicacion').value;
+            const tipo = document.getElementById('filtroTipo').value;
+            const mesVal = document.getElementById('filtroMes').value;
+            const anio = document.getElementById('filtroAnio').value;
+            
+            if (!ubicacion) {
+                Swal.fire("Selección Requerida", "Por favor selecciona una ubicación.", "warning");
+                return;
+            }
+            
+            if (!tipo) {
+                Swal.fire("Selección Requerida", "Por favor selecciona un tipo de limpieza.", "warning");
+                return;
+            }
+            
+            if (!mesVal || !anio) {
+                Swal.fire("Datos Incompletos", "Por favor selecciona mes y año.", "warning");
+                return;
+            }
+            
+            showLoading("Consultando datos...", "Calculando cumplimiento de metas");
+            
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('seccionDuplicados').style.display = 'none';
+            document.getElementById('alertNoData').style.display = 'none';
+            
+            // Guardar valores actuales
+            ubicacionActual = ubicacion;
+            tipoActual = tipo;
+            mesActual = mesVal;
+            anioActual = anio;
+            
+            // Actualizar título de ubicación en la tabla
+            document.getElementById('ubicacionTitulo').textContent = ubicacion;
+            
+            fetch(URL_SCRIPT_GOOGLE, {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    action: "obtenerDatos", 
+                    ubicacion: ubicacion, 
+                    tipo: tipo, 
+                    mes: mesVal, 
+                    anio: anio 
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                hideLoading();
+                if (data.status === "error") {
+                    Swal.fire("Error", data.message, "error");
+                    return;
+                }
+                
+                renderizarDashboard(data.data, mesVal, anio, tipo, ubicacion);
+                
+                if (!data.data.existeHoja || data.data.totalReportes === 0) {
+                    document.getElementById('alertNoData').style.display = 'block';
+                }
+            })
+            .catch(err => {
+                hideLoading();
+                Swal.fire("Error", "Problema de conexión con el servidor.", "error");
+                console.error("Error:", err);
+            });
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA RENDERIZAR EL DASHBOARD
+        // =========================================================================
+        
+        function renderizarDashboard(data, mesVal, anio, tipo, ubicacion) {
+            document.getElementById('dashboardContent').style.display = 'block';
+            datosTablaGlobal = data.listaReportes || [];
+            
+            // Detectar duplicados
+            const duplicados = detectarDuplicados(datosTablaGlobal);
+            mostrarTablaDuplicados(duplicados);
+            
+            // Calcular cumplimiento de metas
+            const cumplimiento = calcularCumplimientoMetas(datosTablaGlobal, tipo, parseInt(mesVal), parseInt(anio));
+            mostrarPanelCumplimiento(cumplimiento, tipo, mesVal, anio);
+            
+            // Renderizar tabla
+            datosFiltrados = [...datosTablaGlobal];
+            filtrarTabla();
+        }
+        
+        // =========================================================================
+        // FUNCIONES PARA FILTRAR TABLA
+        // =========================================================================
+        
+        function filtrarTabla() {
+            const textoBusqueda = document.getElementById('filtroTabla').value.toLowerCase();
+            
+            // Aplicar filtros
+            datosFiltrados = datosTablaGlobal.filter(item => {
+                // Filtro por texto de búsqueda
+                if (textoBusqueda) {
+                    const match = 
+                        (item.fecha && item.fecha.toLowerCase().includes(textoBusqueda)) ||
+                        (item.observaciones && item.observaciones.toLowerCase().includes(textoBusqueda)) ||
+                        (item.fecha && item.fecha.replace(/\//g, '').includes(textoBusqueda.replace(/\//g, '')));
+                    
+                    if (!match) return false;
+                }
+                
+                return true;
+            });
+            
+            renderizarTabla(datosFiltrados);
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA RENDERIZAR TABLA
+        // =========================================================================
+        
+        function renderizarTabla(lista) {
+            const tbody = document.getElementById('tablaCuerpo');
+            const aviso = document.getElementById('sinResultadosFiltro');
+            tbody.innerHTML = '';
+            
+            if (lista.length === 0) {
+                aviso.style.display = 'block'; 
+                return;
+            }
+            aviso.style.display = 'none';
+            
+            // Ordenar por fecha (más reciente primero)
+            lista.sort((a, b) => {
+                if (a.fechaOrden && b.fechaOrden) {
+                    return new Date(b.fechaOrden).getTime() - new Date(a.fechaOrden).getTime();
+                }
+                return 0;
+            });
+            
+            lista.forEach((item, index) => {
+                // Botones de acciones
+                let botones = '';
+                
+                if (item.url && item.url.includes('http')) {
+                    const btnVer = `<button class="btn btn-action btn-pdf" onclick="verPDF('${item.url}')" title="Ver Reporte">
+                                        <i class="fas fa-eye"></i>
+                                    </button>`;
+                    
+                    const btnDownload = `<button class="btn btn-action btn-download" onclick="descargarPDF('${item.url}')" title="Descargar">
+                                            <i class="fas fa-download"></i>
+                                         </button>`;
+                    
+                    const btnDelete = `<button class="btn btn-action btn-delete" onclick="confirmarEliminar(${index})" title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                       </button>`;
+                    
+                    botones = `<div class="d-flex justify-content-center">
+                                ${btnVer} ${btnDownload} ${btnDelete}
+                               </div>`;
+                } else {
+                    const btnDelete = `<button class="btn btn-action btn-delete" onclick="confirmarEliminar(${index})" title="Eliminar">
+                                            <i class="fas fa-trash-alt"></i>
+                                       </button>`;
+                    
+                    botones = `<div class="d-flex justify-content-center">
+                                ${btnDelete}
+                               </div>`;
+                }
+                
+                // Verificar si este registro es duplicado
+                const esDuplicado = duplicadosDetectados.some(dup => 
+                    dup.fecha === item.fecha && 
+                    dup.ubicacion === item.ubicacion && 
+                    dup.tipo === item.tipo && 
+                    dup.horaInicio === item.horaInicio
+                );
+                
+                const badgeDuplicado = esDuplicado ? 
+                    `<span class="badge-duplicate"><i class="fas fa-copy me-1"></i>Duplicado</span>` : '';
+                
+                const badgeTipo = `<span class="badge ${item.tipo === 'Repaso' ? 'bg-info' : 'bg-success'}">
+                    ${item.tipo}
+                </span>`;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold">${item.fecha}</td>
+                    <td>${item.horaInicio || 'N/A'}</td>
+                    <td>${item.horaCierre || 'N/A'}</td>
+                    <td>${item.ubicacion} ${badgeDuplicado}<br>${badgeTipo}</td>
+                    <td><small>${item.observaciones || 'Sin observaciones'}</small></td>
+                    <td class="text-center">
+                        ${botones}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // =========================================================================
+        // FUNCIONES PARA MANEJO DE PDF (ORIGINALES)
+        // =========================================================================
+        
+        function verPDF(url) {
+            if(!url) return;
+            
+            // Convertir URL de view a preview para mostrar dentro del iframe
+            let previewUrl = url;
+            if (url.includes('/view')) {
+                previewUrl = url.replace(/\/view.*/, '/preview');
+            }
+            
+            document.getElementById('iframePDF').src = previewUrl;
+            modalPDF.show();
+        }
+        
+        function getDriveId(url) {
+            if (!url) return null;
+            let match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (match) return match[1];
+            match = url.match(/id=([a-zA-Z0-9-_]+)/);
+            return match ? match[1] : null;
+        }
+        
+        function descargarPDF(url) {
+            const id = getDriveId(url);
+            if (id) {
+                const downloadLink = `https://drive.google.com/uc?export=download&id=${id}`;
+                window.open(downloadLink, '_blank');
+            } else {
+                Swal.fire('Error', 'No se pudo obtener el ID del archivo', 'error');
+            }
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA ELIMINAR REGISTRO INDIVIDUAL
+        // =========================================================================
+        
+        function confirmarEliminar(index) {
+            const item = datosFiltrados[index];
+            if (!item) return;
+
+            Swal.fire({
+                title: 'Eliminar Reporte',
+                text: 'Ingresa la contraseña para confirmar la eliminación:',
+                input: 'password',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    placeholder: 'Contraseña'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                confirmButtonColor: '#e74c3c',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                backdrop: `rgba(43, 62, 80, 0.8)`,
+                preConfirm: (password) => {
+                    if (password !== CONTRASENA_ELIMINAR) {
+                        Swal.showValidationMessage('Contraseña incorrecta');
+                        return false;
+                    }
+                    return password;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ejecutarEliminacion(item);
+                }
+            });
+        }
+        
+        function ejecutarEliminacion(item) {
+            showLoading("Eliminando reporte...", "Por favor espera");
+            
+            fetch(URL_SCRIPT_GOOGLE, {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    action: "eliminarReporte", 
+                    tipo: tipoActual, 
+                    ubicacion: ubicacionActual,
+                    mes: mesActual, 
+                    anio: anioActual,
+                    fila: item.fila,
+                    url: item.url,
+                    contrasena: CONTRASENA_ELIMINAR
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                hideLoading();
+                
+                if (data.status === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        text: data.data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Recargar datos
+                        consultarDatos();
+                    });
+                } else {
+                    Swal.fire("Error", data.message, "error");
+                }
+            })
+            .catch(err => {
+                hideLoading();
+                Swal.fire("Error", "Problema de conexión con el servidor.", "error");
+            });
+        }
+        
+        // =========================================================================
+        // FUNCIÓN PARA ELIMINAR TODOS LOS DUPLICADOS
+        // =========================================================================
+        
+        function confirmarEliminarDuplicados() {
+            if (duplicadosDetectados.length === 0) {
+                Swal.fire("Sin duplicados", "No hay reportes duplicados para eliminar.", "info");
+                return;
+            }
+            
+            // Calcular total de registros a eliminar (todos menos uno por grupo)
+            let totalAEliminar = 0;
+            duplicadosDetectados.forEach(dup => {
+                totalAEliminar += (dup.items.length - 1); // Dejamos uno, eliminamos los demás
+            });
+            
+            Swal.fire({
+                title: 'Eliminar Todos los Duplicados',
+                html: `Se eliminarán <strong>${totalAEliminar}</strong> reportes duplicados.<br><br>
+                      <small class="text-muted">Se dejará solo un reporte por cada grupo de duplicados.</small><br><br>
+                      Ingresa la contraseña para confirmar:`,
+                input: 'password',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    placeholder: 'Contraseña'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar Duplicados',
+                confirmButtonColor: '#e74c3c',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                backdrop: `rgba(43, 62, 80, 0.8)`,
+                preConfirm: (password) => {
+                    if (password !== CONTRASENA_ELIMINAR) {
+                        Swal.showValidationMessage('Contraseña incorrecta');
+                        return false;
+                    }
+                    return password;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ejecutarEliminacionDuplicados();
+                }
+            });
+        }
+        
+        function ejecutarEliminacionDuplicados() {
+            showLoading("Eliminando duplicados...", `Procesando ${duplicadosDetectados.length} grupos de duplicados`);
+            
+            // Preparar datos para eliminar
+            const registrosAEliminar = [];
+            
+            // Para cada grupo de duplicados, dejamos el primero (más reciente) y eliminamos los demás
+            duplicadosDetectados.forEach(grupo => {
+                // Ordenar por fechaOrden (más reciente primero)
+                const ordenados = [...grupo.items].sort((a, b) => {
+                    const fechaA = a.fechaOrden ? new Date(a.fechaOrden) : new Date(0);
+                    const fechaB = b.fechaOrden ? new Date(b.fechaOrden) : new Date(0);
+                    return fechaB - fechaA; // Descendente
+                });
+                
+                // Dejar el primero (más reciente), eliminar los demás
+                for (let i = 1; i < ordenados.length; i++) {
+                    registrosAEliminar.push(ordenados[i]);
+                }
+            });
+            
+            if (registrosAEliminar.length === 0) {
+                hideLoading();
+                Swal.fire("Operación completada", "No había duplicados para eliminar.", "success");
+                return;
+            }
+            
+            // Enviar solicitud al servidor para eliminar todos los duplicados
+            fetch(URL_SCRIPT_GOOGLE, {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    action: "eliminarDuplicados", 
+                    tipo: tipoActual, 
+                    ubicacion: ubicacionActual,
+                    mes: mesActual, 
+                    anio: anioActual,
+                    registros: registrosAEliminar.map(r => ({
+                        fila: r.fila,
+                        url: r.url
+                    })),
+                    contrasena: CONTRASENA_ELIMINAR
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                hideLoading();
+                
+                if (data.status === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Duplicados Eliminados',
+                        html: `Se eliminaron <strong>${registrosAEliminar.length}</strong> reportes duplicados.<br><br>
+                              <small class="text-muted">${data.data.message || ''}</small>`,
+                        timer: 3000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Recargar datos
+                        consultarDatos();
+                    });
+                } else {
+                    Swal.fire("Error", data.message, "error");
+                }
+            })
+            .catch(err => {
+                hideLoading();
+                Swal.fire("Error", "Problema de conexión con el servidor.", "error");
+            });
+        }
+
+    </script>
+</body>
+</html>
