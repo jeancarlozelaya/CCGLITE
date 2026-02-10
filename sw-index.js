@@ -1,16 +1,21 @@
 // Archivo: sw-index.js
 
-const CACHE_NAME_INDEX = 'pibrisa-index-v1.7.1';
+const CACHE_NAME_INDEX = 'pibrisa-index-v1.7.2';
 const urlsToCacheIndex = [
     './',
     './index.html',
     './manifest.json',
     './Pag - Reportería.html',
+    './Pag - Soporte de Bitácoras.html',
     './Liberación.html',
     './Control de Llaves.html',
     './Pag - Residuos.html',
     './Registro de Residuos.html',
-    './Registro de Trazabilidad & Volumen de Residuos.html',   
+    './Registro de Trazabilidad & Volumen de Residuos.html',  
+    './Bitácora de Elevadores.html',   
+    './Bitácora de Baños de Sótanos.html',   
+    './Datos de Baños de Sótanos.html',   
+    './Datos de Elevadores.html',   
     'Imágenes/Icono.png',
 
     // 1. LA IMAGEN DEL PDF (Asegúrate que la ruta sea exacta, mayúsculas y acentos importan)
