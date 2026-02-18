@@ -753,46 +753,45 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN DUPLICADOS -->
-            <div class="row" id="seccionDuplicados" style="display: none;">
-                <div class="col-12">
-                    <div class="card-custom border-warning" style="border-top: 5px solid var(--warning-color);">
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 border-bottom pb-2">
-                            <h5 class="text-warning mb-2 mb-md-0">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Reportes Duplicados Detectados
-                                <span class="badge bg-warning text-dark ms-2" id="contadorDuplicados">0</span>
-                            </h5>
-                            <button class="btn btn-danger-custom" onclick="confirmarEliminarDuplicados()">
-                                <i class="fas fa-trash-alt me-1"></i> Eliminar Todos los Duplicados
-                            </button>
-                        </div>
+<!-- SECCIÓN DUPLICADOS -->
+<div class="row" id="seccionDuplicados" style="display: none;">
+    <div class="col-12">
+        <div class="card-custom border-warning" style="border-top: 5px solid var(--warning-color);">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 border-bottom pb-2">
+                <h5 class="text-warning mb-2 mb-md-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Reportes Duplicados Detectados
+                    <span class="badge bg-warning text-dark ms-2" id="contadorDuplicados">0</span>
+                </h5>
+                <button class="btn btn-danger-custom" onclick="confirmarEliminarDuplicados()">
+                    <i class="fas fa-trash-alt me-1"></i> Eliminar Todos los Duplicados
+                </button>
+            </div>
 
-                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                            <table class="table table-hover align-middle">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 50px;">#</th>
-                                        <th style="width: 120px;">Fecha</th>
-                                        <th>Hora Inicio</th>
-                                        <th>Hora Cierre</th>
-                                        <th>Tipo</th>
-                                        <th class="text-center" style="width: 100px;">Repeticiones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaDuplicadosCuerpo"></tbody>
-                            </table>
-                            <div id="sinDuplicados" class="text-center p-4 text-muted" style="display:none;">
-                                No se encontraron reportes duplicados.
-                            </div>
-                        </div>
-                        
-                        <div class="mt-3 text-muted small">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Se consideran duplicados aquellos reportes con misma fecha, ubicación, tipo y horario.
-                        </div>
-                    </div>
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th style="width: 120px;">Fecha</th>
+                            <th style="width: 150px;">Número de Repaso</th>
+                            <th>Tipo</th>
+                            <th class="text-center" style="width: 100px;">Repeticiones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaDuplicadosCuerpo"></tbody>
+                </table>
+                <div id="sinDuplicados" class="text-center p-4 text-muted" style="display:none;">
+                    No se encontraron reportes duplicados.
                 </div>
             </div>
+            
+            <div class="mt-3 text-muted small">
+                <i class="fas fa-info-circle me-1"></i>
+                Se consideran duplicados aquellos reportes con misma fecha, ubicación, tipo y número de repaso (para Repaso).
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- TABLA DETALLADA -->
             <div class="row">
@@ -812,19 +811,18 @@
                         </div>
 
                         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                            <table class="table table-hover align-middle">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 100px;">Fecha</th>
-                                        <th style="width: 90px;">Hora Inicio</th>
-                                        <th style="width: 90px;">Hora Cierre</th>
-                                        <th style="width: 150px;">Ubicación</th>
-                                        <th>Observaciones</th>
-                                        <th class="text-center" style="width: 130px;">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaCuerpo"></tbody>
-                            </table>
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th style="width: 100px;">Fecha</th>
+            <th style="width: 120px;">Número de Repaso</th> <!-- NUEVA COLUMNA -->
+            <th style="width: 150px;">Ubicación</th>
+            <th>Observaciones</th>
+            <th class="text-center" style="width: 130px;">Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="tablaCuerpo"></tbody>
+</table>
                             <div id="sinResultadosFiltro" class="text-center p-4 text-muted" style="display:none;">
                                 No se encontraron reportes con ese filtro.
                             </div>
@@ -956,85 +954,108 @@
         // FUNCIÓN PARA DETECTAR DUPLICADOS
         // =========================================================================
         
-        function detectarDuplicados(listaReportes) {
-            const mapaDuplicados = new Map();
-            
-            // Crear clave única con fecha + ubicación + tipo + horaInicio
-            listaReportes.forEach((item, index) => {
-                const clave = `${item.fecha}|${item.ubicacion}|${item.tipo}|${item.horaInicio}`;
-                
-                if (!mapaDuplicados.has(clave)) {
-                    mapaDuplicados.set(clave, {
-                        clave: clave,
-                        items: [item],
-                        indices: [index]
-                    });
-                } else {
-                    const grupo = mapaDuplicados.get(clave);
-                    grupo.items.push(item);
-                    grupo.indices.push(index);
-                }
+function detectarDuplicados(listaReportes) {
+    const mapaDuplicados = new Map();
+    
+    // Crear clave única con fecha + ubicación + tipo + número de repaso
+    listaReportes.forEach((item, index) => {
+        // Para Profundo, el número de repaso es vacío o '-'
+        const numeroRepasoKey = item.numeroRepaso || 'sin-repaso';
+        const clave = `${item.fecha}|${item.ubicacion}|${item.tipo}|${numeroRepasoKey}`;
+        
+        if (!mapaDuplicados.has(clave)) {
+            mapaDuplicados.set(clave, {
+                clave: clave,
+                items: [item],
+                indices: [index]
             });
+        } else {
+            const grupo = mapaDuplicados.get(clave);
+            grupo.items.push(item);
+            grupo.indices.push(index);
+        }
+    });
+    
+    // Filtrar solo los que tienen más de un elemento
+    const duplicados = [];
+    for (const [clave, grupo] of mapaDuplicados.entries()) {
+        if (grupo.items.length > 1) {
+            // Separar partes
+            const partes = clave.split('|');
+            const fecha = partes[0];
+            const ubicacion = partes[1];
+            const tipo = partes[2];
+            const numeroRepasoKey = partes[3];
             
-            // Filtrar solo los que tienen más de un elemento
-            const duplicados = [];
-            for (const [clave, grupo] of mapaDuplicados.entries()) {
-                if (grupo.items.length > 1) {
-                    // Separar por /
-                    const partes = clave.split('|');
-                    duplicados.push({
-                        fecha: partes[0],
-                        ubicacion: partes[1],
-                        tipo: partes[2],
-                        horaInicio: partes[3],
-                        items: grupo.items,
-                        indices: grupo.indices,
-                        count: grupo.items.length
-                    });
-                }
+            // Determinar el número de repaso a mostrar
+            let numeroRepaso = '';
+            if (tipo === 'Repaso') {
+                // Buscar en los items el número de repaso real
+                // (todos deberían tener el mismo, pero tomamos el primero)
+                numeroRepaso = grupo.items[0].numeroRepaso || '';
             }
             
-            return duplicados;
+            duplicados.push({
+                fecha: fecha,
+                ubicacion: ubicacion,
+                tipo: tipo,
+                numeroRepaso: numeroRepaso,
+                items: grupo.items,
+                indices: grupo.indices,
+                count: grupo.items.length
+            });
         }
+    }
+    
+    return duplicados;
+}
         
         // =========================================================================
         // FUNCIÓN PARA MOSTRAR TABLA DE DUPLICADOS
         // =========================================================================
         
-        function mostrarTablaDuplicados(duplicados) {
-            const seccionDuplicados = document.getElementById('seccionDuplicados');
-            const tablaCuerpo = document.getElementById('tablaDuplicadosCuerpo');
-            const sinDuplicados = document.getElementById('sinDuplicados');
-            const contador = document.getElementById('contadorDuplicados');
-            
-            if (duplicados.length === 0) {
-                seccionDuplicados.style.display = 'none';
-                return;
-            }
-            
-            seccionDuplicados.style.display = 'block';
-            contador.textContent = duplicados.length;
-            tablaCuerpo.innerHTML = '';
-            sinDuplicados.style.display = 'none';
-            
-            duplicados.forEach((dup, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="fw-bold">${index + 1}</td>
-                    <td class="fw-bold">${dup.fecha}</td>
-                    <td>${dup.horaInicio}</td>
-                    <td>${dup.items[0].horaCierre || 'N/A'}</td>
-                    <td><span class="badge bg-info">${dup.tipo}</span></td>
-                    <td class="text-center">
-                        <span class="badge bg-danger">${dup.count} reportes</span>
-                    </td>
-                `;
-                tablaCuerpo.appendChild(tr);
-            });
-            
-            // Guardar duplicados en variable global
-            duplicadosDetectados = duplicados;
+function mostrarTablaDuplicados(duplicados) {
+    const seccionDuplicados = document.getElementById('seccionDuplicados');
+    const tablaCuerpo = document.getElementById('tablaDuplicadosCuerpo');
+    const sinDuplicados = document.getElementById('sinDuplicados');
+    const contador = document.getElementById('contadorDuplicados');
+    
+    if (duplicados.length === 0) {
+        seccionDuplicados.style.display = 'none';
+        return;
+    }
+    
+    seccionDuplicados.style.display = 'block';
+    contador.textContent = duplicados.length;
+    tablaCuerpo.innerHTML = '';
+    sinDuplicados.style.display = 'none';
+    
+    duplicados.forEach((dup, index) => {
+        // Determinar qué mostrar en la columna de número de repaso
+        let numeroRepasoDisplay = '';
+        if (dup.tipo === 'Repaso') {
+            numeroRepasoDisplay = dup.numeroRepaso || 'No especificado';
+        } else {
+            numeroRepasoDisplay = '- (Profundo)';
         }
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="fw-bold">${index + 1}</td>
+            <td class="fw-bold">${dup.fecha}</td>
+            <td>${numeroRepasoDisplay}</td>
+            <td><span class="badge ${dup.tipo === 'Repaso' ? 'bg-info' : 'bg-success'}">${dup.tipo}</span></td>
+            <td class="text-center">
+                <span class="badge bg-danger">${dup.count} reportes</span>
+            </td>
+        `;
+        tablaCuerpo.appendChild(tr);
+    });
+    
+    // Guardar duplicados en variable global
+    duplicadosDetectados = duplicados;
+}
+
         
         // =========================================================================
         // FUNCIÓN PARA CALCULAR CUMPLIMIENTO DE METAS
@@ -1177,146 +1198,160 @@
         // FUNCIÓN PARA MOSTRAR DETALLES DE UN DÍA ESPECÍFICO
         // =========================================================================
         
-        function mostrarDetalleDia(diaNumero) {
-            if (!cumplimientoData || !cumplimientoData.dias[diaNumero]) {
-                Swal.fire("Error", "No se encontraron datos para este día.", "error");
-                return;
-            }
-            
-            const diaInfo = cumplimientoData.dias[diaNumero];
-            const resumen = cumplimientoData.resumen;
-            const nombreMes = mesesNombres[parseInt(mesActual) - 1];
-            
-            // Actualizar información del modal
-            document.getElementById('modalFechaTitulo').textContent = 
-                `${diasSemana[diaInfo.diaSemana]} ${diaNumero} de ${nombreMes} ${anioActual}`;
-            
-            document.getElementById('modalUbicacionDia').textContent = ubicacionActual;
-            document.getElementById('modalTipoDia').textContent = tipoActual;
-            
-            // Determinar estado del día
-            let estadoTexto = "No Laborable";
-            let estadoClase = "badge-estado";
-            let resumenTexto = `Reportes: ${diaInfo.conteo}/${diaInfo.meta}`;
-            
-            if (diaInfo.futuro) {
-                estadoTexto = "Día Futuro";
-                estadoClase += " badge-no-cumplido";
-                resumenTexto = "Día aún no transcurrido";
-            } else if (diaInfo.esLaborable) {
-                if (diaInfo.cumplido) {
-                    estadoTexto = "Cumplido";
-                    estadoClase += " badge-cumplido";
-                } else if (diaInfo.parcial) {
-                    estadoTexto = "Parcial";
-                    estadoClase += " badge-parcial";
-                } else {
-                    estadoTexto = "No Cumplido";
-                    estadoClase += " badge-no-cumplido";
-                }
-            } else {
-                estadoClase += " badge-no-cumplido";
-                resumenTexto = "Día no laborable";
-            }
-            
-            document.getElementById('modalEstadoDia').textContent = estadoTexto;
-            document.getElementById('modalEstadoDia').className = estadoClase;
-            document.getElementById('modalResumenDia').textContent = resumenTexto;
-            
-            // Actualizar estadísticas
-            document.getElementById('modalReportesRealizados').textContent = diaInfo.conteo;
-            document.getElementById('modalMetaDiaria').textContent = diaInfo.meta;
-            
-            const porcentajeDia = diaInfo.meta > 0 ? 
-                Math.round((diaInfo.conteo / diaInfo.meta) * 100) : 0;
-            document.getElementById('modalPorcentajeDia').textContent = `${porcentajeDia}%`;
-            
-            // Colorear el porcentaje según cumplimiento
-            const porcentajeElement = document.getElementById('modalPorcentajeDia');
-            porcentajeElement.style.color = 
-                porcentajeDia >= 100 ? "#155724" : 
-                porcentajeDia >= 50 ? "#856404" : "#721c24";
-            
-            // Mostrar lista de reportes CON SCROLL
-            const listaReportes = document.getElementById('modalListaReportes');
-            const sinReportes = document.getElementById('modalSinReportes');
-            const totalReportes = document.getElementById('modalTotalReportes');
-            
-            listaReportes.innerHTML = '';
-            totalReportes.textContent = diaInfo.reportes.length;
-            
-            if (diaInfo.reportes.length === 0) {
-                listaReportes.style.display = 'none';
-                sinReportes.style.display = 'block';
-            } else {
-                listaReportes.style.display = 'block';
-                sinReportes.style.display = 'none';
-                
-                // Ordenar reportes por hora
-                const reportesOrdenados = [...diaInfo.reportes].sort((a, b) => {
-                    const horaA = a.horaInicio || "00:00";
-                    const horaB = b.horaInicio || "00:00";
-                    return horaA.localeCompare(horaB);
-                });
-                
-                reportesOrdenados.forEach((reporte, index) => {
-                    const reporteItem = document.createElement('div');
-                    reporteItem.className = 'reporte-item';
-                    
-                    // Verificar si es duplicado
-                    const esDuplicado = duplicadosDetectados.some(dup => 
-                        dup.fecha === reporte.fecha && 
-                        dup.ubicacion === reporte.ubicacion && 
-                        dup.tipo === reporte.tipo && 
-                        dup.horaInicio === reporte.horaInicio
-                    );
-                    
-                    const badgeDuplicado = esDuplicado ? 
-                        `<span class="badge-duplicate small ms-2"><i class="fas fa-copy me-1"></i>Duplicado</span>` : '';
-                    
-                    // Botones de acción - CON FUNCIÓN QUE CIERRA EL MODAL ACTUAL PRIMERO
-                    let botonesHTML = '';
-                    if (reporte.url && reporte.url.includes('http')) {
-                        botonesHTML = `
-                            <div class="mt-2">
-                                <button class="btn btn-sm btn-outline-primary me-1" onclick="verPDFDesdeModal('${reporte.url}')">
-                                    <i class="fas fa-eye"></i> Ver
-                                </button>
-                                <button class="btn btn-sm btn-outline-success" onclick="descargarPDFDesdeModal('${reporte.url}')">
-                                    <i class="fas fa-download"></i> Descargar
-                                </button>
-                            </div>
-                        `;
-                    }
-                    
-                    reporteItem.innerHTML = `
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <div class="reporte-hora">
-                                    <i class="fas fa-clock me-2"></i>
-                                    ${reporte.horaInicio || 'N/A'} - ${reporte.horaCierre || 'N/A'}
-                                    ${badgeDuplicado}
-                                </div>
-                                <div class="reporte-observaciones">
-                                    ${reporte.observaciones || 'Sin observaciones'}
-                                </div>
-                                ${botonesHTML}
-                            </div>
-                            <div>
-                                <span class="badge ${reporte.tipo === 'Repaso' ? 'bg-info' : 'bg-success'}">
-                                    ${reporte.tipo}
-                                </span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    listaReportes.appendChild(reporteItem);
-                });
-            }
-            
-            // Mostrar el modal
-            modalDetalleDia.show();
+function mostrarDetalleDia(diaNumero) {
+    if (!cumplimientoData || !cumplimientoData.dias[diaNumero]) {
+        Swal.fire("Error", "No se encontraron datos para este día.", "error");
+        return;
+    }
+    
+    const diaInfo = cumplimientoData.dias[diaNumero];
+    const resumen = cumplimientoData.resumen;
+    const nombreMes = mesesNombres[parseInt(mesActual) - 1];
+    
+    // Actualizar información del modal
+    document.getElementById('modalFechaTitulo').textContent = 
+        `${diasSemana[diaInfo.diaSemana]} ${diaNumero} de ${nombreMes} ${anioActual}`;
+    
+    document.getElementById('modalUbicacionDia').textContent = ubicacionActual;
+    document.getElementById('modalTipoDia').textContent = tipoActual;
+    
+    // Determinar estado del día
+    let estadoTexto = "No Laborable";
+    let estadoClase = "badge-estado";
+    let resumenTexto = `Reportes: ${diaInfo.conteo}/${diaInfo.meta}`;
+    
+    if (diaInfo.futuro) {
+        estadoTexto = "Día Futuro";
+        estadoClase += " badge-no-cumplido";
+        resumenTexto = "Día aún no transcurrido";
+    } else if (diaInfo.esLaborable) {
+        if (diaInfo.cumplido) {
+            estadoTexto = "Cumplido";
+            estadoClase += " badge-cumplido";
+        } else if (diaInfo.parcial) {
+            estadoTexto = "Parcial";
+            estadoClase += " badge-parcial";
+        } else {
+            estadoTexto = "No Cumplido";
+            estadoClase += " badge-no-cumplido";
         }
+    } else {
+        estadoClase += " badge-no-cumplido";
+        resumenTexto = "Día no laborable";
+    }
+    
+    document.getElementById('modalEstadoDia').textContent = estadoTexto;
+    document.getElementById('modalEstadoDia').className = estadoClase;
+    document.getElementById('modalResumenDia').textContent = resumenTexto;
+    
+    // Actualizar estadísticas
+    document.getElementById('modalReportesRealizados').textContent = diaInfo.conteo;
+    document.getElementById('modalMetaDiaria').textContent = diaInfo.meta;
+    
+    const porcentajeDia = diaInfo.meta > 0 ? 
+        Math.round((diaInfo.conteo / diaInfo.meta) * 100) : 0;
+    document.getElementById('modalPorcentajeDia').textContent = `${porcentajeDia}%`;
+    
+    // Colorear el porcentaje según cumplimiento
+    const porcentajeElement = document.getElementById('modalPorcentajeDia');
+    porcentajeElement.style.color = 
+        porcentajeDia >= 100 ? "#155724" : 
+        porcentajeDia >= 50 ? "#856404" : "#721c24";
+    
+    // Mostrar lista de reportes CON SCROLL
+    const listaReportes = document.getElementById('modalListaReportes');
+    const sinReportes = document.getElementById('modalSinReportes');
+    const totalReportes = document.getElementById('modalTotalReportes');
+    
+    listaReportes.innerHTML = '';
+    totalReportes.textContent = diaInfo.reportes.length;
+    
+    if (diaInfo.reportes.length === 0) {
+        listaReportes.style.display = 'none';
+        sinReportes.style.display = 'block';
+    } else {
+        listaReportes.style.display = 'block';
+        sinReportes.style.display = 'none';
+        
+        // Ordenar reportes (ya no por hora, ahora por número de repaso)
+        const reportesOrdenados = [...diaInfo.reportes].sort((a, b) => {
+            // Para Repaso, ordenar por número de repaso
+            if (a.tipo === 'Repaso' && b.tipo === 'Repaso') {
+                const numA = parseInt(a.numeroRepaso?.replace(/[^0-9]/g, '')) || 0;
+                const numB = parseInt(b.numeroRepaso?.replace(/[^0-9]/g, '')) || 0;
+                return numA - numB;
+            }
+            // Si no, mantener orden original
+            return 0;
+        });
+        
+        reportesOrdenados.forEach((reporte, index) => {
+            const reporteItem = document.createElement('div');
+            reporteItem.className = 'reporte-item';
+            
+            // Verificar si es duplicado (basado en fecha + ubicación + número de repaso)
+            const esDuplicado = duplicadosDetectados.some(dup => 
+                dup.fecha === reporte.fecha && 
+                dup.ubicacion === reporte.ubicacion && 
+                dup.tipo === reporte.tipo && 
+                dup.numeroRepaso === reporte.numeroRepaso
+            );
+            
+            const badgeDuplicado = esDuplicado ? 
+                `<span class="badge-duplicate small ms-2"><i class="fas fa-copy me-1"></i>Duplicado</span>` : '';
+            
+            // Mostrar información según tipo
+            let infoPrincipal = '';
+            if (reporte.tipo === 'Repaso') {
+                infoPrincipal = `<strong>${reporte.numeroRepaso || 'Repaso'}</strong>`;
+            } else {
+                infoPrincipal = `<strong>Limpieza Profunda</strong>`;
+            }
+            
+            // Botones de acción - CON FUNCIÓN QUE CIERRA EL MODAL ACTUAL PRIMERO
+            let botonesHTML = '';
+            if (reporte.url && reporte.url.includes('http')) {
+                botonesHTML = `
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="verPDFDesdeModal('${reporte.url}')">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" onclick="descargarPDFDesdeModal('${reporte.url}')">
+                            <i class="fas fa-download"></i> Descargar
+                        </button>
+                    </div>
+                `;
+            }
+            
+            reporteItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="reporte-hora">
+                            <i class="fas fa-broom me-2"></i>
+                            ${infoPrincipal}
+                            ${badgeDuplicado}
+                        </div>
+                        <div class="reporte-observaciones">
+                            ${reporte.observaciones || 'Sin observaciones'}
+                        </div>
+                        ${botonesHTML}
+                    </div>
+                    <div>
+                        <span class="badge ${reporte.tipo === 'Repaso' ? 'bg-info' : 'bg-success'}">
+                            ${reporte.tipo}
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            listaReportes.appendChild(reporteItem);
+        });
+    }
+    
+    // Mostrar el modal
+    modalDetalleDia.show();
+}
+
         
         // =========================================================================
         // FUNCIONES ESPECIALES PARA MANEJAR PDF DESDE EL MODAL
@@ -1586,84 +1621,90 @@
         // FUNCIÓN PARA RENDERIZAR TABLA
         // =========================================================================
         
-        function renderizarTabla(lista) {
-            const tbody = document.getElementById('tablaCuerpo');
-            const aviso = document.getElementById('sinResultadosFiltro');
-            tbody.innerHTML = '';
-            
-            if (lista.length === 0) {
-                aviso.style.display = 'block'; 
-                return;
-            }
-            aviso.style.display = 'none';
-            
-            // Ordenar por fecha (más reciente primero)
-            lista.sort((a, b) => {
-                if (a.fechaOrden && b.fechaOrden) {
-                    return new Date(b.fechaOrden).getTime() - new Date(a.fechaOrden).getTime();
-                }
-                return 0;
-            });
-            
-            lista.forEach((item, index) => {
-                // Botones de acciones
-                let botones = '';
-                
-                if (item.url && item.url.includes('http')) {
-                    const btnVer = `<button class="btn btn-action btn-pdf" onclick="verPDF('${item.url}')" title="Ver Reporte">
-                                        <i class="fas fa-eye"></i>
-                                    </button>`;
-                    
-                    const btnDownload = `<button class="btn btn-action btn-download" onclick="descargarPDF('${item.url}')" title="Descargar">
-                                            <i class="fas fa-download"></i>
-                                         </button>`;
-                    
-                    const btnDelete = `<button class="btn btn-action btn-delete" onclick="confirmarEliminar(${index})" title="Eliminar">
-                                            <i class="fas fa-trash-alt"></i>
-                                       </button>`;
-                    
-                    botones = `<div class="d-flex justify-content-center">
-                                ${btnVer} ${btnDownload} ${btnDelete}
-                               </div>`;
-                } else {
-                    const btnDelete = `<button class="btn btn-action btn-delete" onclick="confirmarEliminar(${index})" title="Eliminar">
-                                            <i class="fas fa-trash-alt"></i>
-                                       </button>`;
-                    
-                    botones = `<div class="d-flex justify-content-center">
-                                ${btnDelete}
-                               </div>`;
-                }
-                
-                // Verificar si este registro es duplicado
-                const esDuplicado = duplicadosDetectados.some(dup => 
-                    dup.fecha === item.fecha && 
-                    dup.ubicacion === item.ubicacion && 
-                    dup.tipo === item.tipo && 
-                    dup.horaInicio === item.horaInicio
-                );
-                
-                const badgeDuplicado = esDuplicado ? 
-                    `<span class="badge-duplicate"><i class="fas fa-copy me-1"></i>Duplicado</span>` : '';
-                
-                const badgeTipo = `<span class="badge ${item.tipo === 'Repaso' ? 'bg-info' : 'bg-success'}">
-                    ${item.tipo}
-                </span>`;
-                
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="fw-bold">${item.fecha}</td>
-                    <td>${item.horaInicio || 'N/A'}</td>
-                    <td>${item.horaCierre || 'N/A'}</td>
-                    <td>${item.ubicacion} ${badgeDuplicado}<br>${badgeTipo}</td>
-                    <td><small>${item.observaciones || 'Sin observaciones'}</small></td>
-                    <td class="text-center">
-                        ${botones}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+function renderizarTabla(lista) {
+    const tbody = document.getElementById('tablaCuerpo');
+    const aviso = document.getElementById('sinResultadosFiltro');
+    tbody.innerHTML = '';
+    
+    if (lista.length === 0) {
+        aviso.style.display = 'block'; 
+        return;
+    }
+    aviso.style.display = 'none';
+    
+    // Ordenar por fecha (más reciente primero)
+    lista.sort((a, b) => {
+        if (a.fechaOrden && b.fechaOrden) {
+            return new Date(b.fechaOrden).getTime() - new Date(a.fechaOrden).getTime();
         }
+        return 0;
+    });
+    
+    lista.forEach((item, index) => {
+        // Botones de acciones
+        let botones = '';
+        
+        if (item.url && item.url.includes('http')) {
+            const btnVer = `<button class="btn btn-action btn-pdf" onclick="verPDF('${item.url}')" title="Ver Reporte">
+                                <i class="fas fa-eye"></i>
+                            </button>`;
+            
+            const btnDownload = `<button class="btn btn-action btn-download" onclick="descargarPDF('${item.url}')" title="Descargar">
+                                    <i class="fas fa-download"></i>
+                                 </button>`;
+            
+            const btnDelete = `<button class="btn btn-action btn-delete" onclick="confirmarEliminar(${index})" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                               </button>`;
+            
+            botones = `<div class="d-flex justify-content-center">
+                        ${btnVer} ${btnDownload} ${btnDelete}
+                       </div>`;
+        } else {
+            const btnDelete = `<button class="btn btn-action btn-delete" onclick="confirmarEliminar(${index})" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                               </button>`;
+            
+            botones = `<div class="d-flex justify-content-center">
+                        ${btnDelete}
+                       </div>`;
+        }
+        
+        // Verificar si este registro es duplicado (basado en fecha + ubicación + número de repaso)
+        const esDuplicado = duplicadosDetectados.some(dup => 
+            dup.fecha === item.fecha && 
+            dup.ubicacion === item.ubicacion && 
+            dup.tipo === item.tipo && 
+            dup.numeroRepaso === item.numeroRepaso
+        );
+        
+        const badgeDuplicado = esDuplicado ? 
+            `<span class="badge-duplicate"><i class="fas fa-copy me-1"></i>Duplicado</span>` : '';
+        
+        const badgeTipo = `<span class="badge ${item.tipo === 'Repaso' ? 'bg-info' : 'bg-success'}">
+            ${item.tipo}
+        </span>`;
+        
+        // Mostrar número de repaso si existe
+        const numeroRepasoDisplay = item.numeroRepaso || (item.tipo === 'Profundo' ? '-' : '');
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="fw-bold">${item.fecha}</td>
+            <td>
+                ${numeroRepasoDisplay} ${badgeDuplicado}<br>
+                ${badgeTipo}
+            </td>
+            <td>${item.ubicacion}</td>
+            <td><small>${item.observaciones || 'Sin observaciones'}</small></td>
+            <td class="text-center">
+                ${botones}
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
         
         // =========================================================================
         // FUNCIONES PARA MANEJO DE PDF (ORIGINALES)
@@ -1781,47 +1822,48 @@
         // FUNCIÓN PARA ELIMINAR TODOS LOS DUPLICADOS
         // =========================================================================
         
-        function confirmarEliminarDuplicados() {
-            if (duplicadosDetectados.length === 0) {
-                Swal.fire("Sin duplicados", "No hay reportes duplicados para eliminar.", "info");
-                return;
+function confirmarEliminarDuplicados() {
+    if (duplicadosDetectados.length === 0) {
+        Swal.fire("Sin duplicados", "No hay reportes duplicados para eliminar.", "info");
+        return;
+    }
+    
+    // Calcular total de registros a eliminar (todos menos uno por grupo)
+    let totalAEliminar = 0;
+    duplicadosDetectados.forEach(dup => {
+        totalAEliminar += (dup.items.length - 1); // Dejamos uno, eliminamos los demás
+    });
+    
+    Swal.fire({
+        title: 'Eliminar Todos los Duplicados',
+        html: `Se eliminarán <strong>${totalAEliminar}</strong> reportes duplicados.<br><br>
+              <small class="text-muted">Se dejará solo un reporte por cada grupo de duplicados (misma fecha, ubicación, tipo y número de repaso).</small><br><br>
+              Ingresa la contraseña para confirmar:`,
+        input: 'password',
+        inputAttributes: {
+            autocapitalize: 'off',
+            placeholder: 'Contraseña'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar Duplicados',
+        confirmButtonColor: '#e74c3c',
+        cancelButtonText: 'Cancelar',
+        allowOutsideClick: false,
+        backdrop: `rgba(43, 62, 80, 0.8)`,
+        preConfirm: (password) => {
+            if (password !== CONTRASENA_ELIMINAR) {
+                Swal.showValidationMessage('Contraseña incorrecta');
+                return false;
             }
-            
-            // Calcular total de registros a eliminar (todos menos uno por grupo)
-            let totalAEliminar = 0;
-            duplicadosDetectados.forEach(dup => {
-                totalAEliminar += (dup.items.length - 1); // Dejamos uno, eliminamos los demás
-            });
-            
-            Swal.fire({
-                title: 'Eliminar Todos los Duplicados',
-                html: `Se eliminarán <strong>${totalAEliminar}</strong> reportes duplicados.<br><br>
-                      <small class="text-muted">Se dejará solo un reporte por cada grupo de duplicados.</small><br><br>
-                      Ingresa la contraseña para confirmar:`,
-                input: 'password',
-                inputAttributes: {
-                    autocapitalize: 'off',
-                    placeholder: 'Contraseña'
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Eliminar Duplicados',
-                confirmButtonColor: '#e74c3c',
-                cancelButtonText: 'Cancelar',
-                allowOutsideClick: false,
-                backdrop: `rgba(43, 62, 80, 0.8)`,
-                preConfirm: (password) => {
-                    if (password !== CONTRASENA_ELIMINAR) {
-                        Swal.showValidationMessage('Contraseña incorrecta');
-                        return false;
-                    }
-                    return password;
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    ejecutarEliminacionDuplicados();
-                }
-            });
+            return password;
         }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            ejecutarEliminacionDuplicados();
+        }
+    });
+}
+
         
         function ejecutarEliminacionDuplicados() {
             showLoading("Eliminando duplicados...", `Procesando ${duplicadosDetectados.length} grupos de duplicados`);
@@ -1892,20 +1934,6 @@
             });
         }
 
-// Nuevo código para el Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw-index.js')
-                    .then(function(registration) {
-                        console.log('✅ Service Worker de Llaves registrado con éxito:', registration.scope);
-                    })
-                    .catch(function(error) {
-                        console.log('❌ Error al registrar Service Worker de Llaves:', error);
-                    });
-            });
-        }
-        
     </script>
 </body>
-
 </html>
