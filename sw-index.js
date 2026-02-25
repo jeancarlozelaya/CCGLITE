@@ -1,6 +1,6 @@
 // Archivo: sw-index.js
 
-const CACHE_NAME_INDEX = 'pibrisa-index-v1.7.2';
+const CACHE_NAME_INDEX = 'pibrisa-index-v1.7.3';
 const urlsToCacheIndex = [
     './',
     './index.html',
@@ -14,6 +14,7 @@ const urlsToCacheIndex = [
     './Registro de Trazabilidad & Volumen de Residuos.html',  
     './Bitácora de Elevadores.html',   
     './Bitácora de Baños de Sótanos.html',   
+    './Liberación.html',   
     './Datos de Baños de Sótanos.html',   
     './Datos de Elevadores.html',   
     'Imágenes/Icono.png',
