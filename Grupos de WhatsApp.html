@@ -6,7 +6,6 @@
     <title>Pisos Brillantes - Grupos WhatsApp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -76,21 +75,6 @@
             border-radius: 2px;
         }
 
-        h2 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        h2 i {
-            color: var(--whatsapp-color);
-            font-size: 1.1rem;
-        }
-
         .card {
             border-radius: 10px;
             box-shadow: var(--shadow);
@@ -152,7 +136,7 @@
             }
         }
 
-        /* Grid específico para aspiradores - SIEMPRE 2 columnas en móvil */
+        /* Grid específico para aspiradores */
         .aspiradores-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -180,7 +164,7 @@
             }
         }
 
-        /* Tarjeta de grupo - más compacta */
+        /* Tarjeta de grupo */
         .grupo-card {
             background: white;
             border-radius: 10px;
@@ -212,7 +196,6 @@
             background: linear-gradient(90deg, var(--whatsapp-color), var(--secondary-color));
         }
 
-        /* Icono más pequeño */
         .grupo-icon {
             width: 45px;
             height: 45px;
@@ -265,7 +248,6 @@
             line-height: 1.2;
         }
 
-        /* Botón WhatsApp más pequeño */
         .btn-whatsapp {
             background: linear-gradient(135deg, var(--whatsapp-color), #128C7E);
             border: none;
@@ -294,7 +276,6 @@
             font-size: 0.85rem;
         }
 
-        /* Sección de aspiradores - acordeón */
         .aspiradores-section {
             margin-top: 15px;
             border-top: 1px dashed var(--border-color);
@@ -328,7 +309,6 @@
             transform: rotate(180deg);
         }
 
-        /* Instrucciones más compactas */
         .instrucciones-card {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 10px;
@@ -364,52 +344,6 @@
             width: 18px;
         }
 
-        /* Overlay de carga */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.95);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            flex-direction: column;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(37, 211, 102, 0.2);
-            border-radius: 50%;
-            border-top-color: var(--whatsapp-color);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 15px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        #loadingMessage {
-            text-align: center;
-            color: var(--dark-color);
-        }
-
-        #loadingMessage h4 {
-            margin: 0 0 5px;
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-
-        #loadingMessage p {
-            margin: 0;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-        }
-
         /* Animaciones */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -422,101 +356,83 @@
     </style>
 </head>
 <body>
-    <div id="main-content" style="display: none;">
-        <div class="header">Pisos Brillantes</div>
-        
-        <div class="container">
-            <h1>Grupos de WhatsApp</h1>
-
-            <!-- Instrucciones compactas -->
-            <div class="instrucciones-card">
-                <h4><i class="fas fa-info-circle me-1" style="color: var(--whatsapp-color);"></i> ¿Cómo unirse?</h4>
-                <ul>
-                    <li><i class="fas fa-mobile-alt"></i> <strong>1.</strong> Haz clic en el botón verde del grupo</li>
-                    <li><i class="fab fa-whatsapp"></i> <strong>2.</strong> Se abrirá WhatsApp</li>
-                    <li><i class="fas fa-user-plus"></i> <strong>3.</strong> Confirma que quieres unirte</li>
-                </ul>
-            </div>
-
-            <!-- GRUPOS OBLIGATORIOS -->
-            <div class="card">
-                <div class="card-header card-header-danger">
-                    <i class="fas fa-exclamation-circle me-1"></i> Grupos Obligatorios
-                </div>
-                <div class="card-body">
-                    <div class="grupos-grid" id="grupos-obligatorios"></div>
-                </div>
-            </div>
-
-            <!-- EDIFICIOS (Torres y CBA, CBB, CBC) -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-building me-1"></i> Edificios
-                </div>
-                <div class="card-body">
-                    <div class="grupos-grid" id="grupos-edificios"></div>
-                    
-                    <!-- SECCIÓN ASPIRADORES (desplegable) -->
-                    <div class="aspiradores-section">
-                        <button class="btn-aspiradores" id="btn-aspiradores" onclick="toggleAspiradores()">
-                            <i class="fas fa-chevron-down"></i> Ver grupos de aspiradores
-                        </button>
-                        <div class="aspiradores-grid" id="aspiradores-grid">
-                            <!-- Se llenará con JavaScript -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- OTROS GRUPOS -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-ellipsis-h me-1"></i> Otras Áreas
-                </div>
-                <div class="card-body">
-                    <div class="grupos-grid" id="grupos-otros"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- OVERLAY DE CARGA -->
-    <div id="overlay">
-        <div class="spinner"></div>
-        <div id="loadingMessage">
-            <h4>Cargando grupos...</h4>
-            <p>Por favor espera</p>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="header">Pisos Brillantes</div>
     
+    <div class="container">
+        <h1>Grupos de WhatsApp</h1>
+
+        <!-- Instrucciones -->
+        <div class="instrucciones-card">
+            <h4><i class="fas fa-info-circle me-1" style="color: var(--whatsapp-color);"></i> ¿Cómo unirse?</h4>
+            <ul>
+                <li><i class="fas fa-mobile-alt"></i> <strong>1.</strong> Haz clic en el botón verde del grupo</li>
+                <li><i class="fab fa-whatsapp"></i> <strong>2.</strong> Se abrirá WhatsApp</li>
+                <li><i class="fas fa-user-plus"></i> <strong>3.</strong> Confirma que quieres unirte</li>
+            </ul>
+        </div>
+
+        <!-- GRUPOS OBLIGATORIOS -->
+        <div class="card">
+            <div class="card-header card-header-danger">
+                <i class="fas fa-exclamation-circle me-1"></i> Grupos Obligatorios
+            </div>
+            <div class="card-body">
+                <div class="grupos-grid" id="grupos-obligatorios"></div>
+            </div>
+        </div>
+
+        <!-- EDIFICIOS (Torres y CBA, CBB, CBC) -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-building me-1"></i> Edificios
+            </div>
+            <div class="card-body">
+                <div class="grupos-grid" id="grupos-edificios"></div>
+                
+                <!-- SECCIÓN ASPIRADORES (desplegable) -->
+                <div class="aspiradores-section">
+                    <button class="btn-aspiradores" id="btn-aspiradores" onclick="toggleAspiradores()">
+                        <i class="fas fa-chevron-down"></i> Ver grupos de aspiradores
+                    </button>
+                    <div class="aspiradores-grid" id="aspiradores-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OTROS GRUPOS -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-ellipsis-h me-1"></i> Otras Áreas
+            </div>
+            <div class="card-body">
+                <div class="grupos-grid" id="grupos-otros"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================
         // CONFIGURACIÓN DE GRUPOS
         // ============================================
-        // IMPORTANTE: Reemplaza los enlaces de ejemplo con los reales
-        // Los que terminan con * son OBLIGATORIOS
-        
         const GRUPOS = {
-            // --- OBLIGATORIOS (marcados con *) ---
+            // --- OBLIGATORIOS ---
             noticias: {
                 nombre: "Noticias / Avisos",
-                enlace: "https://chat.whatsapp.com/BAIggGy3pcjB4rGLBxWDqn", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/BAIggGy3pcjB4rGLBxWDqn",
                 icono: "fa-newspaper",
                 tipo: "obligatorio",
                 descripcion: "Comunicados oficiales"
             },
             novedades: {
                 nombre: "Novedades",
-                enlace: "https://chat.whatsapp.com/Kd73dR25Ugr3GxOZPthHwd", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/Kd73dR25Ugr3GxOZPthHwd",
                 icono: "fa-bell",
                 tipo: "obligatorio",
                 descripcion: "Novedades diarias"
             },
             liberacion: {
                 nombre: "Liberación de Responsabilidades",
-                enlace: "https://chat.whatsapp.com/Ccep02WXgodLj1HdAzS02z", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/Ccep02WXgodLj1HdAzS02z",
                 icono: "fa-file-signature",
                 tipo: "obligatorio",
                 descripcion: "Proceso de liberación"
@@ -525,44 +441,44 @@
             // --- EDIFICIOS ---
             torre1: {
                 nombre: "Torre #1",
-                enlace: "https://chat.whatsapp.com/Kq4GAOf88txB9Yut1DIvDT", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/Kq4GAOf88txB9Yut1DIvDT",
                 icono: "fa-building",
                 tipo: "edificio",
                 descripcion: "Personal Torre #1"
             },
             torre2: {
                 nombre: "Torre #2",
-                enlace: "https://chat.whatsapp.com/BXtYYNWGUiRBXgvdCtsGgN", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/BXtYYNWGUiRBXgvdCtsGgN",
                 icono: "fa-building",
                 tipo: "edificio",
                 descripcion: "Personal Torre #2"
             },
             cba: {
                 nombre: "CBA",
-                enlace: "https://chat.whatsapp.com/GxZw3EzxWYjCpRhmmf4XSI", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/GxZw3EzxWYjCpRhmmf4XSI",
                 icono: "fa-building",
                 tipo: "edificio",
                 descripcion: "Personal CBA"
             },
             cbb: {
                 nombre: "CBB",
-                enlace: "https://chat.whatsapp.com/Jzdsy7VcDDg099jNID8LtV", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/Jzdsy7VcDDg099jNID8LtV",
                 icono: "fa-building",
                 tipo: "edificio",
                 descripcion: "Personal CBB"
             },
             cbc: {
                 nombre: "CBC",
-                enlace: "https://chat.whatsapp.com/GtUqL5JKZHi8rwTsp21lOc", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/GtUqL5JKZHi8rwTsp21lOc",
                 icono: "fa-building",
                 tipo: "edificio",
                 descripcion: "Personal CBC"
             },
 
-            // --- ASPIRADORES (por edificio) ---
+            // --- ASPIRADORES ---
             aspiradoresTorre1: {
                 nombre: "Aspiradores Torre #1",
-                enlace: "https://chat.whatsapp.com/BnrSSkSURYA8HA30lvireS", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/BnrSSkSURYA8HA30lvireS",
                 icono: "fa-broom",
                 tipo: "aspirador",
                 edificio: "Torre #1",
@@ -570,7 +486,7 @@
             },
             aspiradoresTorre2: {
                 nombre: "Aspiradores Torre #2",
-                enlace: "https://chat.whatsapp.com/H3Z6Rl3l3zcAHlST7Dcyc8", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/H3Z6Rl3l3zcAHlST7Dcyc8",
                 icono: "fa-broom",
                 tipo: "aspirador",
                 edificio: "Torre #2",
@@ -578,7 +494,7 @@
             },
             aspiradoresCBA: {
                 nombre: "Aspiradores CBA",
-                enlace: "https://chat.whatsapp.com/FgzwfMJNCCCILXWjADx9ay", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/FgzwfMJNCCCILXWjADx9ay",
                 icono: "fa-broom",
                 tipo: "aspirador",
                 edificio: "CBA",
@@ -586,7 +502,7 @@
             },
             aspiradoresCBB: {
                 nombre: "Aspiradores CBB",
-                enlace: "https://chat.whatsapp.com/GNDIrtnxuJaBEA9IXpzRIM", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/GNDIrtnxuJaBEA9IXpzRIM",
                 icono: "fa-broom",
                 tipo: "aspirador",
                 edificio: "CBB",
@@ -594,7 +510,7 @@
             },
             aspiradoresCBC: {
                 nombre: "Aspiradores CBC",
-                enlace: "https://chat.whatsapp.com/Jb8v3k0j9w55ShHP29y4OM", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/Jb8v3k0j9w55ShHP29y4OM",
                 icono: "fa-broom",
                 tipo: "aspirador",
                 edificio: "CBC",
@@ -604,35 +520,34 @@
             // --- OTROS GRUPOS ---
             sotanos: {
                 nombre: "Sótanos",
-                enlace: "https://chat.whatsapp.com/KW3h1J60tlA7ItqolN0RFM", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/KW3h1J60tlA7ItqolN0RFM",
                 icono: "fa-arrow-down",
                 tipo: "otro",
                 descripcion: "Personal de sótanos"
             },
             elevadores: {
                 nombre: "Elevadores",
-                enlace: "https://chat.whatsapp.com/IICcoQS5TMM5WuAEKTearu", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/IICcoQS5TMM5WuAEKTearu",
                 icono: "fa-elevator",
                 tipo: "otro",
                 descripcion: "Mantenimiento elevadores"
             },
             plazas: {
                 nombre: "Plazas y Exteriores",
-                enlace: "https://chat.whatsapp.com/IeJjBvpzZNnI1FeqPSCjLF", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/IeJjBvpzZNnI1FeqPSCjLF",
                 icono: "fa-tree",
                 tipo: "otro",
                 descripcion: "Áreas externas"
             },
             depositos: {
                 nombre: "Depósitos",
-                enlace: "https://chat.whatsapp.com/CX0jqIqwjVrJVVP8XeW7us", // <-- REEMPLAZAR
+                enlace: "https://chat.whatsapp.com/CX0jqIqwjVrJVVP8XeW7us",
                 icono: "fa-boxes",
                 tipo: "otro",
                 descripcion: "Personal de depósitos"
             }
         };
 
-        // Variable para controlar el estado del acordeón
         let aspiradoresVisible = false;
 
         // Función para crear tarjeta de grupo
@@ -655,7 +570,7 @@
             `;
         }
 
-        // Función para crear tarjeta de aspirador (igual que las demás para que se vean igual)
+        // Función para crear tarjeta de aspirador
         function crearTarjetaAspirador(id, grupo) {
             return `
                 <div class="grupo-card" data-id="${id}">
@@ -673,41 +588,25 @@
 
         // Función para cargar grupos
         function cargarGrupos() {
-            document.getElementById('overlay').style.display = 'flex';
+            const contenedorObligatorios = document.getElementById('grupos-obligatorios');
+            const contenedorEdificios = document.getElementById('grupos-edificios');
+            const contenedorAspiradores = document.getElementById('aspiradores-grid');
+            const contenedorOtros = document.getElementById('grupos-otros');
 
-            setTimeout(() => {
-                const contenedorObligatorios = document.getElementById('grupos-obligatorios');
-                const contenedorEdificios = document.getElementById('grupos-edificios');
-                const contenedorAspiradores = document.getElementById('aspiradores-grid');
-                const contenedorOtros = document.getElementById('grupos-otros');
-
-                contenedorObligatorios.innerHTML = '';
-                contenedorEdificios.innerHTML = '';
-                contenedorAspiradores.innerHTML = '';
-                contenedorOtros.innerHTML = '';
-
-                Object.entries(GRUPOS).forEach(([id, grupo]) => {
-                    if (grupo.tipo === 'obligatorio') {
-                        contenedorObligatorios.innerHTML += crearTarjetaGrupo(id, grupo);
-                    } 
-                    else if (grupo.tipo === 'edificio') {
-                        contenedorEdificios.innerHTML += crearTarjetaGrupo(id, grupo);
-                    }
-                    else if (grupo.tipo === 'aspirador') {
-                        contenedorAspiradores.innerHTML += crearTarjetaAspirador(id, grupo);
-                    }
-                    else if (grupo.tipo === 'otro') {
-                        contenedorOtros.innerHTML += crearTarjetaGrupo(id, grupo);
-                    }
-                });
-
-                // Si no hay aspiradores, ocultar el botón
-                if (contenedorAspiradores.children.length === 0) {
-                    document.querySelector('.aspiradores-section').style.display = 'none';
+            Object.entries(GRUPOS).forEach(([id, grupo]) => {
+                if (grupo.tipo === 'obligatorio') {
+                    contenedorObligatorios.innerHTML += crearTarjetaGrupo(id, grupo);
+                } 
+                else if (grupo.tipo === 'edificio') {
+                    contenedorEdificios.innerHTML += crearTarjetaGrupo(id, grupo);
                 }
-
-                document.getElementById('overlay').style.display = 'none';
-            }, 500);
+                else if (grupo.tipo === 'aspirador') {
+                    contenedorAspiradores.innerHTML += crearTarjetaAspirador(id, grupo);
+                }
+                else if (grupo.tipo === 'otro') {
+                    contenedorOtros.innerHTML += crearTarjetaGrupo(id, grupo);
+                }
+            });
         }
 
         // Función para mostrar/ocultar aspiradores
@@ -728,59 +627,8 @@
             aspiradoresVisible = !aspiradoresVisible;
         }
 
-        // Verificar sesión
-        document.addEventListener('DOMContentLoaded', function() {
-            checkSession();
-        });
-
-        function checkSession() {
-            const sessionKey = 'whatsappSessionTimestamp';
-            const sessionStart = localStorage.getItem(sessionKey);
-
-            if (sessionStart) {
-                const twentyFourHours = 24 * 60 * 60 * 1000;
-                const timeElapsed = new Date().getTime() - parseInt(sessionStart, 10);
-
-                if (timeElapsed < twentyFourHours) {
-                    document.getElementById('main-content').style.display = 'block';
-                    cargarGrupos();
-                    return;
-                }
-            }
-            promptForPassword();
-        }
-
-        function promptForPassword() {
-            Swal.fire({
-                title: 'Grupos WhatsApp',
-                html: 'Ingrese la contraseña para acceder',
-                input: 'password',
-                inputPlaceholder: 'Contraseña',
-                confirmButtonText: 'Ingresar',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                backdrop: `rgba(43, 62, 80, 0.8)`,
-                preConfirm: (password) => {
-                    if (password !== 'pisosbrillantes') { // Cambiar si se desea
-                        Swal.showValidationMessage('Contraseña incorrecta');
-                        return false;
-                    }
-                    return password;
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    localStorage.setItem('whatsappSessionTimestamp', new Date().getTime().toString());
-                    document.getElementById('main-content').style.display = 'block';
-                    cargarGrupos();
-                }
-            });
-        }
-
-        // Prevenir selección
-        document.addEventListener('selectstart', function(e) {
-            e.preventDefault();
-            return false;
-        });
+        // Cargar grupos al iniciar
+        document.addEventListener('DOMContentLoaded', cargarGrupos);
     </script>
 </body>
 </html>
