@@ -11,6 +11,12 @@
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data-1970-2030.min.js"></script>
+    
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     
     <link rel="icon" href="Imágenes/Icono.png" type="image/png">
     <link rel="manifest" href="/CCGLITE/manifest.json">
@@ -49,7 +55,6 @@
             user-select: none;
         }
 
-        /* Botón de instalación PWA */
         #install-button {
             display: none;
             padding: 12px 24px;
@@ -161,7 +166,6 @@
             margin: 10px 0;
         }
 
-        /* Notificaciones */
         #notification-icon {
             position: fixed;
             top: 20px;
@@ -203,8 +207,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Modales */
-        .notification-modal, .info-modal, .file-list-modal {
+        .notification-modal, .info-modal, .file-list-modal, .birthday-modal, .suggestion-modal, .permission-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -220,12 +223,12 @@
             transition: opacity 0.3s, visibility 0.3s;
         }
 
-        .notification-modal.active, .info-modal.active, .file-list-modal.active { opacity: 1; visibility: visible; }
+        .notification-modal.active, .info-modal.active, .file-list-modal.active, .birthday-modal.active, .suggestion-modal.active, .permission-modal.active { opacity: 1; visibility: visible; }
 
-        .notification-modal-content, .info-modal-content, .file-list-modal-content {
+        .notification-modal-content, .info-modal-content, .file-list-modal-content, .birthday-modal-content, .suggestion-modal-content, .permission-modal-content {
             background: white;
             width: 85%;
-            max-width: 500px;
+            max-width: 550px;
             max-height: 80vh;
             overflow-y: auto;
             border-radius: var(--border-radius);
@@ -238,9 +241,12 @@
 
         .notification-modal.active .notification-modal-content, 
         .info-modal.active .info-modal-content,
-        .file-list-modal.active .file-list-modal-content { transform: translateY(0); }
+        .file-list-modal.active .file-list-modal-content,
+        .birthday-modal.active .birthday-modal-content,
+        .suggestion-modal.active .suggestion-modal-content,
+        .permission-modal.active .permission-modal-content { transform: translateY(0); }
 
-        .notification-header, .info-header, .file-list-header {
+        .notification-header, .info-header, .file-list-header, .birthday-header, .suggestion-header, .permission-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -249,7 +255,7 @@
             border-bottom: 1px solid var(--gray-200);
         }
 
-        .notification-header h2, .info-header h2, .file-list-header h2 {
+        .notification-header h2, .info-header h2, .file-list-header h2, .birthday-header h2, .suggestion-header h2, .permission-header h2 {
             margin: 0;
             font-size: 1.5em;
             color: var(--primary);
@@ -268,7 +274,115 @@
         }
         .close-modal:hover { color: var(--secondary); transform: rotate(90deg); }
 
-        /* Estilos Lista de Notificaciones */
+        .suggestion-form, .permission-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group label i {
+            color: var(--primary);
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            padding: 12px 15px;
+            border: 1px solid var(--gray-300);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95em;
+            transition: var(--transition);
+            resize: vertical;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 115, 210, 0.1);
+        }
+        .form-group textarea {
+            min-height: 120px;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .form-note {
+            font-size: 0.8em;
+            color: var(--gray-600);
+            text-align: center;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .preview-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .preview-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--gray-300);
+            cursor: pointer;
+        }
+        .file-input-label {
+            background: var(--gray-200);
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-block;
+            width: 100%;
+        }
+        .file-input-label:hover {
+            background: var(--gray-300);
+        }
+
+        .consulta-card {
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .estado-pendiente { background: #FFF3CD; color: #856404; padding: 5px 12px; border-radius: 20px; display: inline-block; }
+        .estado-aprobado { background: #D4EDDA; color: #155724; padding: 5px 12px; border-radius: 20px; display: inline-block; }
+        .estado-cancelado { background: #F8D7DA; color: #721C24; padding: 5px 12px; border-radius: 20px; display: inline-block; }
+
+        .consulta-buscar-btn {
+            margin-top: 15px;
+            width: 100%;
+        }
+
         .notification-list { list-style-type: none; padding: 0; margin: 0; }
         .notification-item {
             background: var(--gray-100);
@@ -298,7 +412,6 @@
         }
         .refresh-button:hover { background: var(--primary); color: white; transform: rotate(180deg); }
 
-        /* Estilos Info Creador */
         .creator-info { text-align: center; }
         .creator-info img {
             width: 100px; height: 100px;
@@ -310,7 +423,159 @@
         .creator-info a { color: var(--primary); text-decoration: none; transition: var(--transition); }
         .creator-info a:hover { color: var(--primary-dark); text-decoration: underline; }
 
-        /* --- ESTILOS PANTALLA DE CARGA (OVERLAY) --- */
+        .birthday-stats {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: white;
+        }
+        .birthday-stats h3 {
+            font-size: 2em;
+            margin: 0;
+            font-weight: 700;
+        }
+        .birthday-stats p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+        }
+        .birthday-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .birthday-card {
+            background: linear-gradient(135deg, #fff, #fef5f5);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+        }
+        .birthday-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--secondary);
+        }
+        .birthday-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary), #ff9a9a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8em;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .birthday-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .birthday-details {
+            flex: 1;
+        }
+        .birthday-details h4 {
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .birthday-details .birthday-date-full {
+            font-size: 0.85em;
+            color: var(--secondary);
+            font-weight: 500;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .birthday-badge {
+            background: linear-gradient(135deg, var(--secondary), #ff8e8e);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-align: center;
+            min-width: 70px;
+        }
+        .no-birthdays {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--gray-600);
+        }
+        .no-birthdays i {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .month-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        .month-nav-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+        .month-nav-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+        .month-nav-btn:active {
+            transform: scale(0.95);
+        }
+        .current-month-display {
+            flex: 1;
+            text-align: center;
+            background: var(--gray-100);
+            padding: 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1em;
+        }
+        .reset-month-btn {
+            background: var(--gray-200);
+            color: var(--primary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+        }
+        .reset-month-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(180deg);
+        }
+
         #overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: rgba(255, 255, 255, 0.95); 
@@ -326,11 +591,9 @@
             margin-bottom: 20px; 
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        #loadingMessage { text-align: center; color: var(--dark); }
-        #loadingMessage h4 { margin: 0 0 10px; font-size: 1.3rem; font-weight: bold; }
-        #loadingMessage p { margin: 0; color: #7f8c8d; font-weight: normal; }
+        #loadingMessage { text-align: center; }
+        #loadingMessage p { margin: 0; color: #000000; font-weight: bold; }
 
-        /* --- ESTILOS LISTA DE ARCHIVOS --- */
         #file-list-container { display: flex; flex-direction: column; gap: 15px; }
         .file-block {
             background: white;
@@ -369,6 +632,8 @@
             .menu-item span { font-size: 1.8em; }
             .menu-item p { font-size: 0.9em; }
             .header { font-size: 1.2em; padding: 15px 0; }
+            .birthday-avatar { width: 50px; height: 50px; font-size: 1.4em; }
+            .birthday-badge { padding: 5px 12px; font-size: 0.75em; min-width: 60px; }
         }
         @media screen and (max-width: 480px) {
             .menu-container { grid-template-columns: 1fr 1fr; }
@@ -380,13 +645,28 @@
             footer { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
         }
 
-        /* Estilo especial para carpetas */
         .folder-item span {
             background: linear-gradient(135deg, var(--warning), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
+        .ui-autocomplete {
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            z-index: 10000;
+        }
+        .ui-menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        .ui-menu-item:hover {
+            background: var(--gray-100);
+        }
     </style>
 </head>
 
@@ -397,8 +677,7 @@
 <div id="overlay">
     <div class="spinner"></div>
     <div id="loadingMessage">
-        <h4>Buscando Planificación...</h4>
-        <p>Por favor espera un momento...</p>
+        <p><strong>Por favor espera un momento...</strong></p>
     </div>
 </div>
 
@@ -407,19 +686,22 @@
     
     <div class="app-container">
         <div class="menu-container">
-
             <div class="menu-item folder-item" onclick="window.location.href='Pag - Primeros Pasos.html';">
                 <span><i class="fas fa-folder"></i></span>
                 <p>Primeros Pasos</p>
             </div>
 
+            <div class="menu-item folder-item" onclick="window.location.href='Pag - Reportería.html';">
+                <span><i class="fas fa-folder"></i></span>
+                <p>Reportería</p>
+            </div>
+
+            <div class="separator"></div>
            
             <div class="menu-item" onclick="window.location.href='Registro de Participación.html';">
                 <span><i class="fa-solid fa-graduation-cap"></i></span>
                 <p>Registro de Participación</p>
             </div>
-
-            <div class="separator"></div>
 
 
             <div class="menu-item" onclick="window.location.href='Control de Llaves.html';">
@@ -427,24 +709,36 @@
                 <p>Control de Llaves</p>
             </div>  
             
-            <div class="menu-item" onclick="window.location.href='Pag - Reportería.html';">
-                <span><i class="fas fa-chart-line"></i></span>
-                <p>Reportería</p>
-            </div>
-
             <div class="separator"></div>
-
 
             <div class="menu-item" onclick="cargarPlanificacion()">
                 <span><i class="fas fa-calendar-alt"></i></span>
                 <p>Planificación Semana <span id="week-display" style="font-size: inherit;">#</span></p>
             </div>
           
+            <div class="menu-item" onclick="mostrarOpcionesPermiso()">
+                <span><i class="fas fa-file-alt"></i></span>
+                <p>Gestión de Permisos</p>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="menu-item" onclick="mostrarCumpleaños()">
+                <span><i class="fas fa-birthday-cake"></i></span>
+                <p>Cumpleañeros del Mes</p>
+            </div>
+
+            <div class="menu-item" onclick="mostrarBuzon()">
+                <span><i class="fas fa-envelope-open-text"></i></span>
+                <p>Buzón de Sugerencias</p>
+            </div>
+
+            <div class="separator"></div>
+
             <div class="menu-item" onclick="mostrarInfo()">
                 <span><i class="fas fa-info-circle"></i></span>
                 <p>Acerca de</p>
             </div>
-            
         </div>
     </div>
 
@@ -495,6 +789,130 @@
         </div>
     </div>
 
+    <div id="birthday-modal" class="birthday-modal">
+        <div class="birthday-modal-content">
+            <div class="birthday-header">
+                <h2><i class="fas fa-birthday-cake"></i> Cumpleañeros del Mes</h2>
+                <button class="close-modal" onclick="cerrarCumpleaños()">&times;</button>
+            </div>
+            <div id="birthday-list-container"></div>
+        </div>
+    </div>
+
+    <div id="suggestion-modal" class="suggestion-modal">
+        <div class="suggestion-modal-content">
+            <div class="suggestion-header">
+                <h2><i class="fas fa-envelope-open-text"></i> Buzón de Sugerencias</h2>
+                <button class="close-modal" onclick="cerrarBuzon()">&times;</button>
+            </div>
+            <form id="suggestion-form" class="suggestion-form">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Tu nombre</label>
+                    <input type="text" id="sugerencia-nombre" placeholder="Escribe tu nombre completo" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-comment-dots"></i> Tu sugerencia o comentario</label>
+                    <textarea id="sugerencia-mensaje" placeholder="Comparte tu sugerencia, idea o comentario..." required maxlength="500"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Enviar sugerencia
+                </button>
+                <div class="form-note">
+                    <i class="fas fa-lock"></i> Tu opinión será revisada por coordinación
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="opciones-permiso-modal" class="permission-modal">
+        <div class="permission-modal-content">
+            <div class="permission-header">
+                <h2><i class="fas fa-file-alt"></i> Gestión de Permisos</h2>
+                <button class="close-modal" onclick="cerrarOpcionesPermiso()">&times;</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button class="submit-btn" onclick="cerrarOpcionesPermiso(); mostrarSolicitarPermiso();" style="background: linear-gradient(135deg, #28A745, #1e7e34);">
+                    <i class="fas fa-plus-circle"></i> Solicitar nuevo permiso
+                </button>
+                <button class="submit-btn" onclick="cerrarOpcionesPermiso(); mostrarConsultarPermiso();" style="background: linear-gradient(135deg, #17A2B8, #117a8b);">
+                    <i class="fas fa-search"></i> Consultar estado de mi permiso
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="solicitar-permiso-modal" class="permission-modal">
+        <div class="permission-modal-content">
+            <div class="permission-header">
+                <h2><i class="fas fa-plus-circle"></i> Solicitar Permiso</h2>
+                <button class="close-modal" onclick="cerrarSolicitarPermiso()">&times;</button>
+            </div>
+            <form id="permission-form" class="permission-form">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Colaborador</label>
+                    <input type="text" id="permission-nombre" placeholder="Escribe tu nombre..." required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Número de contacto</label>
+                    <input type="tel" id="permission-telefono" placeholder="Ej: 98765432" maxlength="8" pattern="\d{8}" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-alt"></i> Fecha del permiso</label>
+                    <input type="date" id="permission-fecha" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Tipo de Permiso</label>
+                    <select id="permission-tipo" required>
+                        <option value="">Seleccione...</option>
+                        <option value="dias">Días</option>
+                        <option value="horas">Horas</option>
+                    </select>
+                </div>
+                <div id="campo-dias" class="form-group" style="display:none;">
+                    <label><i class="fas fa-calendar-week"></i> Cantidad de días</label>
+                    <input type="number" id="permission-dias" min="0.5" step="0.5" placeholder="Ej: 1, 1.5, 2">
+                </div>
+                <div id="campo-horas" class="form-group" style="display:none;">
+                    <label><i class="fas fa-clock"></i> Horario del permiso</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="time" id="permission-hora-inicio" placeholder="Hora inicio" style="flex:1">
+                        <span>a</span>
+                        <input type="time" id="permission-hora-fin" placeholder="Hora fin" style="flex:1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-comment"></i> Motivo del permiso</label>
+                    <textarea id="permission-motivo" placeholder="Describe el motivo de tu solicitud..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-camera"></i> Evidencia (fotos)</label>
+                    <div class="file-input-label" onclick="document.getElementById('permission-fotos').click()">
+                        <i class="fas fa-upload"></i> Seleccionar imágenes
+                    </div>
+                    <input type="file" id="permission-fotos" accept="image/*" multiple style="display:none;">
+                    <div id="preview-container" class="preview-images"></div>
+                </div>
+                <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Enviar solicitud</button>
+                <div class="form-note"><i class="fas fa-shield-alt"></i> Recibirás un código de seguimiento</div>
+            </form>
+        </div>
+    </div>
+
+    <div id="consultar-permiso-modal" class="permission-modal">
+        <div class="permission-modal-content">
+            <div class="permission-header">
+                <h2><i class="fas fa-search"></i> Consultar mi Permiso</h2>
+                <button class="close-modal" onclick="cerrarConsultarPermiso()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-hashtag"></i> Código de solicitud</label>
+                <input type="text" id="consulta-codigo" placeholder="Ej: A1B2C" maxlength="5" style="text-transform:uppercase">
+            </div>
+            <button class="submit-btn consulta-buscar-btn" onclick="buscarMiPermiso()"><i class="fas fa-search"></i> Buscar solicitud</button>
+            <div id="resultado-consulta"></div>
+        </div>
+    </div>
+
     <footer>
         JZ © <span id="current-year"></span> - Sistema de Gestión
     </footer>
@@ -505,6 +923,18 @@
 
         function mostrarInfo() { document.getElementById('info-modal').classList.add('active'); }
         function cerrarInfo() { document.getElementById('info-modal').classList.remove('active'); }
+
+        function getCurrentDateInHonduras() {
+            return moment.tz('America/Tegucigalpa');
+        }
+
+        function getWeekNumberInHonduras() {
+            return getCurrentDateInHonduras().isoWeek();
+        }
+
+        const semanaActual = getWeekNumberInHonduras();
+        const weekDisplay = document.getElementById('week-display');
+        if(weekDisplay) weekDisplay.textContent = "#" + semanaActual;
 
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -600,50 +1030,13 @@
         window.addEventListener("load", verificarNotificaciones);
         setInterval(verificarNotificaciones, 10000);
 
-        function promptForRRHH() {
-            const sessionKey = 'passwordSessionTimestamp';
-            const sessionStart = localStorage.getItem(sessionKey);
-            if (sessionStart && (new Date().getTime() - parseInt(sessionStart, 10) < 86400000)) {
-                window.location.href = 'Pag - RRHH.html';
-                return;
-            }
-            Swal.fire({
-                title: 'Acceso Restringido', html: 'Ingrese la contraseña para RRHH.', input: 'password', confirmButtonText: 'Ingresar', showCancelButton: true, cancelButtonText: 'Cancelar', backdrop: `rgba(43, 62, 80, 0.8)`,
-                preConfirm: (pass) => { if (pass !== 'macdel1') { Swal.showValidationMessage('Contraseña incorrecta'); return false; } return pass; }
-            }).then((res) => { if (res.isConfirmed) { localStorage.setItem(sessionKey, new Date().getTime().toString()); window.location.href = 'Pag - RRHH.html'; } });
-        }
-
-        function promptForActualizacion() {
-            const sessionKey = 'actualizacionDatosSessionTimestamp';
-            const sessionStart = localStorage.getItem(sessionKey);
-            if (sessionStart && (new Date().getTime() - parseInt(sessionStart, 10) < 86400000)) {
-                window.location.href = 'Actualización de Datos.html';
-                return;
-            }
-            Swal.fire({
-                title: 'Acceso Restringido', html: 'Ingrese la contraseña para Actualizar Datos.', input: 'password', confirmButtonText: 'Ingresar', showCancelButton: true, cancelButtonText: 'Cancelar', backdrop: `rgba(43, 62, 80, 0.8)`,
-                preConfirm: (pass) => { if (pass !== 'pisos123') { Swal.showValidationMessage('Contraseña incorrecta'); return false; } return pass; }
-            }).then((res) => { if (res.isConfirmed) { localStorage.setItem(sessionKey, new Date().getTime().toString()); window.location.href = 'Actualización de Datos.html'; } });
-        }
-
         const PLANIFICACION_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygzRsx6xQ3ETEN_zfpqqz8XHWetIqklRJmR35_b-ippTXcercaq14-aTJRDBrwLxLDrA/exec";
         let imagenesGlobales = [];
-
-        function getWeekNumber(d) {
-            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-            return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
-        }
-
-        const semanaActual = getWeekNumber(new Date());
-        const weekDisplay = document.getElementById('week-display');
-        if(weekDisplay) weekDisplay.textContent = "#" + semanaActual;
 
         async function cargarPlanificacion() {
             document.getElementById('overlay').style.display = 'flex';
             try {
-                const response = await fetch(PLANIFICACION_SCRIPT_URL);
+                const response = await fetch(PLANIFICACION_SCRIPT_URL + "?t=" + new Date().getTime());
                 const data = await response.json();
                 document.getElementById('overlay').style.display = 'none';
 
@@ -696,47 +1089,536 @@
             setTimeout(() => { document.getElementById('file-list-container').innerHTML = ''; imagenesGlobales = []; }, 300);
         }
 
-// --- REGISTRO DE SERVICE WORKER CON ACTUALIZACIÓN AUTOMÁTICA ---
-if ('serviceWorker' in navigator) {
-    // Detectar cuando el Service Worker cambia y recargar
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('Nueva versión del Service Worker detectada. Recargando...');
-        window.location.reload();
-    });
-    
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw-index.js')
-            .then(function(registration) {
-                console.log('Service Worker Index registrado con éxito:', registration.scope);
-                
-                // Verificar actualizaciones al cargar la página
-                registration.update();
-                
-                // Verificar actualizaciones cada hora
-                setInterval(() => {
-                    registration.update();
-                    console.log('Verificando actualizaciones del Service Worker...');
-                }, 60 * 60 * 1000);
-                
-            }, function(err) {
-                console.log('Fallo al registrar Service Worker Index:', err);
-            });
-    });
-    
-    // Verificar actualizaciones cuando la página recibe foco
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            navigator.serviceWorker.ready.then(registration => {
-                registration.update();
-                console.log('Verificando actualizaciones (página visible)');
-            });
+        const SUGERENCIA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3SPRvdr6hWWkNNqUFDO7XwZybJ0oRawjJ06V2XgZI6tKbY0Vsa9nFUV8Zc6rcmNlu/exec";
+
+        function mostrarBuzon() {
+            document.getElementById('suggestion-modal').classList.add('active');
+            document.getElementById('sugerencia-nombre').value = '';
+            document.getElementById('sugerencia-mensaje').value = '';
         }
-    });
+
+        function cerrarBuzon() {
+            document.getElementById('suggestion-modal').classList.remove('active');
+        }
+
+        document.getElementById('suggestion-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('sugerencia-nombre').value.trim();
+            const mensaje = document.getElementById('sugerencia-mensaje').value.trim();
+            
+            if (!nombre) {
+                Swal.fire('Error', 'Por favor ingresa tu nombre', 'error');
+                return;
+            }
+            if (!mensaje) {
+                Swal.fire('Error', 'Por favor escribe tu sugerencia', 'error');
+                return;
+            }
+            if (mensaje.length < 5) {
+                Swal.fire('Error', 'El mensaje debe tener al menos 5 caracteres', 'error');
+                return;
+            }
+            
+            const fechaHonduras = getCurrentDateInHonduras();
+            const fechaFormateada = fechaHonduras.format('YYYY-MM-DD HH:mm:ss');
+            
+            document.getElementById('overlay').style.display = 'flex';
+            
+            try {
+                await fetch(SUGERENCIA_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        accion: 'sugerencia',
+                        fecha: fechaFormateada,
+                        nombre: nombre,
+                        mensaje: mensaje
+                    })
+                });
+                
+                document.getElementById('overlay').style.display = 'none';
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Sugerencia enviada!',
+                    text: 'Gracias por tu aporte, lo revisaremos pronto.',
+                    confirmButtonColor: '#2C73D2'
+                });
+                
+                cerrarBuzon();
+                
+            } catch (error) {
+                document.getElementById('overlay').style.display = 'none';
+                console.error('Error al enviar sugerencia:', error);
+                Swal.fire('Error', 'No se pudo enviar la sugerencia. Intenta de nuevo.', 'error');
+            }
+        });
+
+        // ==================== GESTIÓN DE PERMISOS ====================
+        const PERMISO_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzyW8BXlcFBrVl2Ju_OsIifEfXGz4i7uskZzyd7iUxtozqijjDJBdN00MBcoM-CDAn3-A/exec";
+        
+        let nombresColaboradores = [];
+        let archivosSeleccionados = [];
+
+        async function cargarNombres() {
+            try {
+                const response = await fetch("https://script.google.com/macros/s/AKfycbzzc0oprrMXsDIAOIkdHZaVj3gwI2u0uliSLtIKWRueTfHn8jJWAbYXkWOz0uPNwDDK/exec?t=" + Date.now());
+                const data = await response.json();
+                nombresColaboradores = data.activos?.map(p => p.nombre).filter(n => n) || [];
+            } catch(e) { console.error(e); }
+        }
+
+        function configurarAutocompletado() {
+            $("#permission-nombre").autocomplete({ source: nombresColaboradores, minLength: 1 });
+        }
+
+        function generarCodigo() {
+            const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+            let codigo = '';
+            for (let i = 0; i < 5; i++) {
+                codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            return codigo;
+        }
+
+        document.getElementById('permission-tipo')?.addEventListener('change', function() {
+            const tipo = this.value;
+            document.getElementById('campo-dias').style.display = tipo === 'dias' ? 'flex' : 'none';
+            document.getElementById('campo-horas').style.display = tipo === 'horas' ? 'flex' : 'none';
+        });
+
+        function mostrarOpcionesPermiso() { document.getElementById('opciones-permiso-modal').classList.add('active'); }
+        function cerrarOpcionesPermiso() { document.getElementById('opciones-permiso-modal').classList.remove('active'); }
+        
+        function mostrarSolicitarPermiso() {
+            document.getElementById('solicitar-permiso-modal').classList.add('active');
+            document.getElementById('permission-form').reset();
+            document.getElementById('preview-container').innerHTML = '';
+            archivosSeleccionados = [];
+            document.getElementById('permission-fecha').value = getCurrentDateInHonduras().format('YYYY-MM-DD');
+            document.getElementById('campo-dias').style.display = 'none';
+            document.getElementById('campo-horas').style.display = 'none';
+        }
+        function cerrarSolicitarPermiso() { document.getElementById('solicitar-permiso-modal').classList.remove('active'); }
+        
+        function mostrarConsultarPermiso() {
+            document.getElementById('consultar-permiso-modal').classList.add('active');
+            document.getElementById('consulta-codigo').value = '';
+            document.getElementById('resultado-consulta').innerHTML = '';
+        }
+        function cerrarConsultarPermiso() { document.getElementById('consultar-permiso-modal').classList.remove('active'); }
+
+        document.getElementById('permission-fotos')?.addEventListener('change', function(e) {
+            archivosSeleccionados = Array.from(e.target.files);
+            const preview = document.getElementById('preview-container');
+            preview.innerHTML = '';
+            archivosSeleccionados.forEach((file, idx) => {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.className = 'preview-image';
+                    img.onclick = () => {
+                        archivosSeleccionados.splice(idx, 1);
+                        const dt = new DataTransfer();
+                        archivosSeleccionados.forEach(f => dt.items.add(f));
+                        document.getElementById('permission-fotos').files = dt.files;
+                        preview.removeChild(img);
+                    };
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        async function subirImagenesALDrive(codigo) {
+            const urls = [];
+            for (const file of archivosSeleccionados) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('codigo', codigo);
+                formData.append('accion', 'upload');
+                
+                try {
+                    const response = await fetch(PERMISO_SCRIPT_URL, { method: 'POST', body: formData });
+                    const result = await response.json();
+                    if (result.success && result.url) {
+                        urls.push(result.url);
+                    } else {
+                        console.error('Error subiendo archivo:', result);
+                    }
+                } catch (error) {
+                    console.error('Error en fetch:', error);
+                }
+            }
+            return urls;
+        }
+
+        document.getElementById('permission-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('permission-nombre').value.trim();
+            const telefono = document.getElementById('permission-telefono').value.trim();
+            const fecha = document.getElementById('permission-fecha').value;
+            const tipo = document.getElementById('permission-tipo').value;
+            const motivo = document.getElementById('permission-motivo').value.trim();
+            
+            if (!nombre) return Swal.fire('Error', 'Selecciona tu nombre', 'error');
+            if (!telefono || !/^\d{8}$/.test(telefono)) return Swal.fire('Error', 'Ingresa 8 dígitos válidos', 'error');
+            if (!fecha) return Swal.fire('Error', 'Selecciona la fecha', 'error');
+            if (!tipo) return Swal.fire('Error', 'Selecciona el tipo de permiso', 'error');
+            if (!motivo) return Swal.fire('Error', 'Describe el motivo', 'error');
+            
+            let cantidadDias = '';
+            let horasPermiso = '';
+            
+            if (tipo === 'dias') {
+                cantidadDias = document.getElementById('permission-dias').value;
+                if (!cantidadDias) return Swal.fire('Error', 'Ingresa la cantidad de días', 'error');
+            } else if (tipo === 'horas') {
+                const horaInicio = document.getElementById('permission-hora-inicio').value;
+                const horaFin = document.getElementById('permission-hora-fin').value;
+                if (!horaInicio || !horaFin) return Swal.fire('Error', 'Ingresa el horario del permiso', 'error');
+                const convertirHora = (h) => {
+                    let [hh, mm] = h.split(':');
+                    let periodo = hh >= 12 ? 'PM' : 'AM';
+                    let hh12 = hh % 12 || 12;
+                    return `${hh12}:${mm} ${periodo}`;
+                };
+                horasPermiso = `${convertirHora(horaInicio)} - ${convertirHora(horaFin)}`;
+            }
+            
+            const codigo = generarCodigo();
+            document.getElementById('overlay').style.display = 'flex';
+            
+            try {
+                let fotosUrls = [];
+                if (archivosSeleccionados.length) {
+                    fotosUrls = await subirImagenesALDrive(codigo);
+                }
+                
+                await fetch(PERMISO_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        accion: 'permiso',
+                        codigo: codigo,
+                        fechaSolicitud: getCurrentDateInHonduras().format('YYYY-MM-DD HH:mm:ss'),
+                        fechaPermiso: fecha,
+                        tipoPermiso: tipo,
+                        cantidadDias: cantidadDias,
+                        horasPermiso: horasPermiso,
+                        colaborador: nombre,
+                        telefono: telefono,
+                        motivo: motivo,
+                        fotos: fotosUrls.join(';'),
+                        estado: 'Pendiente'
+                    })
+                });
+                
+                Swal.fire({ icon: 'success', title: '¡Solicitud enviada!', html: `Tu código: <strong style="font-size:1.5em">${codigo}</strong><br>Guárdalo para consultar el estado` });
+                cerrarSolicitarPermiso();
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'No se pudo enviar la solicitud', 'error');
+            }
+            document.getElementById('overlay').style.display = 'none';
+        });
+
+function formatearFechaParaMostrar(fechaStr) {
+    if (!fechaStr) return '';
+    
+    // Limpiar la fecha: eliminar la 'T' y la 'Z' si existen
+    let fechaLimpia = fechaStr.replace('T', ' ').replace('Z', '');
+    
+    // Intentar crear un objeto Date
+    let fecha = new Date(fechaLimpia);
+    
+    // Verificar si la fecha es válida
+    if (!isNaN(fecha.getTime())) {
+        // Formatear como DD/MM/YYYY HH:MM:SS
+        let dia = fecha.getDate().toString().padStart(2, '0');
+        let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+        let anio = fecha.getFullYear();
+        let horas = fecha.getHours().toString().padStart(2, '0');
+        let minutos = fecha.getMinutes().toString().padStart(2, '0');
+        let segundos = fecha.getSeconds().toString().padStart(2, '0');
+        
+        return `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
+    }
+    
+    // Si no se pudo parsear, devolver el texto original
+    return fechaStr;
 }
 
+
+
+async function buscarMiPermiso() {
+    const codigo = document.getElementById('consulta-codigo').value.trim().toUpperCase();
+    if (!codigo) return Swal.fire('Error', 'Ingresa el código', 'error');
+    
+    document.getElementById('overlay').style.display = 'flex';
+    try {
+        const response = await fetch(PERMISO_SCRIPT_URL + "?accion=consultar&codigo=" + codigo + "&t=" + Date.now());
+        const data = await response.json();
+        document.getElementById('overlay').style.display = 'none';
         
+        const container = document.getElementById('resultado-consulta');
+        if (data.success && data.solicitud) {
+            const s = data.solicitud;
+            let estadoClass = s.estado === 'Pendiente' ? 'estado-pendiente' : (s.estado === 'Aprobado' ? 'estado-aprobado' : 'estado-cancelado');
+            let fotosHtml = '';
+            if (s.fotos && s.fotos.trim()) {
+                fotosHtml = `<div class="preview-images">${s.fotos.split(';').map(f => `<img src="${f}" class="preview-image" onclick="window.open('${f}','_blank')">`).join('')}</div>`;
+            }
+            let detallePermiso = s.tipoPermiso === 'dias' ? `${s.cantidadDias} día(s)` : s.horasPermiso;
+            
+            // IMPORTANTE: Usar la función formatearFechaParaMostrar para la fecha
+            let fechaSolicitudFormateada = formatearFechaParaMostrar(s.fechaSolicitud);
+            let fechaPermisoFormateada = s.fechaPermiso; // La fecha de permiso ya viene como YYYY-MM-DD normalmente
+            
+            // Si la fecha de permiso también viene con formato raro, formatearla también
+            if (s.fechaPermiso && s.fechaPermiso.includes('T')) {
+                fechaPermisoFormateada = formatearFechaParaMostrar(s.fechaPermiso);
+            } else if (s.fechaPermiso && s.fechaPermiso.match(/^\d{4}-\d{2}-\d{2}/)) {
+                // Si es YYYY-MM-DD, convertir a DD/MM/YYYY
+                let partes = s.fechaPermiso.split('-');
+                if (partes.length === 3) {
+                    fechaPermisoFormateada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+                }
+            }
+            
+            container.innerHTML = `
+                <div class="consulta-card">
+                    <p><strong>Código:</strong> ${s.codigo}</p>
+                    <p><strong>Fecha solicitud:</strong> ${fechaSolicitudFormateada}</p>
+                    <p><strong>Fecha permiso:</strong> ${fechaPermisoFormateada}</p>
+                    <p><strong>Tipo/Duración:</strong> ${detallePermiso}</p>
+                    <p><strong>Colaborador:</strong> ${s.colaborador}</p>
+                    <p><strong>Teléfono:</strong> ${s.telefono}</p>
+                    <p><strong>Motivo:</strong> ${s.motivo}</p>
+                    ${fotosHtml}
+                    <p><strong>Estado:</strong> <span class="${estadoClass}">${s.estado}</span></p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = '<div class="consulta-card" style="background:#F8D7DA; color:#721C24;">No se encontró ninguna solicitud con ese código</div>';
+        }
+    } catch (error) {
+        document.getElementById('overlay').style.display = 'none';
+        console.error('Error:', error);
+        Swal.fire('Error', 'No se pudo consultar la solicitud', 'error');
+    }
+}
+
+
+        // ==================== CUMPLEAÑEROS ====================
+        const BIRTHDAY_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzc0oprrMXsDIAOIkdHZaVj3gwI2u0uliSLtIKWRueTfHn8jJWAbYXkWOz0uPNwDDK/exec";
+
+        const mesesEspanol = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        
+        let datosActivosGlobal = null;
+        let mesActual = null;
+        let yearActual = null;
+
+        async function cargarDatosActivos() {
+            if (datosActivosGlobal) return datosActivosGlobal;
+            
+            const response = await fetch(BIRTHDAY_SCRIPT_URL + "?t=" + new Date().getTime());
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+            
+            datosActivosGlobal = data.activos || [];
+            return datosActivosGlobal;
+        }
+
+        function obtenerCumpleañerosPorMes(mes, year, activos) {
+            return activos.filter(persona => {
+                if (!persona.fechaNacimiento) return false;
+                const fechaNac = moment.tz(persona.fechaNacimiento, 'America/Tegucigalpa');
+                if (!fechaNac.isValid()) return false;
+                return fechaNac.month() === mes;
+            }).map(persona => {
+                const fechaNac = moment.tz(persona.fechaNacimiento, 'America/Tegucigalpa');
+                return {
+                    nombre: persona.nombre,
+                    fechaNacimiento: persona.fechaNacimiento,
+                    dia: fechaNac.date(),
+                    mes: fechaNac.month(),
+                    fotoUrl: persona.fotoUrl || null
+                };
+            }).sort((a, b) => a.dia - b.dia);
+        }
+
+        function renderizarCumpleaños(activos, mes, year) {
+            const cumpleañeros = obtenerCumpleañerosPorMes(mes, year, activos);
+            const nombreMes = mesesEspanol[mes];
+            const container = document.getElementById('birthday-list-container');
+            container.innerHTML = '';
+            
+            const navDiv = document.createElement('div');
+            navDiv.className = 'month-navigation';
+            navDiv.innerHTML = `
+                <button class="month-nav-btn" id="prev-month-btn"><i class="fas fa-chevron-left"></i></button>
+                <div class="current-month-display">${nombreMes} ${year}</div>
+                <button class="month-nav-btn" id="next-month-btn"><i class="fas fa-chevron-right"></i></button>
+                <button class="reset-month-btn" id="reset-month-btn" title="Volver al mes actual"><i class="fas fa-calendar-day"></i></button>
+            `;
+            container.appendChild(navDiv);
+            
+            if (cumpleañeros.length === 0) {
+                const noBirthdaysDiv = document.createElement('div');
+                noBirthdaysDiv.className = 'no-birthdays';
+                noBirthdaysDiv.innerHTML = `
+                    <i class="fas fa-sad-tear"></i>
+                    <p>No hay cumpleañeros registrados para ${nombreMes}</p>
+                `;
+                container.appendChild(noBirthdaysDiv);
+            } else {
+                const statsDiv = document.createElement('div');
+                statsDiv.className = 'birthday-stats';
+                statsDiv.innerHTML = `
+                    <h3>${cumpleañeros.length}</h3>
+                    <p>${cumpleañeros.length === 1 ? 'cumpleañero' : 'cumpleañeros'} en ${nombreMes}</p>
+                `;
+                container.appendChild(statsDiv);
+                
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'birthday-grid';
+                
+                cumpleañeros.forEach(persona => {
+                    const card = document.createElement('div');
+                    card.className = 'birthday-card';
+                    
+                    let avatarHtml = '';
+                    if (persona.fotoUrl && persona.fotoUrl.trim() !== '') {
+                        avatarHtml = `<img src="${persona.fotoUrl}" alt="${persona.nombre}" onerror="this.src=''; this.onerror=null; this.parentElement.innerHTML='<i class=\\\\'fas fa-user\\\\'></i>'">`;
+                    } else {
+                        avatarHtml = `<i class="fas fa-user"></i>`;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="birthday-avatar">
+                            ${avatarHtml}
+                        </div>
+                        <div class="birthday-details">
+                            <h4>${persona.nombre}</h4>
+                            <div class="birthday-date-full">
+                                <i class="fas fa-calendar-alt"></i> ${persona.dia} de ${nombreMes}
+                            </div>
+                        </div>
+                        <div class="birthday-badge">
+                            <i class="fas fa-gift"></i> ${persona.dia}
+                        </div>
+                    `;
+                    gridDiv.appendChild(card);
+                });
+                
+                container.appendChild(gridDiv);
+            }
+            
+            document.getElementById('prev-month-btn').addEventListener('click', () => cambiarMes(-1));
+            document.getElementById('next-month-btn').addEventListener('click', () => cambiarMes(1));
+            document.getElementById('reset-month-btn').addEventListener('click', () => resetearMes());
+        }
+        
+        async function cambiarMes(delta) {
+            let nuevoMes = mesActual + delta;
+            let nuevoYear = yearActual;
+            
+            if (nuevoMes < 0) {
+                nuevoMes = 11;
+                nuevoYear--;
+            } else if (nuevoMes > 11) {
+                nuevoMes = 0;
+                nuevoYear++;
+            }
+            
+            mesActual = nuevoMes;
+            yearActual = nuevoYear;
+            
+            document.getElementById('overlay').style.display = 'flex';
+            try {
+                const activos = await cargarDatosActivos();
+                renderizarCumpleaños(activos, mesActual, yearActual);
+            } catch (error) {
+                console.error('Error al cambiar mes:', error);
+            } finally {
+                document.getElementById('overlay').style.display = 'none';
+            }
+        }
+        
+        async function resetearMes() {
+            const hondurasDate = getCurrentDateInHonduras();
+            mesActual = hondurasDate.month();
+            yearActual = hondurasDate.year();
+            
+            document.getElementById('overlay').style.display = 'flex';
+            try {
+                const activos = await cargarDatosActivos();
+                renderizarCumpleaños(activos, mesActual, yearActual);
+            } catch (error) {
+                console.error('Error al resetear mes:', error);
+            } finally {
+                document.getElementById('overlay').style.display = 'none';
+            }
+        }
+
+        async function mostrarCumpleaños() {
+            document.getElementById('overlay').style.display = 'flex';
+            
+            try {
+                const activos = await cargarDatosActivos();
+                const hondurasDate = getCurrentDateInHonduras();
+                mesActual = hondurasDate.month();
+                yearActual = hondurasDate.year();
+                
+                renderizarCumpleaños(activos, mesActual, yearActual);
+                document.getElementById('birthday-modal').classList.add('active');
+                
+            } catch (error) {
+                console.error('Error cargando cumpleañeros:', error);
+                Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+            } finally {
+                document.getElementById('overlay').style.display = 'none';
+            }
+        }
+        
+        function cerrarCumpleaños() {
+            document.getElementById('birthday-modal').classList.remove('active');
+        }
+
+        cargarNombres().then(() => configurarAutocompletado());
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('Nueva versión del Service Worker detectada. Recargando...');
+                window.location.reload();
+            });
+            
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw-index.js')
+                    .then(function(registration) {
+                        console.log('Service Worker Index registrado con éxito:', registration.scope);
+                        registration.update();
+                        setInterval(() => {
+                            registration.update();
+                        }, 60 * 60 * 1000);
+                    }, function(err) {
+                        console.log('Fallo al registrar Service Worker Index:', err);
+                    });
+            });
+            
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.update();
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>
-
-
