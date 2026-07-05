@@ -2240,33 +2240,30 @@
                     
                     actualizarContadores();
                     
-                    let mensajeHTML = `
-                        <div style="text-align: center;">
-                            <p style="font-size: 1.1em; margin-bottom: 15px;">${responseData.message}</p>
-                            <div style="text-align: left; margin: 15px 0; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
-                                <p style="margin: 5px 0; color: #28a745;">
-                                    <i class="fas fa-check-circle"></i> Procesados: ${idsProcesados.length}
-                                </p>
-                                ${idsExistentes.length > 0 ? `
-                                    <p style="margin: 5px 0; color: #f39c12;">
-                                        <i class="fas fa-exclamation-triangle"></i> Ya existían (ignorados): ${idsExistentes.length}
-                                    </p>
-                                ` : ''}
-                                ${idsConError.length > 0 ? `
-                                    <p style="margin: 5px 0; color: #e74c3c;">
-                                        <i class="fas fa-times-circle"></i> Con error (reintentar): ${idsConError.length}
-                                    </p>
-                                ` : ''}
-                                <p style="margin: 5px 0; color: #3498db;">
-                                    <i class="fas fa-user"></i> Responsable: ${responsableActual}
-                                </p>
-                            </div>
-                            <p style="font-size: 0.9em; color: #7f8c8d;">
-                                ${registrosEliminados > 0 ? `✅ ${registrosEliminados} registros eliminados localmente` : 'No se eliminaron registros'}
-                                ${registrosMantenidos > 0 ? ` | 📌 ${registrosMantenidos} registros mantenidos` : ''}
-                            </p>
-                        </div>
-                    `;
+let mensajeHTML = `
+    <div style="text-align: center;">
+        <p style="font-size: 1.1em; margin-bottom: 15px;">${responseData.message}</p>
+        <div style="text-align: left; margin: 15px 0; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+            <p style="margin: 5px 0; color: #28a745;">
+                <i class="fas fa-check-circle"></i> Sincronizados: ${idsProcesados.length}
+            </p>
+            ${idsExistentes.length > 0 ? `
+                <p style="margin: 5px 0; color: #f39c12;">
+                    <i class="fas fa-exclamation-triangle"></i> Duplicados ignorados: ${idsExistentes.length}
+                </p>
+            ` : ''}
+            ${idsConError.length > 0 ? `
+                <p style="margin: 5px 0; color: #e74c3c;">
+                    <i class="fas fa-times-circle"></i> Con error: ${idsConError.length}
+                </p>
+            ` : ''}
+            <p style="margin: 5px 0; color: #3498db;">
+                <i class="fas fa-user"></i> Responsable: ${responsableActual}
+            </p>
+        </div>
+    </div>
+`;
+
                     
                     let icono = 'success';
                     let titulo = 'Sincronización Exitosa';
