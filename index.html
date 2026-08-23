@@ -353,6 +353,11 @@
             border-radius: 8px;
             border: 2px solid var(--gray-300);
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .preview-image:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
         }
         .file-input-label {
             background: var(--gray-200);
@@ -633,6 +638,55 @@
             opacity: 0.7;
         }
 
+        /* Estilos para firma en permisos */
+        .firma-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            background-color: #fff;
+            min-height: 150px;
+        }
+
+        #firmaCanvasPermiso {
+            width: 100% !important;
+            height: 150px !important;
+            background: white;
+            border: 1px solid #ccc;
+            touch-action: none;
+            -ms-touch-action: none;
+            border-radius: 8px;
+        }
+
+        #firmaCanvasPermiso.signed {
+            border-color: #28A745 !important;
+            border-width: 2px !important;
+        }
+
+        .icon-button {
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .icon-button.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .icon-button:hover {
+            background: #e2e6ea;
+        }
+
         @media screen and (max-width: 768px) {
             .menu-container { grid-template-columns: 1fr 1fr; gap: 12px; }
             .menu-item { padding: 15px 10px; min-height: 100px; }
@@ -673,6 +727,263 @@
         }
         .ui-menu-item:hover {
             background: var(--gray-100);
+        }
+
+        /* Estilos para el historial de permisos */
+        .historial-container {
+            margin-top: 20px;
+            border-top: 1px solid var(--gray-200);
+            padding-top: 20px;
+        }
+
+        .historial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .historial-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .historial-header h3 i {
+            color: var(--primary);
+        }
+
+        .historial-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .historial-item {
+            background: var(--gray-100);
+            border-radius: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 3px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .historial-item:hover {
+            transform: translateX(3px);
+            box-shadow: var(--shadow-md);
+            background: white;
+        }
+
+        .historial-item-info {
+            flex: 1;
+        }
+
+        .historial-item-info .codigo {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95em;
+        }
+
+        .historial-item-info .fecha {
+            font-size: 0.8em;
+            color: var(--gray-600);
+            display: block;
+        }
+
+        .historial-item-info .estado-mini {
+            font-size: 0.75em;
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .historial-item-info .estado-mini.pendiente {
+            background: #FFF3CD;
+            color: #856404;
+        }
+
+        .historial-item-info .estado-mini.aprobado {
+            background: #D4EDDA;
+            color: #155724;
+        }
+
+        .historial-item-info .estado-mini.cancelado {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        .historial-vacio {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--gray-600);
+        }
+
+        .historial-vacio i {
+            font-size: 2.5em;
+            opacity: 0.5;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .historial-item .historial-flecha {
+            color: var(--gray-600);
+            font-size: 0.9em;
+            transition: var(--transition);
+        }
+
+        .historial-item:hover .historial-flecha {
+            color: var(--primary);
+            transform: translateX(3px);
+        }
+
+        .limpiar-historial-btn {
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            font-size: 0.8em;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .limpiar-historial-btn:hover {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+
+        .badge-count {
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 0.7em;
+            font-weight: 600;
+        }
+
+        /* Estilos para la tarjeta de consulta mejorada */
+        .consulta-card-mejorada {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid var(--gray-200);
+        }
+
+        .consulta-card-mejorada .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 20px;
+            margin-bottom: 15px;
+        }
+
+        .consulta-card-mejorada .campo {
+            background: var(--gray-100);
+            padding: 10px 14px;
+            border-radius: 8px;
+        }
+
+        .consulta-card-mejorada .campo .label {
+            font-size: 0.7em;
+            color: var(--gray-600);
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .consulta-card-mejorada .campo .valor {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .consulta-card-mejorada .campo .valor i {
+            color: var(--primary);
+            width: 18px;
+        }
+
+        .consulta-card-mejorada .motivo-box {
+            background: #FFF9E6;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .consulta-card-mejorada .motivo-box .label {
+            font-size: 0.7em;
+            color: var(--gray-600);
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .consulta-card-mejorada .motivo-box .valor {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .consulta-card-mejorada .fotos-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .consulta-card-mejorada .fotos-grid img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--gray-200);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .consulta-card-mejorada .fotos-grid img:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .consulta-card-mejorada .footer-info {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.75em;
+            color: var(--gray-600);
+        }
+
+        @media screen and (max-width: 600px) {
+            .consulta-card-mejorada {
+                padding: 15px !important;
+            }
+            .consulta-card-mejorada .grid-2col {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+            .consulta-card-mejorada .header-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -805,7 +1116,6 @@
         </div>
     </div>
 
-    <!-- MODIFICADO: Buzón de Sugerencias con campo oculto para identidad -->
     <div id="suggestion-modal" class="suggestion-modal">
         <div class="suggestion-modal-content">
             <div class="suggestion-header">
@@ -900,6 +1210,28 @@
                     <input type="file" id="permission-fotos" accept="image/*" multiple style="display:none;">
                     <div id="preview-container" class="preview-images"></div>
                 </div>
+                <!-- FIRMA DEL RESPONSABLE -->
+                <div class="form-group">
+                    <label><i class="fas fa-signature"></i> Firma del Responsable</label>
+                    <div id="firmaContainerPermiso" class="firma-container">
+                        <canvas id="firmaCanvasPermiso" width="400" height="150" style="border: 1px solid #ccc; border-radius: 8px; touch-action: none; width: 100%; height: 150px;"></canvas>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+                        <button type="button" id="toggleEraserPermiso" class="icon-button" title="Borrador">
+                            <i class="fas fa-eraser"></i>
+                        </button>
+                        <button type="button" id="undoPermiso" class="icon-button" title="Deshacer">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button type="button" id="redoPermiso" class="icon-button" title="Rehacer">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button type="button" id="clearSignaturePermiso" class="icon-button" title="Limpiar">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- FIN FIRMA -->
                 <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Enviar solicitud</button>
                 <div class="form-note"><i class="fas fa-shield-alt"></i> Recibirás un código de seguimiento</div>
             </form>
@@ -912,12 +1244,29 @@
                 <h2><i class="fas fa-search"></i> Consultar mi Permiso</h2>
                 <button class="close-modal" onclick="cerrarConsultarPermiso()">&times;</button>
             </div>
+            
+            <!-- Campo de búsqueda por código -->
             <div class="form-group">
                 <label><i class="fas fa-hashtag"></i> Código de solicitud</label>
                 <input type="text" id="consulta-codigo" placeholder="Ej: A1B2C" maxlength="5" style="text-transform:uppercase">
             </div>
-            <button class="submit-btn consulta-buscar-btn" onclick="buscarMiPermiso()"><i class="fas fa-search"></i> Buscar solicitud</button>
+            <button class="submit-btn consulta-buscar-btn" onclick="buscarMiPermiso()">
+                <i class="fas fa-search"></i> Buscar solicitud
+            </button>
             <div id="resultado-consulta"></div>
+            
+            <!-- NUEVA SECCIÓN: Historial de permisos -->
+            <div class="historial-container" id="historial-container">
+                <div class="historial-header">
+                    <h3><i class="fas fa-history"></i> Mis solicitudes recientes</h3>
+                    <button class="limpiar-historial-btn" onclick="limpiarHistorialPermisos()" title="Limpiar historial">
+                        <i class="fas fa-trash-alt"></i> Limpiar
+                    </button>
+                </div>
+                <div id="historial-lista" class="historial-lista">
+                    <!-- Aquí se renderizarán los permisos guardados -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1099,7 +1448,6 @@
 
         const SUGERENCIA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrOFyYZzu8EFCox-en4loOdb0bG3w0zm3MxgxrbSAb7aeu46DLT6mS_KO2z-ngwyeI/exec";
 
-        // MODIFICADO: mostrarBuzon con reset de identidad
         function mostrarBuzon() {
             document.getElementById('suggestion-modal').classList.add('active');
             document.getElementById('sugerencia-nombre').value = '';
@@ -1121,7 +1469,6 @@
             $("#sugerencia-nombre").autocomplete("destroy");
         }
 
-        // MODIFICADO: Envío de sugerencias con identidad
         document.getElementById('suggestion-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1232,7 +1579,6 @@
             });
         }
 
-        // MODIFICADO: configurarAutocompletadoBuzon con guardado de identidad
         function configurarAutocompletadoBuzon() {
             if (nombresColaboradores.length === 0) {
                 mostrarCargandoColaboradores(true);
@@ -1282,6 +1628,218 @@
         function mostrarOpcionesPermiso() { document.getElementById('opciones-permiso-modal').classList.add('active'); }
         function cerrarOpcionesPermiso() { document.getElementById('opciones-permiso-modal').classList.remove('active'); }
         
+        // ==================== FIRMA PARA PERMISOS ====================
+        let isDrawingPermiso = false;
+        let isErasingPermiso = false;
+        let lastXPermiso = 0;
+        let lastYPermiso = 0;
+        const canvasPermiso = document.getElementById("firmaCanvasPermiso");
+        const ctxPermiso = canvasPermiso.getContext("2d", { willReadFrequently: true });
+        const undoStackPermiso = [];
+        const redoStackPermiso = [];
+
+        function initializeCanvasPermiso() {
+            const container = canvasPermiso.parentElement;
+            const rect = container.getBoundingClientRect();
+            const width = rect.width > 0 ? rect.width : 400;
+            const height = 150;
+            
+            canvasPermiso.width = width;
+            canvasPermiso.height = height;
+            
+            ctxPermiso.strokeStyle = "#000000";
+            ctxPermiso.lineWidth = 3;
+            ctxPermiso.lineCap = "round";
+            ctxPermiso.lineJoin = "round";
+            
+            ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+            ctxPermiso.fillStyle = "#FFFFFF";
+            ctxPermiso.fillRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+        }
+
+        function getCoordinatesPermiso(e) {
+            const rect = canvasPermiso.getBoundingClientRect();
+            const scaleX = canvasPermiso.width / rect.width;
+            const scaleY = canvasPermiso.height / rect.height;
+            
+            if (e.touches && e.touches.length > 0) {
+                return {
+                    x: (e.touches[0].clientX - rect.left) * scaleX,
+                    y: (e.touches[0].clientY - rect.top) * scaleY
+                };
+            } else if (e.offsetX !== undefined) {
+                return {
+                    x: e.offsetX * scaleX,
+                    y: e.offsetY * scaleY
+                };
+            } else if (e.clientX !== undefined) {
+                return {
+                    x: (e.clientX - rect.left) * scaleX,
+                    y: (e.clientY - rect.top) * scaleY
+                };
+            }
+            return { x: 0, y: 0 };
+        }
+
+        function startDrawingPermiso(e) {
+            e.preventDefault();
+            saveToUndoStackPermiso();
+            isDrawingPermiso = true;
+            const { x, y } = getCoordinatesPermiso(e);
+            lastXPermiso = x;
+            lastYPermiso = y;
+            
+            ctxPermiso.beginPath();
+            ctxPermiso.arc(x, y, ctxPermiso.lineWidth/2, 0, Math.PI * 2);
+            ctxPermiso.fillStyle = isErasingPermiso ? "#FFFFFF" : "#000000";
+            ctxPermiso.fill();
+            ctxPermiso.beginPath();
+            ctxPermiso.moveTo(x, y);
+        }
+
+        function drawPermiso(e) {
+            if (!isDrawingPermiso) return;
+            e.preventDefault();
+            
+            const { x, y } = getCoordinatesPermiso(e);
+            
+            ctxPermiso.beginPath();
+            ctxPermiso.moveTo(lastXPermiso, lastYPermiso);
+            ctxPermiso.lineTo(x, y);
+            ctxPermiso.strokeStyle = isErasingPermiso ? "#FFFFFF" : "#000000";
+            ctxPermiso.lineWidth = isErasingPermiso ? 20 : 3;
+            ctxPermiso.stroke();
+            
+            lastXPermiso = x;
+            lastYPermiso = y;
+        }
+
+        function stopDrawingPermiso() {
+            if (isDrawingPermiso) {
+                isDrawingPermiso = false;
+                verificarFirmaPermiso();
+            }
+        }
+
+        function saveToUndoStackPermiso() {
+            undoStackPermiso.push(canvasPermiso.toDataURL());
+            redoStackPermiso.length = 0;
+            updateButtonStatesPermiso();
+        }
+
+        function undoPermiso() {
+            if (undoStackPermiso.length > 0) {
+                redoStackPermiso.push(canvasPermiso.toDataURL());
+                const lastState = undoStackPermiso.pop();
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => {
+                    ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+                    ctxPermiso.drawImage(img, 0, 0);
+                    verificarFirmaPermiso();
+                };
+                updateButtonStatesPermiso();
+            }
+        }
+
+        function redoPermiso() {
+            if (redoStackPermiso.length > 0) {
+                undoStackPermiso.push(canvasPermiso.toDataURL());
+                const lastState = redoStackPermiso.pop();
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => {
+                    ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+                    ctxPermiso.drawImage(img, 0, 0);
+                    verificarFirmaPermiso();
+                };
+                updateButtonStatesPermiso();
+            }
+        }
+
+        function updateButtonStatesPermiso() {
+            const undoBtn = document.getElementById("undoPermiso");
+            const redoBtn = document.getElementById("redoPermiso");
+            if (undoBtn) undoBtn.style.display = undoStackPermiso.length > 0 ? "inline-flex" : "none";
+            if (redoBtn) redoBtn.style.display = redoStackPermiso.length > 0 ? "inline-flex" : "none";
+        }
+
+        function clearSignaturePermiso() {
+            saveToUndoStackPermiso();
+            ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+            ctxPermiso.fillStyle = "#FFFFFF";
+            ctxPermiso.fillRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+            verificarFirmaPermiso();
+            updateButtonStatesPermiso();
+        }
+
+        function verificarFirmaPermiso() {
+            const hayFirma = !isCanvasBlankPermiso(canvasPermiso);
+            if (hayFirma) {
+                canvasPermiso.classList.add('signed');
+            } else {
+                canvasPermiso.classList.remove('signed');
+            }
+        }
+
+        function isCanvasBlankPermiso(canvas) {
+            try {
+                const context = canvas.getContext('2d');
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const pixelBuffer = new Uint32Array(imageData.data.buffer);
+                
+                let nonWhitePixels = 0;
+                for (let i = 0; i < pixelBuffer.length; i++) {
+                    if (pixelBuffer[i] !== 0xFFFFFFFF && pixelBuffer[i] !== 0x00000000) {
+                        nonWhitePixels++;
+                    }
+                }
+                return nonWhitePixels <= 50;
+            } catch (error) {
+                console.error('Error al verificar canvas:', error);
+                return true;
+            }
+        }
+
+        function setupSignatureEventsPermiso() {
+            canvasPermiso.addEventListener("mousedown", startDrawingPermiso);
+            canvasPermiso.addEventListener("mousemove", drawPermiso);
+            canvasPermiso.addEventListener("mouseup", stopDrawingPermiso);
+            canvasPermiso.addEventListener("mouseout", stopDrawingPermiso);
+            
+            canvasPermiso.addEventListener("touchstart", function(e) {
+                startDrawingPermiso(e);
+                e.preventDefault();
+            }, { passive: false });
+            
+            canvasPermiso.addEventListener("touchmove", function(e) {
+                drawPermiso(e);
+                e.preventDefault();
+            }, { passive: false });
+            
+            canvasPermiso.addEventListener("touchend", stopDrawingPermiso);
+            canvasPermiso.addEventListener("touchcancel", stopDrawingPermiso);
+            
+            document.getElementById("toggleEraserPermiso").addEventListener("click", function() {
+                isErasingPermiso = !isErasingPermiso;
+                this.classList.toggle("active");
+                this.innerHTML = isErasingPermiso ? 
+                    '<i class="fas fa-pen"></i>' : 
+                    '<i class="fas fa-eraser"></i>';
+            });
+            
+            document.getElementById("undoPermiso").addEventListener("click", undoPermiso);
+            document.getElementById("redoPermiso").addEventListener("click", redoPermiso);
+            document.getElementById("clearSignaturePermiso").addEventListener("click", clearSignaturePermiso);
+            
+            canvasPermiso.addEventListener("contextmenu", function(e) { e.preventDefault(); });
+            
+            canvasPermiso.style.touchAction = "none";
+            canvasPermiso.style.msTouchAction = "none";
+        }
+
+        // ==================== FIN FIRMA PARA PERMISOS ====================
+
         function mostrarSolicitarPermiso() {
             document.getElementById('solicitar-permiso-modal').classList.add('active');
             document.getElementById('permission-form').reset();
@@ -1290,6 +1848,14 @@
             document.getElementById('permission-fecha').value = getCurrentDateInHonduras().format('YYYY-MM-DD');
             document.getElementById('campo-dias').style.display = 'none';
             document.getElementById('campo-horas').style.display = 'none';
+            
+            // Limpiar y reinicializar firma
+            clearSignaturePermiso();
+            setTimeout(() => {
+                initializeCanvasPermiso();
+                setupSignatureEventsPermiso();
+                verificarFirmaPermiso();
+            }, 300);
             
             if (nombresColaboradores.length === 0) {
                 mostrarCargandoColaboradores(true);
@@ -1307,9 +1873,12 @@
             document.getElementById('consultar-permiso-modal').classList.add('active');
             document.getElementById('consulta-codigo').value = '';
             document.getElementById('resultado-consulta').innerHTML = '';
+            renderizarHistorialPermisos();
         }
 
         function cerrarConsultarPermiso() { document.getElementById('consultar-permiso-modal').classList.remove('active'); }
+
+        let archivosSeleccionados = [];
 
         document.getElementById('permission-fotos')?.addEventListener('change', function(e) {
             archivosSeleccionados = Array.from(e.target.files);
@@ -1334,54 +1903,54 @@
             });
         });
 
-async function subirImagenesALDrive(codigo) {
-    const urls = [];
-    for (const file of archivosSeleccionados) {
-        try {
-            // Leer el archivo como base64
-            const base64Data = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    const base64 = reader.result.split(',')[1];
-                    resolve(base64);
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-            
-            // Enviar como base64 - SIN mode: 'no-cors' para poder leer la respuesta
-            const response = await fetch(PERMISO_SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    accion: 'upload',
-                    codigo: codigo,
-                    archivo: base64Data,
-                    nombre: file.name
-                })
-            });
-            
-            // Leer la respuesta como JSON
-            const result = await response.json();
-            
-            if (result.success && result.url) {
-                urls.push(result.url);
-                console.log('URL de la imagen:', result.url);
-            } else {
-                console.error('Error al subir archivo:', result);
+        async function subirImagenesALDrive(codigo) {
+            const urls = [];
+            for (const file of archivosSeleccionados) {
+                try {
+                    const base64Data = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const base64 = reader.result.split(',')[1];
+                            resolve(base64);
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    const response = await fetch(PERMISO_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            accion: 'upload',
+                            codigo: codigo,
+                            archivo: base64Data,
+                            nombre: file.name
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.url) {
+                        urls.push(result.url);
+                    } else {
+                        console.error('Error al subir archivo:', result);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error subiendo archivo:', error);
+                }
             }
-            
-        } catch (error) {
-            console.error('Error subiendo archivo:', error);
+            return urls;
         }
-    }
-    return urls;
-}
 
-
-        // MODIFICADO: Envío de permisos con identidad
         document.getElementById('permission-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Validar firma
+            if (isCanvasBlankPermiso(canvasPermiso)) {
+                Swal.fire('Error', 'La firma del responsable es obligatoria', 'error');
+                return;
+            }
             
             const nombre = document.getElementById('permission-nombre').value.trim();
             const telefono = document.getElementById('permission-telefono').value.trim();
@@ -1418,68 +1987,95 @@ async function subirImagenesALDrive(codigo) {
                 horasPermiso = `${convertirHora(horaInicio)} - ${convertirHora(horaFin)}`;
             }
             
+            // Obtener la firma como imagen base64
+            const firmaDataUrl = canvasPermiso.toDataURL("image/png");
+            
             const codigo = generarCodigo();
             document.getElementById('overlay').style.display = 'flex';
             
-try {
-let fotosUrls = [];
-if (archivosSeleccionados.length > 0) {
-    // Mostrar mensaje de subida
-    Swal.fire({
-        title: 'Subiendo imágenes...',
-        text: 'Por favor espera mientras se suben las evidencias',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-    
-    fotosUrls = await subirImagenesALDrive(codigo);
-    console.log('Fotos subidas:', fotosUrls);
-    Swal.close();
-}
-    
-    // Enviar la solicitud de permiso (esto sí puede ir con no-cors)
-await fetch(PERMISO_SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        accion: 'permiso',
-        codigo: codigo,
-        fechaSolicitud: getCurrentDateInHonduras().format('YYYY-MM-DD HH:mm:ss'),
-        fechaPermiso: fecha,
-        tipoPermiso: tipo,
-        cantidadDias: cantidadDias,
-        horasPermiso: horasPermiso,
-        colaborador: nombre,
-        identidad: identidad,
-        telefono: telefono,
-        motivo: motivo,
-        fotos: fotosUrls.join(';'),
-        estado: 'Pendiente'
-    })
-});
-    
-    document.getElementById('overlay').style.display = 'none';
-    
-    Swal.fire({ 
-        icon: 'success', 
-        title: '¡Solicitud enviada!', 
-        html: `Tu código: <strong style="font-size:1.5em">${codigo}</strong><br>Guárdalo para consultar el estado`,
-        confirmButtonColor: '#2C73D2'
-    });
-    cerrarSolicitarPermiso();
-    
-} catch (error) {
-    document.getElementById('overlay').style.display = 'none';
-    Swal.close(); // Cerrar cualquier SweetAlert abierto
-    console.error('Error:', error);
-    Swal.fire('Error', 'No se pudo enviar la solicitud: ' + error.message, 'error');
-}
-
-
-            document.getElementById('overlay').style.display = 'none';
+            try {
+                let fotosUrls = [];
+                let firmaUrl = '';
+                
+                // Subir fotos si hay
+                if (archivosSeleccionados.length > 0) {
+                    fotosUrls = await subirImagenesALDrive(codigo);
+                }
+                
+                // Subir la firma
+                try {
+                    const firmaBase64 = firmaDataUrl.split(',')[1];
+                    
+                    const firmaResponse = await fetch(PERMISO_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            accion: 'upload',
+                            codigo: codigo,
+                            archivo: firmaBase64,
+                            nombre: `firma_${codigo}.png`
+                        })
+                    });
+                    
+                    const firmaResult = await firmaResponse.json();
+                    if (firmaResult.success && firmaResult.url) {
+                        firmaUrl = firmaResult.url;
+                    }
+                } catch (firmaError) {
+                    console.error('Error al subir firma:', firmaError);
+                }
+                
+                // Enviar la solicitud de permiso
+                await fetch(PERMISO_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        accion: 'permiso',
+                        codigo: codigo,
+                        fechaSolicitud: getCurrentDateInHonduras().format('YYYY-MM-DD HH:mm:ss'),
+                        fechaPermiso: fecha,
+                        tipoPermiso: tipo,
+                        cantidadDias: cantidadDias,
+                        horasPermiso: horasPermiso,
+                        colaborador: nombre,
+                        identidad: identidad,
+                        telefono: telefono,
+                        motivo: motivo,
+                        fotos: fotosUrls.join(';'),
+                        firma: firmaUrl,
+                        estado: 'Pendiente'
+                    })
+                });
+                
+                document.getElementById('overlay').style.display = 'none';
+                
+                // Guardar en historial local
+                guardarPermisoEnHistorial({
+                    codigo: codigo,
+                    fechaSolicitud: getCurrentDateInHonduras().format('YYYY-MM-DD HH:mm:ss'),
+                    fechaPermiso: fecha,
+                    colaborador: nombre,
+                    estado: 'Pendiente',
+                    tipoPermiso: tipo,
+                    cantidadDias: cantidadDias,
+                    horasPermiso: horasPermiso,
+                    motivo: motivo
+                });
+                
+                Swal.fire({ 
+                    icon: 'success', 
+                    title: '¡Solicitud enviada!', 
+                    html: `Tu código: <strong style="font-size:1.5em">${codigo}</strong><br>Guárdalo para consultar el estado`,
+                    confirmButtonColor: '#2C73D2'
+                });
+                cerrarSolicitarPermiso();
+                
+            } catch (error) {
+                document.getElementById('overlay').style.display = 'none';
+                console.error('Error:', error);
+                Swal.fire('Error', 'No se pudo enviar la solicitud: ' + error.message, 'error');
+            }
         });
 
         function formatearFechaParaMostrar(fechaStr) {
@@ -1492,11 +2088,8 @@ await fetch(PERMISO_SCRIPT_URL, {
                 let dia = fecha.getDate().toString().padStart(2, '0');
                 let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
                 let anio = fecha.getFullYear();
-                let horas = fecha.getHours().toString().padStart(2, '0');
-                let minutos = fecha.getMinutes().toString().padStart(2, '0');
-                let segundos = fecha.getSeconds().toString().padStart(2, '0');
                 
-                return `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
+                return `${dia}/${mes}/${anio}`;
             }
             
             return fechaStr;
@@ -1515,40 +2108,79 @@ await fetch(PERMISO_SCRIPT_URL, {
                 const container = document.getElementById('resultado-consulta');
                 if (data.success && data.solicitud) {
                     const s = data.solicitud;
+                    
                     let estadoClass = s.estado === 'Pendiente' ? 'estado-pendiente' : (s.estado === 'Aprobado' ? 'estado-aprobado' : 'estado-cancelado');
+                    
                     let fotosHtml = '';
                     if (s.fotos && s.fotos.trim()) {
-                        fotosHtml = `<div class="preview-images">${s.fotos.split(';').map(f => `<img src="${f}" class="preview-image" onclick="window.open('${f}','_blank')">`).join('')}</div>`;
+                        fotosHtml = `<div class="fotos-grid">${s.fotos.split(';').map(f => `<img src="${f}" onclick="window.open('${f}','_blank')">`).join('')}</div>`;
                     }
+                    
+                    let firmaHtml = '';
+                    if (s.firma && s.firma.trim()) {
+                        firmaHtml = `<div style="margin-top:10px;"><span class="label"><i class="fas fa-signature"></i> Firma del Responsable</span><br><img src="${s.firma}" style="max-width:200px; max-height:80px; border:1px solid #ccc; border-radius:8px; margin-top:5px; padding:5px; background:white;"></div>`;
+                    }
+                    
                     let detallePermiso = s.tipoPermiso === 'dias' ? `${s.cantidadDias} día(s)` : s.horasPermiso;
                     
                     let fechaSolicitudFormateada = formatearFechaParaMostrar(s.fechaSolicitud);
-                    let fechaPermisoFormateada = s.fechaPermiso;
-                    
-                    if (s.fechaPermiso && s.fechaPermiso.includes('T')) {
-                        fechaPermisoFormateada = formatearFechaParaMostrar(s.fechaPermiso);
-                    } else if (s.fechaPermiso && s.fechaPermiso.match(/^\d{4}-\d{2}-\d{2}/)) {
-                        let partes = s.fechaPermiso.split('-');
-                        if (partes.length === 3) {
-                            fechaPermisoFormateada = `${partes[2]}/${partes[1]}/${partes[0]}`;
-                        }
-                    }
+                    let fechaPermisoFormateada = formatearFechaParaMostrar(s.fechaPermiso);
                     
                     container.innerHTML = `
-                        <div class="consulta-card">
-                            <p><strong>Código:</strong> ${s.codigo}</p>
-                            <p><strong>Fecha solicitud:</strong> ${fechaSolicitudFormateada}</p>
-                            <p><strong>Fecha permiso:</strong> ${fechaPermisoFormateada}</p>
-                            <p><strong>Tipo/Duración:</strong> ${detallePermiso}</p>
-                            <p><strong>Colaborador:</strong> ${s.colaborador}</p>
-                            <p><strong>Teléfono:</strong> ${s.telefono}</p>
-                            <p><strong>Motivo:</strong> ${s.motivo}</p>
-                            ${fotosHtml}
-                            <p><strong>Estado:</strong> <span class="${estadoClass}">${s.estado}</span></p>
+                        <div class="consulta-card-mejorada">
+                            <!-- Encabezado con código y estado -->
+                            <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 15px; border-bottom: 2px solid var(--gray-200);">
+                                <div>
+                                    <span style="font-size: 0.8em; color: var(--gray-600); display: block;">CÓDIGO DE SOLICITUD</span>
+                                    <span style="font-size: 1.8em; font-weight: 700; color: var(--primary); letter-spacing: 2px;">${s.codigo}</span>
+                                </div>
+                                <span class="${estadoClass}" style="font-size: 0.9em; font-weight: 600; padding: 8px 20px; border-radius: 30px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <i class="fas ${s.estado === 'Pendiente' ? 'fa-clock' : (s.estado === 'Aprobado' ? 'fa-check-circle' : 'fa-times-circle')}"></i> 
+                                    ${s.estado}
+                                </span>
+                            </div>
+                            
+                            <!-- Grid de información -->
+                            <div class="grid-2col">
+                                <div class="campo">
+                                    <span class="label"><i class="far fa-calendar-alt"></i> Fecha de solicitud</span>
+                                    <span class="valor">${fechaSolicitudFormateada}</span>
+                                </div>
+                                <div class="campo">
+                                    <span class="label"><i class="far fa-calendar-check"></i> Fecha del permiso</span>
+                                    <span class="valor">${fechaPermisoFormateada}</span>
+                                </div>
+                                <div class="campo">
+                                    <span class="label"><i class="fas fa-clock"></i> Tipo / Duración</span>
+                                    <span class="valor">${detallePermiso}</span>
+                                </div>
+                                <div class="campo">
+                                    <span class="label"><i class="fas fa-user"></i> Colaborador</span>
+                                    <span class="valor">${s.colaborador}</span>
+                                </div>
+                                <div class="campo" style="grid-column: 1 / -1;">
+                                    <span class="label"><i class="fas fa-phone"></i> Teléfono de contacto</span>
+                                    <span class="valor">${s.telefono}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Motivo -->
+                            <div class="motivo-box">
+                                <span class="label"><i class="fas fa-comment"></i> Motivo del permiso</span>
+                                <span class="valor">${s.motivo}</span>
+                            </div>
+                            
+                            <!-- Evidencias (fotos) -->
+                            ${fotosHtml ? `<div style="margin-top: 12px; margin-bottom: 12px;"><span class="label" style="font-size: 0.7em; color: var(--gray-600); display: block; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-camera"></i> Evidencias adjuntas</span>${fotosHtml}</div>` : ''}
+                            
+                            <!-- Firma -->
+                            ${firmaHtml}
+                            
+
                         </div>
                     `;
                 } else {
-                    container.innerHTML = '<div class="consulta-card" style="background:#F8D7DA; color:#721C24;">No se encontró ninguna solicitud con ese código</div>';
+                    container.innerHTML = '<div class="consulta-card" style="background:#F8D7DA; color:#721C24; padding:15px; border-radius:10px;">No se encontró ninguna solicitud con ese código</div>';
                 }
             } catch (error) {
                 document.getElementById('overlay').style.display = 'none';
@@ -1760,6 +2392,126 @@ await fetch(PERMISO_SCRIPT_URL, {
                     navigator.serviceWorker.ready.then(registration => {
                         registration.update();
                     });
+                }
+            });
+        }
+
+        // ==================== HISTORIAL LOCAL DE PERMISOS ====================
+        const HISTORIAL_PERMISOS_KEY = 'historial_permisos';
+
+        // Guardar un permiso en el historial local
+        function guardarPermisoEnHistorial(permiso) {
+            try {
+                let historial = JSON.parse(localStorage.getItem(HISTORIAL_PERMISOS_KEY)) || [];
+                
+                // Verificar si ya existe para no duplicar
+                const existe = historial.some(p => p.codigo === permiso.codigo);
+                if (!existe) {
+                    // Agregar al principio (más reciente primero)
+                    historial.unshift({
+                        codigo: permiso.codigo,
+                        fechaSolicitud: permiso.fechaSolicitud || new Date().toISOString(),
+                        fechaPermiso: permiso.fechaPermiso,
+                        colaborador: permiso.colaborador,
+                        estado: permiso.estado || 'Pendiente',
+                        tipoPermiso: permiso.tipoPermiso,
+                        cantidadDias: permiso.cantidadDias || '',
+                        horasPermiso: permiso.horasPermiso || '',
+                        motivo: permiso.motivo || ''
+                    });
+                    
+                    // Limitar a 50 registros para no sobrecargar
+                    if (historial.length > 50) {
+                        historial = historial.slice(0, 50);
+                    }
+                    
+                    localStorage.setItem(HISTORIAL_PERMISOS_KEY, JSON.stringify(historial));
+                }
+            } catch (error) {
+                console.error('Error guardando en historial:', error);
+            }
+        }
+
+        // Obtener el historial de permisos
+        function obtenerHistorialPermisos() {
+            try {
+                return JSON.parse(localStorage.getItem(HISTORIAL_PERMISOS_KEY)) || [];
+            } catch (error) {
+                console.error('Error obteniendo historial:', error);
+                return [];
+            }
+        }
+
+        // Renderizar el historial en el modal
+        function renderizarHistorialPermisos() {
+            const container = document.getElementById('historial-lista');
+            if (!container) return;
+            
+            const historial = obtenerHistorialPermisos();
+            
+            if (historial.length === 0) {
+                container.innerHTML = `
+                    <div class="historial-vacio">
+                        <i class="fas fa-inbox"></i>
+                        <p>No tienes solicitudes guardadas</p>
+                        <small style="color: var(--gray-600);">Las solicitudes que realices se guardarán automáticamente</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = historial.map(permiso => {
+                const estadoClass = permiso.estado?.toLowerCase() || 'pendiente';
+                const fechaMostrar = permiso.fechaSolicitud ? 
+                    new Date(permiso.fechaSolicitud).toLocaleDateString('es-ES', {
+                        day: '2-digit', month: '2-digit', year: 'numeric'
+                    }) : 'Fecha no disponible';
+                    
+                const tipoMostrar = permiso.tipoPermiso === 'dias' ? 
+                    `${permiso.cantidadDias || 0} día(s)` : 
+                    (permiso.horasPermiso || 'Horas');
+                
+                return `
+                    <div class="historial-item" onclick="consultarPermisoDelHistorial('${permiso.codigo}')">
+                        <div class="historial-item-info">
+                            <span class="codigo"><i class="fas fa-hashtag"></i> ${permiso.codigo}</span>
+                            <span class="fecha">
+                                <i class="far fa-calendar-alt"></i> ${fechaMostrar}
+                                <span style="margin: 0 5px;">|</span>
+                                <i class="far fa-clock"></i> ${tipoMostrar}
+                            </span>
+                            <span class="estado-mini ${estadoClass}">${permiso.estado || 'Pendiente'}</span>
+                        </div>
+                        <div class="historial-flecha">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Consultar un permiso desde el historial
+        async function consultarPermisoDelHistorial(codigo) {
+            document.getElementById('consulta-codigo').value = codigo;
+            await buscarMiPermiso();
+        }
+
+        // Limpiar todo el historial
+        function limpiarHistorialPermisos() {
+            Swal.fire({
+                title: '¿Limpiar historial?',
+                text: 'Se eliminarán todas tus solicitudes guardadas localmente',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, limpiar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem(HISTORIAL_PERMISOS_KEY);
+                    renderizarHistorialPermisos();
+                    Swal.fire('Historial limpiado', '', 'success');
                 }
             });
         }
