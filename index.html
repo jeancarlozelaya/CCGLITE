@@ -207,7 +207,7 @@
             100% { transform: scale(1); }
         }
 
-        .notification-modal, .info-modal, .file-list-modal, .birthday-modal, .suggestion-modal, .permission-modal {
+        .notification-modal, .info-modal, .file-list-modal, .birthday-modal, .suggestion-modal, .permission-modal, .encuesta-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -223,13 +223,16 @@
             transition: opacity 0.3s, visibility 0.3s;
         }
 
-        .notification-modal.active, .info-modal.active, .file-list-modal.active, .birthday-modal.active, .suggestion-modal.active, .permission-modal.active { opacity: 1; visibility: visible; }
+        .notification-modal.active, .info-modal.active, .file-list-modal.active, .birthday-modal.active, .suggestion-modal.active, .permission-modal.active, .encuesta-modal.active { 
+            opacity: 1; 
+            visibility: visible; 
+        }
 
-        .notification-modal-content, .info-modal-content, .file-list-modal-content, .birthday-modal-content, .suggestion-modal-content, .permission-modal-content {
+        .notification-modal-content, .info-modal-content, .file-list-modal-content, .birthday-modal-content, .suggestion-modal-content, .permission-modal-content, .encuesta-modal-content {
             background: white;
             width: 85%;
-            max-width: 550px;
-            max-height: 80vh;
+            max-width: 800px;
+            max-height: 85vh;
             overflow-y: auto;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-lg);
@@ -244,9 +247,12 @@
         .file-list-modal.active .file-list-modal-content,
         .birthday-modal.active .birthday-modal-content,
         .suggestion-modal.active .suggestion-modal-content,
-        .permission-modal.active .permission-modal-content { transform: translateY(0); }
+        .permission-modal.active .permission-modal-content,
+        .encuesta-modal.active .encuesta-modal-content { 
+            transform: translateY(0); 
+        }
 
-        .notification-header, .info-header, .file-list-header, .birthday-header, .suggestion-header, .permission-header {
+        .notification-header, .info-header, .file-list-header, .birthday-header, .suggestion-header, .permission-header, .encuesta-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -255,7 +261,7 @@
             border-bottom: 1px solid var(--gray-200);
         }
 
-        .notification-header h2, .info-header h2, .file-list-header h2, .birthday-header h2, .suggestion-header h2, .permission-header h2 {
+        .notification-header h2, .info-header h2, .file-list-header h2, .birthday-header h2, .suggestion-header h2, .permission-header h2, .encuesta-header h2 {
             margin: 0;
             font-size: 1.5em;
             color: var(--primary);
@@ -274,7 +280,7 @@
         }
         .close-modal:hover { color: var(--secondary); transform: rotate(90deg); }
 
-        .suggestion-form, .permission-form {
+        .suggestion-form, .permission-form, .encuesta-form {
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -309,7 +315,7 @@
             box-shadow: 0 0 0 3px rgba(44, 115, 210, 0.1);
         }
         .form-group textarea {
-            min-height: 120px;
+            min-height: 80px;
         }
         .submit-btn {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -330,6 +336,11 @@
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
         .form-note {
             font-size: 0.8em;
             color: var(--gray-600);
@@ -340,37 +351,237 @@
             justify-content: center;
             gap: 5px;
         }
-        .preview-images {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .preview-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid var(--gray-300);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .preview-image:hover {
-            transform: scale(1.05);
-            border-color: var(--primary);
-        }
-        .file-input-label {
+
+        .btn-limpiar {
             background: var(--gray-200);
-            padding: 12px 15px;
-            border-radius: 10px;
-            text-align: center;
+            color: var(--dark);
+            border: none;
+            padding: 14px 24px;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            display: inline-block;
-            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 0.5;
+            min-width: 100px;
         }
-        .file-input-label:hover {
+
+        .btn-limpiar:hover {
             background: var(--gray-300);
+            transform: translateY(-2px);
+        }
+
+        .btn-limpiar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-reenviar {
+            background: linear-gradient(135deg, #FF6B6B, #ee5a24);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-reenviar:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-group-encuesta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group-encuesta .submit-btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-group-encuesta .btn-limpiar {
+            flex: 0.5;
+            min-width: 100px;
+        }
+
+        .btn-group-encuesta .btn-reenviar {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Estilos para encuesta */
+        .encuesta-section {
+            background: var(--gray-100);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .encuesta-section h3 {
+            color: var(--primary);
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pregunta-item {
+            margin-bottom: 18px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .pregunta-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .pregunta-item .pregunta-texto {
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+            color: var(--dark);
+        }
+
+        .pregunta-item .pregunta-texto .required {
+            color: var(--secondary);
+            margin-left: 3px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 30px;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0 3px;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label {
+            color: #FFD700;
+            transform: scale(1.1);
+        }
+
+        .star-rating input:checked + label {
+            color: #FFD700;
+        }
+
+        .star-rating.disabled label {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .star-rating.disabled label:hover,
+        .star-rating.disabled label:hover ~ label {
+            transform: none;
+        }
+
+        .encuesta-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .encuesta-enviada-badge {
+            background: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .encuesta-enviada-badge i {
+            font-size: 1.2em;
+        }
+
+        .encuesta-section .firma-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            background-color: #fff;
+            min-height: 150px;
+        }
+
+        #firmaCanvasEncuesta {
+            width: 100% !important;
+            height: 150px !important;
+            background: white;
+            border: 1px solid #ccc;
+            touch-action: none;
+            -ms-touch-action: none;
+            border-radius: 8px;
+        }
+
+        #firmaCanvasEncuesta.signed {
+            border-color: #28A745 !important;
+            border-width: 2px !important;
+        }
+
+        .icon-button {
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .icon-button.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .icon-button:hover {
+            background: #e2e6ea;
+        }
+
+        input:disabled, select:disabled, textarea:disabled {
+            background-color: var(--gray-200);
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
         .consulta-card {
@@ -631,81 +842,6 @@
             box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Estilos para campos deshabilitados */
-        input:disabled {
-            background-color: var(--gray-200);
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        /* Estilos para firma en permisos */
-        .firma-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            border: 2px solid var(--gray-300);
-            border-radius: 8px;
-            background-color: #fff;
-            min-height: 150px;
-        }
-
-        #firmaCanvasPermiso {
-            width: 100% !important;
-            height: 150px !important;
-            background: white;
-            border: 1px solid #ccc;
-            touch-action: none;
-            -ms-touch-action: none;
-            border-radius: 8px;
-        }
-
-        #firmaCanvasPermiso.signed {
-            border-color: #28A745 !important;
-            border-width: 2px !important;
-        }
-
-        .icon-button {
-            background: #f8f9fa;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 16px;
-            color: #333;
-            transition: all 0.3s ease;
-        }
-
-        .icon-button.active {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-        }
-
-        .icon-button:hover {
-            background: #e2e6ea;
-        }
-
-        @media screen and (max-width: 768px) {
-            .menu-container { grid-template-columns: 1fr 1fr; gap: 12px; }
-            .menu-item { padding: 15px 10px; min-height: 100px; }
-            .menu-item span { font-size: 1.8em; }
-            .menu-item p { font-size: 0.9em; }
-            .header { font-size: 1.2em; padding: 15px 0; }
-            .birthday-avatar { width: 50px; height: 50px; font-size: 1.4em; }
-            .birthday-badge { padding: 5px 12px; font-size: 0.75em; min-width: 60px; }
-        }
-        @media screen and (max-width: 480px) {
-            .menu-container { grid-template-columns: 1fr 1fr; }
-            .app-container { padding: 15px; }
-        }
-        @media screen and (display-mode: standalone) {
-            body { margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
-            .header { padding-top: calc(20px + env(safe-area-inset-top)); }
-            footer { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
-        }
-
         .folder-item span {
             background: linear-gradient(135deg, var(--warning), var(--secondary));
             -webkit-background-clip: text;
@@ -729,7 +865,6 @@
             background: var(--gray-100);
         }
 
-        /* Estilos para el historial de permisos */
         .historial-container {
             margin-top: 20px;
             border-top: 1px solid var(--gray-200);
@@ -873,7 +1008,6 @@
             font-weight: 600;
         }
 
-        /* Estilos para la tarjeta de consulta mejorada */
         .consulta-card-mejorada {
             background: white;
             border-radius: 12px;
@@ -971,19 +1105,45 @@
             color: var(--gray-600);
         }
 
-        @media screen and (max-width: 600px) {
-            .consulta-card-mejorada {
+        @media screen and (max-width: 768px) {
+            .menu-container { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .menu-item { padding: 15px 10px; min-height: 100px; }
+            .menu-item span { font-size: 1.8em; }
+            .menu-item p { font-size: 0.9em; }
+            .header { font-size: 1.2em; padding: 15px 0; }
+            .birthday-avatar { width: 50px; height: 50px; font-size: 1.4em; }
+            .birthday-badge { padding: 5px 12px; font-size: 0.75em; min-width: 60px; }
+            .encuesta-modal-content {
                 padding: 15px !important;
+                width: 95% !important;
+            }
+            .star-rating label {
+                font-size: 24px !important;
+            }
+            .btn-group-encuesta {
+                flex-direction: column;
+            }
+            .btn-group-encuesta .submit-btn,
+            .btn-group-encuesta .btn-limpiar,
+            .btn-group-encuesta .btn-reenviar {
+                flex: 1;
+                width: 100%;
             }
             .consulta-card-mejorada .grid-2col {
                 grid-template-columns: 1fr !important;
                 gap: 8px !important;
             }
-            .consulta-card-mejorada .header-flex {
-                flex-direction: column;
-                align-items: flex-start !important;
-                gap: 10px;
-            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .menu-container { grid-template-columns: 1fr 1fr; }
+            .app-container { padding: 15px; }
+        }
+
+        @media screen and (display-mode: standalone) {
+            body { margin: 0; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+            .header { padding-top: calc(20px + env(safe-area-inset-top)); }
+            footer { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
         }
     </style>
 </head>
@@ -1051,6 +1211,11 @@
             </div>
 
             <div class="separator"></div>
+
+            <div class="menu-item" onclick="mostrarEncuesta()">
+                <span><i class="fas fa-poll"></i></span>
+                <p>Encuesta de Clima Laboral</p>
+            </div>
 
             <div class="menu-item" onclick="mostrarInfo()">
                 <span><i class="fas fa-info-circle"></i></span>
@@ -1210,28 +1375,6 @@
                     <input type="file" id="permission-fotos" accept="image/*" multiple style="display:none;">
                     <div id="preview-container" class="preview-images"></div>
                 </div>
-                <!-- FIRMA DEL RESPONSABLE -->
-                <div class="form-group">
-                    <label><i class="fas fa-signature"></i> Firma del Responsable</label>
-                    <div id="firmaContainerPermiso" class="firma-container">
-                        <canvas id="firmaCanvasPermiso" width="400" height="150" style="border: 1px solid #ccc; border-radius: 8px; touch-action: none; width: 100%; height: 150px;"></canvas>
-                    </div>
-                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
-                        <button type="button" id="toggleEraserPermiso" class="icon-button" title="Borrador">
-                            <i class="fas fa-eraser"></i>
-                        </button>
-                        <button type="button" id="undoPermiso" class="icon-button" title="Deshacer">
-                            <i class="fas fa-undo"></i>
-                        </button>
-                        <button type="button" id="redoPermiso" class="icon-button" title="Rehacer">
-                            <i class="fas fa-redo"></i>
-                        </button>
-                        <button type="button" id="clearSignaturePermiso" class="icon-button" title="Limpiar">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <!-- FIN FIRMA -->
                 <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Enviar solicitud</button>
                 <div class="form-note"><i class="fas fa-shield-alt"></i> Recibirás un código de seguimiento</div>
             </form>
@@ -1245,7 +1388,6 @@
                 <button class="close-modal" onclick="cerrarConsultarPermiso()">&times;</button>
             </div>
             
-            <!-- Campo de búsqueda por código -->
             <div class="form-group">
                 <label><i class="fas fa-hashtag"></i> Código de solicitud</label>
                 <input type="text" id="consulta-codigo" placeholder="Ej: A1B2C" maxlength="5" style="text-transform:uppercase">
@@ -1255,7 +1397,6 @@
             </button>
             <div id="resultado-consulta"></div>
             
-            <!-- NUEVA SECCIÓN: Historial de permisos -->
             <div class="historial-container" id="historial-container">
                 <div class="historial-header">
                     <h3><i class="fas fa-history"></i> Mis solicitudes recientes</h3>
@@ -1263,9 +1404,507 @@
                         <i class="fas fa-trash-alt"></i> Limpiar
                     </button>
                 </div>
-                <div id="historial-lista" class="historial-lista">
-                    <!-- Aquí se renderizarán los permisos guardados -->
+                <div id="historial-lista" class="historial-lista"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ENCUESTA DE CLIMA LABORAL ==================== -->
+    <div id="encuesta-modal" class="encuesta-modal">
+        <div class="encuesta-modal-content">
+            <div class="encuesta-header">
+                <h2><i class="fas fa-poll"></i> Encuesta de Clima Laboral</h2>
+                <button class="close-modal" onclick="cerrarEncuesta()">&times;</button>
+            </div>
+            
+            <div id="encuesta-contenido">
+                <div id="encuesta-enviada-badge" class="encuesta-enviada-badge" style="display:none;">
+                    <i class="fas fa-check-circle"></i> Encuesta enviada exitosamente
                 </div>
+                
+                <form id="encuesta-form" class="encuesta-form">
+                    <!-- Datos del colaborador -->
+                    <div class="encuesta-section" style="border-left-color: var(--success);">
+                        <h3><i class="fas fa-user-circle"></i> Datos del Colaborador</h3>
+                        <div class="form-group" style="display:none;">
+                            <input type="hidden" id="encuesta-fecha">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Nombre completo <span class="required">*</span></label>
+                            <input type="text" id="encuesta-nombre" placeholder="Cargando colaboradores..." disabled required>
+                            <input type="hidden" id="encuesta-identidad">
+                        </div>
+                    </div>
+
+                    <!-- CLIMA LABORAL -->
+                    <div class="encuesta-section">
+                        <h3><i class="fas fa-building"></i> Clima Laboral</h3>
+                        
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">¿Cuánto tiempo lleva en la organización? <span class="required">*</span></div>
+                            <div class="form-group">
+                                <select id="pregunta_tiempo" required disabled>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Menos de 3 meses">Menos de 3 meses</option>
+                                    <option value="3 a 6 meses">3 a 6 meses</option>
+                                    <option value="6 meses a 1 año">6 meses a 1 año</option>
+                                    <option value="1 a 2 años">1 a 2 años</option>
+                                    <option value="2 a 5 años">2 a 5 años</option>
+                                    <option value="Más de 5 años">Más de 5 años</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">¿Cuál es su área de trabajo? <span class="required">*</span></div>
+                            <div class="form-group">
+                                <select id="pregunta_area" required disabled>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Torre #1">Torre #1</option>
+                                    <option value="Torre #2">Torre #2</option>
+                                    <option value="CBA">CBA</option>
+                                    <option value="CBB">CBB</option>
+                                    <option value="CBC">CBC</option>
+                                    <option value="Depósitos">Depósitos</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Me siento a gusto trabajando en esta organización. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="clima_1">
+                                <input type="radio" name="clima_1" id="clima_1_5" value="5" disabled>
+                                <label for="clima_1_5" title="5 estrellas">★</label>
+                                <input type="radio" name="clima_1" id="clima_1_4" value="4" disabled>
+                                <label for="clima_1_4" title="4 estrellas">★</label>
+                                <input type="radio" name="clima_1" id="clima_1_3" value="3" disabled>
+                                <label for="clima_1_3" title="3 estrellas">★</label>
+                                <input type="radio" name="clima_1" id="clima_1_2" value="2" disabled>
+                                <label for="clima_1_2" title="2 estrellas">★</label>
+                                <input type="radio" name="clima_1" id="clima_1_1" value="1" disabled>
+                                <label for="clima_1_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Existe respeto entre los compañeros de trabajo. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="clima_2">
+                                <input type="radio" name="clima_2" id="clima_2_5" value="5" disabled>
+                                <label for="clima_2_5" title="5 estrellas">★</label>
+                                <input type="radio" name="clima_2" id="clima_2_4" value="4" disabled>
+                                <label for="clima_2_4" title="4 estrellas">★</label>
+                                <input type="radio" name="clima_2" id="clima_2_3" value="3" disabled>
+                                <label for="clima_2_3" title="3 estrellas">★</label>
+                                <input type="radio" name="clima_2" id="clima_2_2" value="2" disabled>
+                                <label for="clima_2_2" title="2 estrellas">★</label>
+                                <input type="radio" name="clima_2" id="clima_2_1" value="1" disabled>
+                                <label for="clima_2_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Mis compañeros colaboran entre sí cuando alguien necesita ayuda. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="clima_3">
+                                <input type="radio" name="clima_3" id="clima_3_5" value="5" disabled>
+                                <label for="clima_3_5" title="5 estrellas">★</label>
+                                <input type="radio" name="clima_3" id="clima_3_4" value="4" disabled>
+                                <label for="clima_3_4" title="4 estrellas">★</label>
+                                <input type="radio" name="clima_3" id="clima_3_3" value="3" disabled>
+                                <label for="clima_3_3" title="3 estrellas">★</label>
+                                <input type="radio" name="clima_3" id="clima_3_2" value="2" disabled>
+                                <label for="clima_3_2" title="2 estrellas">★</label>
+                                <input type="radio" name="clima_3" id="clima_3_1" value="1" disabled>
+                                <label for="clima_3_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Puedo realizar mi trabajo sin sentir un ambiente de tensión constante. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="clima_4">
+                                <input type="radio" name="clima_4" id="clima_4_5" value="5" disabled>
+                                <label for="clima_4_5" title="5 estrellas">★</label>
+                                <input type="radio" name="clima_4" id="clima_4_4" value="4" disabled>
+                                <label for="clima_4_4" title="4 estrellas">★</label>
+                                <input type="radio" name="clima_4" id="clima_4_3" value="3" disabled>
+                                <label for="clima_4_3" title="3 estrellas">★</label>
+                                <input type="radio" name="clima_4" id="clima_4_2" value="2" disabled>
+                                <label for="clima_4_2" title="2 estrellas">★</label>
+                                <input type="radio" name="clima_4" id="clima_4_1" value="1" disabled>
+                                <label for="clima_4_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Siento que puedo expresar una opinión sin temor a represalias. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="clima_5">
+                                <input type="radio" name="clima_5" id="clima_5_5" value="5" disabled>
+                                <label for="clima_5_5" title="5 estrellas">★</label>
+                                <input type="radio" name="clima_5" id="clima_5_4" value="4" disabled>
+                                <label for="clima_5_4" title="4 estrellas">★</label>
+                                <input type="radio" name="clima_5" id="clima_5_3" value="3" disabled>
+                                <label for="clima_5_3" title="3 estrellas">★</label>
+                                <input type="radio" name="clima_5" id="clima_5_2" value="2" disabled>
+                                <label for="clima_5_2" title="2 estrellas">★</label>
+                                <input type="radio" name="clima_5" id="clima_5_1" value="1" disabled>
+                                <label for="clima_5_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Los problemas laborales se atienden de manera adecuada. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="clima_6">
+                                <input type="radio" name="clima_6" id="clima_6_5" value="5" disabled>
+                                <label for="clima_6_5" title="5 estrellas">★</label>
+                                <input type="radio" name="clima_6" id="clima_6_4" value="4" disabled>
+                                <label for="clima_6_4" title="4 estrellas">★</label>
+                                <input type="radio" name="clima_6" id="clima_6_3" value="3" disabled>
+                                <label for="clima_6_3" title="3 estrellas">★</label>
+                                <input type="radio" name="clima_6" id="clima_6_2" value="2" disabled>
+                                <label for="clima_6_2" title="2 estrellas">★</label>
+                                <input type="radio" name="clima_6" id="clima_6_1" value="1" disabled>
+                                <label for="clima_6_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">¿Qué es lo que más debería mejorar del ambiente laboral? <span class="required">*</span></div>
+                            <div class="form-group">
+                                <textarea id="pregunta_mejorar" placeholder="Escribe tu opinión..." required disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TRATO DE ENCARGADOS Y SUPERVISORES -->
+                    <div class="encuesta-section">
+                        <h3><i class="fas fa-user-tie"></i> Trato de Encargados y Supervisores</h3>
+                        
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Mi encargado/supervisor me trata con respeto. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="super_1">
+                                <input type="radio" name="super_1" id="super_1_5" value="5" disabled>
+                                <label for="super_1_5" title="5 estrellas">★</label>
+                                <input type="radio" name="super_1" id="super_1_4" value="4" disabled>
+                                <label for="super_1_4" title="4 estrellas">★</label>
+                                <input type="radio" name="super_1" id="super_1_3" value="3" disabled>
+                                <label for="super_1_3" title="3 estrellas">★</label>
+                                <input type="radio" name="super_1" id="super_1_2" value="2" disabled>
+                                <label for="super_1_2" title="2 estrellas">★</label>
+                                <input type="radio" name="super_1" id="super_1_1" value="1" disabled>
+                                <label for="super_1_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Mi encargado/supervisor escucha mis opiniones y sugerencias. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="super_2">
+                                <input type="radio" name="super_2" id="super_2_5" value="5" disabled>
+                                <label for="super_2_5" title="5 estrellas">★</label>
+                                <input type="radio" name="super_2" id="super_2_4" value="4" disabled>
+                                <label for="super_2_4" title="4 estrellas">★</label>
+                                <input type="radio" name="super_2" id="super_2_3" value="3" disabled>
+                                <label for="super_2_3" title="3 estrellas">★</label>
+                                <input type="radio" name="super_2" id="super_2_2" value="2" disabled>
+                                <label for="super_2_2" title="2 estrellas">★</label>
+                                <input type="radio" name="super_2" id="super_2_1" value="1" disabled>
+                                <label for="super_2_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Cuando cometo un error, se me corrige de manera respetuosa. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="super_3">
+                                <input type="radio" name="super_3" id="super_3_5" value="5" disabled>
+                                <label for="super_3_5" title="5 estrellas">★</label>
+                                <input type="radio" name="super_3" id="super_3_4" value="4" disabled>
+                                <label for="super_3_4" title="4 estrellas">★</label>
+                                <input type="radio" name="super_3" id="super_3_3" value="3" disabled>
+                                <label for="super_3_3" title="3 estrellas">★</label>
+                                <input type="radio" name="super_3" id="super_3_2" value="2" disabled>
+                                <label for="super_3_2" title="2 estrellas">★</label>
+                                <input type="radio" name="super_3" id="super_3_1" value="1" disabled>
+                                <label for="super_3_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Las llamadas de atención se realizan de manera profesional. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="super_4">
+                                <input type="radio" name="super_4" id="super_4_5" value="5" disabled>
+                                <label for="super_4_5" title="5 estrellas">★</label>
+                                <input type="radio" name="super_4" id="super_4_4" value="4" disabled>
+                                <label for="super_4_4" title="4 estrellas">★</label>
+                                <input type="radio" name="super_4" id="super_4_3" value="3" disabled>
+                                <label for="super_4_3" title="3 estrellas">★</label>
+                                <input type="radio" name="super_4" id="super_4_2" value="2" disabled>
+                                <label for="super_4_2" title="2 estrellas">★</label>
+                                <input type="radio" name="super_4" id="super_4_1" value="1" disabled>
+                                <label for="super_4_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Mi encargado/supervisor reconoce cuando realizo un buen trabajo. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="super_5">
+                                <input type="radio" name="super_5" id="super_5_5" value="5" disabled>
+                                <label for="super_5_5" title="5 estrellas">★</label>
+                                <input type="radio" name="super_5" id="super_5_4" value="4" disabled>
+                                <label for="super_5_4" title="4 estrellas">★</label>
+                                <input type="radio" name="super_5" id="super_5_3" value="3" disabled>
+                                <label for="super_5_3" title="3 estrellas">★</label>
+                                <input type="radio" name="super_5" id="super_5_2" value="2" disabled>
+                                <label for="super_5_2" title="2 estrellas">★</label>
+                                <input type="radio" name="super_5" id="super_5_1" value="1" disabled>
+                                <label for="super_5_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Considero que mi encargado/supervisor es justo con el personal. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="super_6">
+                                <input type="radio" name="super_6" id="super_6_5" value="5" disabled>
+                                <label for="super_6_5" title="5 estrellas">★</label>
+                                <input type="radio" name="super_6" id="super_6_4" value="4" disabled>
+                                <label for="super_6_4" title="4 estrellas">★</label>
+                                <input type="radio" name="super_6" id="super_6_3" value="3" disabled>
+                                <label for="super_6_3" title="3 estrellas">★</label>
+                                <input type="radio" name="super_6" id="super_6_2" value="2" disabled>
+                                <label for="super_6_2" title="2 estrellas">★</label>
+                                <input type="radio" name="super_6" id="super_6_1" value="1" disabled>
+                                <label for="super_6_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Mi encargado/supervisor respeta mi dignidad como trabajador. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="super_7">
+                                <input type="radio" name="super_7" id="super_7_5" value="5" disabled>
+                                <label for="super_7_5" title="5 estrellas">★</label>
+                                <input type="radio" name="super_7" id="super_7_4" value="4" disabled>
+                                <label for="super_7_4" title="4 estrellas">★</label>
+                                <input type="radio" name="super_7" id="super_7_3" value="3" disabled>
+                                <label for="super_7_3" title="3 estrellas">★</label>
+                                <input type="radio" name="super_7" id="super_7_2" value="2" disabled>
+                                <label for="super_7_2" title="2 estrellas">★</label>
+                                <input type="radio" name="super_7" id="super_7_1" value="1" disabled>
+                                <label for="super_7_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Puedo hablar con mi encargado/supervisor sobre un problema sin miedo. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="super_8">
+                                <input type="radio" name="super_8" id="super_8_5" value="5" disabled>
+                                <label for="super_8_5" title="5 estrellas">★</label>
+                                <input type="radio" name="super_8" id="super_8_4" value="4" disabled>
+                                <label for="super_8_4" title="4 estrellas">★</label>
+                                <input type="radio" name="super_8" id="super_8_3" value="3" disabled>
+                                <label for="super_8_3" title="3 estrellas">★</label>
+                                <input type="radio" name="super_8" id="super_8_2" value="2" disabled>
+                                <label for="super_8_2" title="2 estrellas">★</label>
+                                <input type="radio" name="super_8" id="super_8_1" value="1" disabled>
+                                <label for="super_8_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TRATO DE COORDINACIÓN -->
+                    <div class="encuesta-section">
+                        <h3><i class="fas fa-users-cog"></i> Trato de Coordinación</h3>
+                        
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">La coordinación mantiene una comunicación adecuada con los auxiliares. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="coord_1">
+                                <input type="radio" name="coord_1" id="coord_1_5" value="5" disabled>
+                                <label for="coord_1_5" title="5 estrellas">★</label>
+                                <input type="radio" name="coord_1" id="coord_1_4" value="4" disabled>
+                                <label for="coord_1_4" title="4 estrellas">★</label>
+                                <input type="radio" name="coord_1" id="coord_1_3" value="3" disabled>
+                                <label for="coord_1_3" title="3 estrellas">★</label>
+                                <input type="radio" name="coord_1" id="coord_1_2" value="2" disabled>
+                                <label for="coord_1_2" title="2 estrellas">★</label>
+                                <input type="radio" name="coord_1" id="coord_1_1" value="1" disabled>
+                                <label for="coord_1_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">La coordinación escucha las necesidades del personal operativo. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="coord_2">
+                                <input type="radio" name="coord_2" id="coord_2_5" value="5" disabled>
+                                <label for="coord_2_5" title="5 estrellas">★</label>
+                                <input type="radio" name="coord_2" id="coord_2_4" value="4" disabled>
+                                <label for="coord_2_4" title="4 estrellas">★</label>
+                                <input type="radio" name="coord_2" id="coord_2_3" value="3" disabled>
+                                <label for="coord_2_3" title="3 estrellas">★</label>
+                                <input type="radio" name="coord_2" id="coord_2_2" value="2" disabled>
+                                <label for="coord_2_2" title="2 estrellas">★</label>
+                                <input type="radio" name="coord_2" id="coord_2_1" value="1" disabled>
+                                <label for="coord_2_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Considero que coordinación conoce las dificultades que enfrentamos en nuestro trabajo diario. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="coord_3">
+                                <input type="radio" name="coord_3" id="coord_3_5" value="5" disabled>
+                                <label for="coord_3_5" title="5 estrellas">★</label>
+                                <input type="radio" name="coord_3" id="coord_3_4" value="4" disabled>
+                                <label for="coord_3_4" title="4 estrellas">★</label>
+                                <input type="radio" name="coord_3" id="coord_3_3" value="3" disabled>
+                                <label for="coord_3_3" title="3 estrellas">★</label>
+                                <input type="radio" name="coord_3" id="coord_3_2" value="2" disabled>
+                                <label for="coord_3_2" title="2 estrellas">★</label>
+                                <input type="radio" name="coord_3" id="coord_3_1" value="1" disabled>
+                                <label for="coord_3_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Siento que coordinación está interesada en mejorar las condiciones de trabajo. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="coord_4">
+                                <input type="radio" name="coord_4" id="coord_4_5" value="5" disabled>
+                                <label for="coord_4_5" title="5 estrellas">★</label>
+                                <input type="radio" name="coord_4" id="coord_4_4" value="4" disabled>
+                                <label for="coord_4_4" title="4 estrellas">★</label>
+                                <input type="radio" name="coord_4" id="coord_4_3" value="3" disabled>
+                                <label for="coord_4_3" title="3 estrellas">★</label>
+                                <input type="radio" name="coord_4" id="coord_4_2" value="2" disabled>
+                                <label for="coord_4_2" title="2 estrellas">★</label>
+                                <input type="radio" name="coord_4" id="coord_4_1" value="1" disabled>
+                                <label for="coord_4_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RESPETO Y DIGNIDAD LABORAL -->
+                    <div class="encuesta-section">
+                        <h3><i class="fas fa-handshake"></i> Respeto y Dignidad Laboral</h3>
+                        
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Me siento respetado por mis compañeros. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="respeto_1">
+                                <input type="radio" name="respeto_1" id="respeto_1_5" value="5" disabled>
+                                <label for="respeto_1_5" title="5 estrellas">★</label>
+                                <input type="radio" name="respeto_1" id="respeto_1_4" value="4" disabled>
+                                <label for="respeto_1_4" title="4 estrellas">★</label>
+                                <input type="radio" name="respeto_1" id="respeto_1_3" value="3" disabled>
+                                <label for="respeto_1_3" title="3 estrellas">★</label>
+                                <input type="radio" name="respeto_1" id="respeto_1_2" value="2" disabled>
+                                <label for="respeto_1_2" title="2 estrellas">★</label>
+                                <input type="radio" name="respeto_1" id="respeto_1_1" value="1" disabled>
+                                <label for="respeto_1_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Me siento respetado por mis supervisores. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="respeto_2">
+                                <input type="radio" name="respeto_2" id="respeto_2_5" value="5" disabled>
+                                <label for="respeto_2_5" title="5 estrellas">★</label>
+                                <input type="radio" name="respeto_2" id="respeto_2_4" value="4" disabled>
+                                <label for="respeto_2_4" title="4 estrellas">★</label>
+                                <input type="radio" name="respeto_2" id="respeto_2_3" value="3" disabled>
+                                <label for="respeto_2_3" title="3 estrellas">★</label>
+                                <input type="radio" name="respeto_2" id="respeto_2_2" value="2" disabled>
+                                <label for="respeto_2_2" title="2 estrellas">★</label>
+                                <input type="radio" name="respeto_2" id="respeto_2_1" value="1" disabled>
+                                <label for="respeto_2_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">No he sido objeto de burlas, humillaciones o comentarios ofensivos en el trabajo. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="respeto_3">
+                                <input type="radio" name="respeto_3" id="respeto_3_5" value="5" disabled>
+                                <label for="respeto_3_5" title="5 estrellas">★</label>
+                                <input type="radio" name="respeto_3" id="respeto_3_4" value="4" disabled>
+                                <label for="respeto_3_4" title="4 estrellas">★</label>
+                                <input type="radio" name="respeto_3" id="respeto_3_3" value="3" disabled>
+                                <label for="respeto_3_3" title="3 estrellas">★</label>
+                                <input type="radio" name="respeto_3" id="respeto_3_2" value="2" disabled>
+                                <label for="respeto_3_2" title="2 estrellas">★</label>
+                                <input type="radio" name="respeto_3" id="respeto_3_1" value="1" disabled>
+                                <label for="respeto_3_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">Las llamadas de atención se realizan de manera privada y respetuosa cuando corresponde. <span class="required">*</span></div>
+                            <div class="star-rating" data-pregunta="respeto_4">
+                                <input type="radio" name="respeto_4" id="respeto_4_5" value="5" disabled>
+                                <label for="respeto_4_5" title="5 estrellas">★</label>
+                                <input type="radio" name="respeto_4" id="respeto_4_4" value="4" disabled>
+                                <label for="respeto_4_4" title="4 estrellas">★</label>
+                                <input type="radio" name="respeto_4" id="respeto_4_3" value="3" disabled>
+                                <label for="respeto_4_3" title="3 estrellas">★</label>
+                                <input type="radio" name="respeto_4" id="respeto_4_2" value="2" disabled>
+                                <label for="respeto_4_2" title="2 estrellas">★</label>
+                                <input type="radio" name="respeto_4" id="respeto_4_1" value="1" disabled>
+                                <label for="respeto_4_1" title="1 estrella">★</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREGUNTAS ABIERTAS FINALES -->
+                    <div class="encuesta-section" style="border-left-color: var(--warning);">
+                        <h3><i class="fas fa-comment-dots"></i> Preguntas Abiertas</h3>
+                        
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">¿Has presenciado o experimentado alguna situación de maltrato, gritos, humillaciones o trato injusto? <span class="required">*</span></div>
+                            <div class="form-group">
+                                <textarea id="pregunta_maltrato" placeholder="Describe si has vivido o presenciado alguna situación de este tipo..." required disabled></textarea>
+                            </div>
+                        </div>
+
+                        <div class="pregunta-item">
+                            <div class="pregunta-texto">¿Qué es lo que más te gusta de tu trabajo y qué cambiarías para sentirte más valorado y respetado? <span class="required">*</span></div>
+                            <div class="form-group">
+                                <textarea id="pregunta_gusta_cambiar" placeholder="Comparte lo que te gusta y qué cambios te gustaría ver..." required disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FIRMA DEL RESPONSABLE -->
+                    <div class="encuesta-section" style="border-left-color: var(--secondary);">
+                        <h3><i class="fas fa-signature"></i> Firma del Responsable <span class="required">*</span></h3>
+                        <div class="form-group">
+                            <div id="firmaContainerEncuesta" class="firma-container">
+                                <canvas id="firmaCanvasEncuesta" width="400" height="150" style="border: 1px solid #ccc; border-radius: 8px; touch-action: none; width: 100%; height: 150px;"></canvas>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+                                <button type="button" id="toggleEraserEncuesta" class="icon-button" title="Borrador">
+                                    <i class="fas fa-eraser"></i>
+                                </button>
+                                <button type="button" id="undoEncuesta" class="icon-button" title="Deshacer">
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                                <button type="button" id="redoEncuesta" class="icon-button" title="Rehacer">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                                <button type="button" id="clearSignatureEncuesta" class="icon-button" title="Limpiar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="btn-group-encuesta">
+                        <button type="submit" class="submit-btn" id="encuesta-enviar-btn" disabled>
+                            <i class="fas fa-paper-plane"></i> Enviar Encuesta
+                        </button>
+                        <button type="button" class="btn-limpiar" id="encuesta-limpiar-btn" onclick="limpiarEncuesta()">
+                            <i class="fas fa-undo"></i> Limpiar
+                        </button>
+                        <button type="button" class="btn-reenviar" id="encuesta-reenviar-btn" style="display:none;" onclick="reenviarEncuesta()">
+                            <i class="fas fa-redo"></i> Reenviar
+                        </button>
+                    </div>
+                    <div class="form-note">
+                        <i class="fas fa-lock"></i> Tus respuestas nos ayudarán a mejorar y la información se tratará de manera confidencial
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1543,8 +2182,12 @@
                 
                 configurarAutocompletado();
                 configurarAutocompletadoBuzon();
+                configurarAutocompletadoEncuesta();
                 
                 mostrarCargandoColaboradores(false);
+                
+                // Después de cargar los nombres, verificar si hay progreso guardado
+                verificarProgresoEncuesta();
                 
             } catch(e) { 
                 console.error(e);
@@ -1564,6 +2207,12 @@
             if (sugerenciaInput) {
                 sugerenciaInput.disabled = mostrar;
                 sugerenciaInput.placeholder = mostrar ? 'Cargando colaboradores...' : 'Escribe tu nombre completo';
+            }
+
+            const encuestaInput = document.getElementById('encuesta-nombre');
+            if (encuestaInput) {
+                encuestaInput.disabled = mostrar;
+                encuestaInput.placeholder = mostrar ? 'Cargando colaboradores...' : 'Escribe tu nombre completo';
             }
         }
 
@@ -1610,6 +2259,54 @@
             input.prop('disabled', false);
         }
 
+        function configurarAutocompletadoEncuesta() {
+            if (nombresColaboradores.length === 0) {
+                mostrarCargandoColaboradores(true);
+                cargarNombres();
+                return;
+            }
+            
+            const input = $("#encuesta-nombre");
+            if (input.data("ui-autocomplete")) {
+                input.autocomplete("destroy");
+            }
+            
+            input.autocomplete({
+                source: nombresColaboradores,
+                minLength: 1,
+                autoFocus: true,
+                delay: 100,
+                select: function(event, ui) {
+                    const colaborador = nombresColaboradoresCompletos.find(c => c.nombre === ui.item.value);
+                    if (colaborador) {
+                        document.getElementById('encuesta-identidad').value = colaborador.identidad;
+                        habilitarEncuesta();
+                        guardarProgresoEncuesta();
+                    }
+                },
+                change: function(event, ui) {
+                    const valor = $(this).val().trim();
+                    if (valor) {
+                        const colaborador = nombresColaboradoresCompletos.find(c => c.nombre === valor);
+                        if (colaborador) {
+                            document.getElementById('encuesta-identidad').value = colaborador.identidad;
+                            habilitarEncuesta();
+                            guardarProgresoEncuesta();
+                        } else {
+                            $(this).val('');
+                            document.getElementById('encuesta-identidad').value = '';
+                            bloquearCamposExceptoNombre(true);
+                        }
+                    }
+                },
+                open: function() {
+                    $(this).prop('disabled', false);
+                }
+            });
+            
+            input.prop('disabled', false);
+        }
+
         function generarCodigo() {
             const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
             let codigo = '';
@@ -1628,218 +2325,6 @@
         function mostrarOpcionesPermiso() { document.getElementById('opciones-permiso-modal').classList.add('active'); }
         function cerrarOpcionesPermiso() { document.getElementById('opciones-permiso-modal').classList.remove('active'); }
         
-        // ==================== FIRMA PARA PERMISOS ====================
-        let isDrawingPermiso = false;
-        let isErasingPermiso = false;
-        let lastXPermiso = 0;
-        let lastYPermiso = 0;
-        const canvasPermiso = document.getElementById("firmaCanvasPermiso");
-        const ctxPermiso = canvasPermiso.getContext("2d", { willReadFrequently: true });
-        const undoStackPermiso = [];
-        const redoStackPermiso = [];
-
-        function initializeCanvasPermiso() {
-            const container = canvasPermiso.parentElement;
-            const rect = container.getBoundingClientRect();
-            const width = rect.width > 0 ? rect.width : 400;
-            const height = 150;
-            
-            canvasPermiso.width = width;
-            canvasPermiso.height = height;
-            
-            ctxPermiso.strokeStyle = "#000000";
-            ctxPermiso.lineWidth = 3;
-            ctxPermiso.lineCap = "round";
-            ctxPermiso.lineJoin = "round";
-            
-            ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
-            ctxPermiso.fillStyle = "#FFFFFF";
-            ctxPermiso.fillRect(0, 0, canvasPermiso.width, canvasPermiso.height);
-        }
-
-        function getCoordinatesPermiso(e) {
-            const rect = canvasPermiso.getBoundingClientRect();
-            const scaleX = canvasPermiso.width / rect.width;
-            const scaleY = canvasPermiso.height / rect.height;
-            
-            if (e.touches && e.touches.length > 0) {
-                return {
-                    x: (e.touches[0].clientX - rect.left) * scaleX,
-                    y: (e.touches[0].clientY - rect.top) * scaleY
-                };
-            } else if (e.offsetX !== undefined) {
-                return {
-                    x: e.offsetX * scaleX,
-                    y: e.offsetY * scaleY
-                };
-            } else if (e.clientX !== undefined) {
-                return {
-                    x: (e.clientX - rect.left) * scaleX,
-                    y: (e.clientY - rect.top) * scaleY
-                };
-            }
-            return { x: 0, y: 0 };
-        }
-
-        function startDrawingPermiso(e) {
-            e.preventDefault();
-            saveToUndoStackPermiso();
-            isDrawingPermiso = true;
-            const { x, y } = getCoordinatesPermiso(e);
-            lastXPermiso = x;
-            lastYPermiso = y;
-            
-            ctxPermiso.beginPath();
-            ctxPermiso.arc(x, y, ctxPermiso.lineWidth/2, 0, Math.PI * 2);
-            ctxPermiso.fillStyle = isErasingPermiso ? "#FFFFFF" : "#000000";
-            ctxPermiso.fill();
-            ctxPermiso.beginPath();
-            ctxPermiso.moveTo(x, y);
-        }
-
-        function drawPermiso(e) {
-            if (!isDrawingPermiso) return;
-            e.preventDefault();
-            
-            const { x, y } = getCoordinatesPermiso(e);
-            
-            ctxPermiso.beginPath();
-            ctxPermiso.moveTo(lastXPermiso, lastYPermiso);
-            ctxPermiso.lineTo(x, y);
-            ctxPermiso.strokeStyle = isErasingPermiso ? "#FFFFFF" : "#000000";
-            ctxPermiso.lineWidth = isErasingPermiso ? 20 : 3;
-            ctxPermiso.stroke();
-            
-            lastXPermiso = x;
-            lastYPermiso = y;
-        }
-
-        function stopDrawingPermiso() {
-            if (isDrawingPermiso) {
-                isDrawingPermiso = false;
-                verificarFirmaPermiso();
-            }
-        }
-
-        function saveToUndoStackPermiso() {
-            undoStackPermiso.push(canvasPermiso.toDataURL());
-            redoStackPermiso.length = 0;
-            updateButtonStatesPermiso();
-        }
-
-        function undoPermiso() {
-            if (undoStackPermiso.length > 0) {
-                redoStackPermiso.push(canvasPermiso.toDataURL());
-                const lastState = undoStackPermiso.pop();
-                const img = new Image();
-                img.src = lastState;
-                img.onload = () => {
-                    ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
-                    ctxPermiso.drawImage(img, 0, 0);
-                    verificarFirmaPermiso();
-                };
-                updateButtonStatesPermiso();
-            }
-        }
-
-        function redoPermiso() {
-            if (redoStackPermiso.length > 0) {
-                undoStackPermiso.push(canvasPermiso.toDataURL());
-                const lastState = redoStackPermiso.pop();
-                const img = new Image();
-                img.src = lastState;
-                img.onload = () => {
-                    ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
-                    ctxPermiso.drawImage(img, 0, 0);
-                    verificarFirmaPermiso();
-                };
-                updateButtonStatesPermiso();
-            }
-        }
-
-        function updateButtonStatesPermiso() {
-            const undoBtn = document.getElementById("undoPermiso");
-            const redoBtn = document.getElementById("redoPermiso");
-            if (undoBtn) undoBtn.style.display = undoStackPermiso.length > 0 ? "inline-flex" : "none";
-            if (redoBtn) redoBtn.style.display = redoStackPermiso.length > 0 ? "inline-flex" : "none";
-        }
-
-        function clearSignaturePermiso() {
-            saveToUndoStackPermiso();
-            ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
-            ctxPermiso.fillStyle = "#FFFFFF";
-            ctxPermiso.fillRect(0, 0, canvasPermiso.width, canvasPermiso.height);
-            verificarFirmaPermiso();
-            updateButtonStatesPermiso();
-        }
-
-        function verificarFirmaPermiso() {
-            const hayFirma = !isCanvasBlankPermiso(canvasPermiso);
-            if (hayFirma) {
-                canvasPermiso.classList.add('signed');
-            } else {
-                canvasPermiso.classList.remove('signed');
-            }
-        }
-
-        function isCanvasBlankPermiso(canvas) {
-            try {
-                const context = canvas.getContext('2d');
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const pixelBuffer = new Uint32Array(imageData.data.buffer);
-                
-                let nonWhitePixels = 0;
-                for (let i = 0; i < pixelBuffer.length; i++) {
-                    if (pixelBuffer[i] !== 0xFFFFFFFF && pixelBuffer[i] !== 0x00000000) {
-                        nonWhitePixels++;
-                    }
-                }
-                return nonWhitePixels <= 50;
-            } catch (error) {
-                console.error('Error al verificar canvas:', error);
-                return true;
-            }
-        }
-
-        function setupSignatureEventsPermiso() {
-            canvasPermiso.addEventListener("mousedown", startDrawingPermiso);
-            canvasPermiso.addEventListener("mousemove", drawPermiso);
-            canvasPermiso.addEventListener("mouseup", stopDrawingPermiso);
-            canvasPermiso.addEventListener("mouseout", stopDrawingPermiso);
-            
-            canvasPermiso.addEventListener("touchstart", function(e) {
-                startDrawingPermiso(e);
-                e.preventDefault();
-            }, { passive: false });
-            
-            canvasPermiso.addEventListener("touchmove", function(e) {
-                drawPermiso(e);
-                e.preventDefault();
-            }, { passive: false });
-            
-            canvasPermiso.addEventListener("touchend", stopDrawingPermiso);
-            canvasPermiso.addEventListener("touchcancel", stopDrawingPermiso);
-            
-            document.getElementById("toggleEraserPermiso").addEventListener("click", function() {
-                isErasingPermiso = !isErasingPermiso;
-                this.classList.toggle("active");
-                this.innerHTML = isErasingPermiso ? 
-                    '<i class="fas fa-pen"></i>' : 
-                    '<i class="fas fa-eraser"></i>';
-            });
-            
-            document.getElementById("undoPermiso").addEventListener("click", undoPermiso);
-            document.getElementById("redoPermiso").addEventListener("click", redoPermiso);
-            document.getElementById("clearSignaturePermiso").addEventListener("click", clearSignaturePermiso);
-            
-            canvasPermiso.addEventListener("contextmenu", function(e) { e.preventDefault(); });
-            
-            canvasPermiso.style.touchAction = "none";
-            canvasPermiso.style.msTouchAction = "none";
-        }
-
-        // ==================== FIN FIRMA PARA PERMISOS ====================
-
         function mostrarSolicitarPermiso() {
             document.getElementById('solicitar-permiso-modal').classList.add('active');
             document.getElementById('permission-form').reset();
@@ -1848,14 +2333,6 @@
             document.getElementById('permission-fecha').value = getCurrentDateInHonduras().format('YYYY-MM-DD');
             document.getElementById('campo-dias').style.display = 'none';
             document.getElementById('campo-horas').style.display = 'none';
-            
-            // Limpiar y reinicializar firma
-            clearSignaturePermiso();
-            setTimeout(() => {
-                initializeCanvasPermiso();
-                setupSignatureEventsPermiso();
-                verificarFirmaPermiso();
-            }, 300);
             
             if (nombresColaboradores.length === 0) {
                 mostrarCargandoColaboradores(true);
@@ -1946,12 +2423,6 @@
         document.getElementById('permission-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Validar firma
-            if (isCanvasBlankPermiso(canvasPermiso)) {
-                Swal.fire('Error', 'La firma del responsable es obligatoria', 'error');
-                return;
-            }
-            
             const nombre = document.getElementById('permission-nombre').value.trim();
             const telefono = document.getElementById('permission-telefono').value.trim();
             const fecha = document.getElementById('permission-fecha').value;
@@ -1987,45 +2458,16 @@
                 horasPermiso = `${convertirHora(horaInicio)} - ${convertirHora(horaFin)}`;
             }
             
-            // Obtener la firma como imagen base64
-            const firmaDataUrl = canvasPermiso.toDataURL("image/png");
-            
             const codigo = generarCodigo();
             document.getElementById('overlay').style.display = 'flex';
             
             try {
                 let fotosUrls = [];
-                let firmaUrl = '';
                 
-                // Subir fotos si hay
                 if (archivosSeleccionados.length > 0) {
                     fotosUrls = await subirImagenesALDrive(codigo);
                 }
                 
-                // Subir la firma
-                try {
-                    const firmaBase64 = firmaDataUrl.split(',')[1];
-                    
-                    const firmaResponse = await fetch(PERMISO_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            accion: 'upload',
-                            codigo: codigo,
-                            archivo: firmaBase64,
-                            nombre: `firma_${codigo}.png`
-                        })
-                    });
-                    
-                    const firmaResult = await firmaResponse.json();
-                    if (firmaResult.success && firmaResult.url) {
-                        firmaUrl = firmaResult.url;
-                    }
-                } catch (firmaError) {
-                    console.error('Error al subir firma:', firmaError);
-                }
-                
-                // Enviar la solicitud de permiso
                 await fetch(PERMISO_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -2043,14 +2485,12 @@
                         telefono: telefono,
                         motivo: motivo,
                         fotos: fotosUrls.join(';'),
-                        firma: firmaUrl,
                         estado: 'Pendiente'
                     })
                 });
                 
                 document.getElementById('overlay').style.display = 'none';
                 
-                // Guardar en historial local
                 guardarPermisoEnHistorial({
                     codigo: codigo,
                     fechaSolicitud: getCurrentDateInHonduras().format('YYYY-MM-DD HH:mm:ss'),
@@ -2116,11 +2556,6 @@
                         fotosHtml = `<div class="fotos-grid">${s.fotos.split(';').map(f => `<img src="${f}" onclick="window.open('${f}','_blank')">`).join('')}</div>`;
                     }
                     
-                    let firmaHtml = '';
-                    if (s.firma && s.firma.trim()) {
-                        firmaHtml = `<div style="margin-top:10px;"><span class="label"><i class="fas fa-signature"></i> Firma del Responsable</span><br><img src="${s.firma}" style="max-width:200px; max-height:80px; border:1px solid #ccc; border-radius:8px; margin-top:5px; padding:5px; background:white;"></div>`;
-                    }
-                    
                     let detallePermiso = s.tipoPermiso === 'dias' ? `${s.cantidadDias} día(s)` : s.horasPermiso;
                     
                     let fechaSolicitudFormateada = formatearFechaParaMostrar(s.fechaSolicitud);
@@ -2128,7 +2563,6 @@
                     
                     container.innerHTML = `
                         <div class="consulta-card-mejorada">
-                            <!-- Encabezado con código y estado -->
                             <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 15px; border-bottom: 2px solid var(--gray-200);">
                                 <div>
                                     <span style="font-size: 0.8em; color: var(--gray-600); display: block;">CÓDIGO DE SOLICITUD</span>
@@ -2140,7 +2574,6 @@
                                 </span>
                             </div>
                             
-                            <!-- Grid de información -->
                             <div class="grid-2col">
                                 <div class="campo">
                                     <span class="label"><i class="far fa-calendar-alt"></i> Fecha de solicitud</span>
@@ -2164,19 +2597,12 @@
                                 </div>
                             </div>
                             
-                            <!-- Motivo -->
                             <div class="motivo-box">
                                 <span class="label"><i class="fas fa-comment"></i> Motivo del permiso</span>
                                 <span class="valor">${s.motivo}</span>
                             </div>
                             
-                            <!-- Evidencias (fotos) -->
                             ${fotosHtml ? `<div style="margin-top: 12px; margin-bottom: 12px;"><span class="label" style="font-size: 0.7em; color: var(--gray-600); display: block; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-camera"></i> Evidencias adjuntas</span>${fotosHtml}</div>` : ''}
-                            
-                            <!-- Firma -->
-                            ${firmaHtml}
-                            
-
                         </div>
                     `;
                 } else {
@@ -2365,49 +2791,831 @@
             document.getElementById('birthday-modal').classList.remove('active');
         }
 
-        // Cargar nombres al inicio
-        cargarNombres();
+        // ==================== ENCUESTA DE CLIMA LABORAL ====================
+        const ENCUESTA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkW0jvHEQR9FC8RH_R_0auP_1BTeJBsiubJA2GFmxZDUwZQg5ZQa99OQDityIC-xUSew/exec";
+        
+        const ENCUESTA_PROGRESO_KEY = 'encuesta_clima_progreso';
+        const ENCUESTA_ENVIADA_KEY = 'encuesta_clima_enviada';
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                console.log('Nueva versión del Service Worker detectada. Recargando...');
-                window.location.reload();
+        // Variables para la firma de la encuesta
+        let isDrawingEncuesta = false;
+        let isErasingEncuesta = false;
+        let lastXEncuesta = 0;
+        let lastYEncuesta = 0;
+        const canvasEncuesta = document.getElementById("firmaCanvasEncuesta");
+        const ctxEncuesta = canvasEncuesta.getContext("2d", { willReadFrequently: true });
+        const undoStackEncuesta = [];
+        const redoStackEncuesta = [];
+
+        function initializeCanvasEncuesta() {
+            const container = canvasEncuesta.parentElement;
+            const rect = container.getBoundingClientRect();
+            const width = rect.width > 0 ? rect.width : 400;
+            const height = 150;
+            
+            canvasEncuesta.width = width;
+            canvasEncuesta.height = height;
+            
+            ctxEncuesta.strokeStyle = "#000000";
+            ctxEncuesta.lineWidth = 3;
+            ctxEncuesta.lineCap = "round";
+            ctxEncuesta.lineJoin = "round";
+            
+            ctxEncuesta.clearRect(0, 0, canvasEncuesta.width, canvasEncuesta.height);
+            ctxEncuesta.fillStyle = "#FFFFFF";
+            ctxEncuesta.fillRect(0, 0, canvasEncuesta.width, canvasEncuesta.height);
+        }
+
+        function getCoordinatesEncuesta(e) {
+            const rect = canvasEncuesta.getBoundingClientRect();
+            const scaleX = canvasEncuesta.width / rect.width;
+            const scaleY = canvasEncuesta.height / rect.height;
+            
+            if (e.touches && e.touches.length > 0) {
+                return {
+                    x: (e.touches[0].clientX - rect.left) * scaleX,
+                    y: (e.touches[0].clientY - rect.top) * scaleY
+                };
+            } else if (e.offsetX !== undefined) {
+                return {
+                    x: e.offsetX * scaleX,
+                    y: e.offsetY * scaleY
+                };
+            } else if (e.clientX !== undefined) {
+                return {
+                    x: (e.clientX - rect.left) * scaleX,
+                    y: (e.clientY - rect.top) * scaleY
+                };
+            }
+            return { x: 0, y: 0 };
+        }
+
+        function startDrawingEncuesta(e) {
+            e.preventDefault();
+            saveToUndoStackEncuesta();
+            isDrawingEncuesta = true;
+            const { x, y } = getCoordinatesEncuesta(e);
+            lastXEncuesta = x;
+            lastYEncuesta = y;
+            
+            ctxEncuesta.beginPath();
+            ctxEncuesta.arc(x, y, ctxEncuesta.lineWidth/2, 0, Math.PI * 2);
+            ctxEncuesta.fillStyle = isErasingEncuesta ? "#FFFFFF" : "#000000";
+            ctxEncuesta.fill();
+            ctxEncuesta.beginPath();
+            ctxEncuesta.moveTo(x, y);
+        }
+
+        function drawEncuesta(e) {
+            if (!isDrawingEncuesta) return;
+            e.preventDefault();
+            
+            const { x, y } = getCoordinatesEncuesta(e);
+            
+            ctxEncuesta.beginPath();
+            ctxEncuesta.moveTo(lastXEncuesta, lastYEncuesta);
+            ctxEncuesta.lineTo(x, y);
+            ctxEncuesta.strokeStyle = isErasingEncuesta ? "#FFFFFF" : "#000000";
+            ctxEncuesta.lineWidth = isErasingEncuesta ? 20 : 3;
+            ctxEncuesta.stroke();
+            
+            lastXEncuesta = x;
+            lastYEncuesta = y;
+        }
+
+        function stopDrawingEncuesta() {
+            if (isDrawingEncuesta) {
+                isDrawingEncuesta = false;
+                verificarFirmaEncuesta();
+                guardarProgresoEncuesta();
+            }
+        }
+
+        function saveToUndoStackEncuesta() {
+            undoStackEncuesta.push(canvasEncuesta.toDataURL());
+            redoStackEncuesta.length = 0;
+            updateButtonStatesEncuesta();
+        }
+
+        function undoEncuesta() {
+            if (undoStackEncuesta.length > 0) {
+                redoStackEncuesta.push(canvasEncuesta.toDataURL());
+                const lastState = undoStackEncuesta.pop();
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => {
+                    ctxEncuesta.clearRect(0, 0, canvasEncuesta.width, canvasEncuesta.height);
+                    ctxEncuesta.drawImage(img, 0, 0);
+                    verificarFirmaEncuesta();
+                    guardarProgresoEncuesta();
+                };
+                updateButtonStatesEncuesta();
+            }
+        }
+
+        function redoEncuesta() {
+            if (redoStackEncuesta.length > 0) {
+                undoStackEncuesta.push(canvasEncuesta.toDataURL());
+                const lastState = redoStackEncuesta.pop();
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => {
+                    ctxEncuesta.clearRect(0, 0, canvasEncuesta.width, canvasEncuesta.height);
+                    ctxEncuesta.drawImage(img, 0, 0);
+                    verificarFirmaEncuesta();
+                    guardarProgresoEncuesta();
+                };
+                updateButtonStatesEncuesta();
+            }
+        }
+
+        function updateButtonStatesEncuesta() {
+            const undoBtn = document.getElementById("undoEncuesta");
+            const redoBtn = document.getElementById("redoEncuesta");
+            if (undoBtn) undoBtn.style.display = undoStackEncuesta.length > 0 ? "inline-flex" : "none";
+            if (redoBtn) redoBtn.style.display = redoStackEncuesta.length > 0 ? "inline-flex" : "none";
+        }
+
+        function clearSignatureEncuesta() {
+            saveToUndoStackEncuesta();
+            ctxEncuesta.clearRect(0, 0, canvasEncuesta.width, canvasEncuesta.height);
+            ctxEncuesta.fillStyle = "#FFFFFF";
+            ctxEncuesta.fillRect(0, 0, canvasEncuesta.width, canvasEncuesta.height);
+            verificarFirmaEncuesta();
+            updateButtonStatesEncuesta();
+            guardarProgresoEncuesta();
+        }
+
+        function verificarFirmaEncuesta() {
+            const hayFirma = !isCanvasBlankEncuesta(canvasEncuesta);
+            if (hayFirma) {
+                canvasEncuesta.classList.add('signed');
+            } else {
+                canvasEncuesta.classList.remove('signed');
+            }
+        }
+
+        function isCanvasBlankEncuesta(canvas) {
+            try {
+                const context = canvas.getContext('2d');
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const pixelBuffer = new Uint32Array(imageData.data.buffer);
+                
+                let nonWhitePixels = 0;
+                for (let i = 0; i < pixelBuffer.length; i++) {
+                    if (pixelBuffer[i] !== 0xFFFFFFFF && pixelBuffer[i] !== 0x00000000) {
+                        nonWhitePixels++;
+                    }
+                }
+                return nonWhitePixels <= 50;
+            } catch (error) {
+                console.error('Error al verificar canvas:', error);
+                return true;
+            }
+        }
+
+        function setupSignatureEventsEncuesta() {
+            canvasEncuesta.addEventListener("mousedown", startDrawingEncuesta);
+            canvasEncuesta.addEventListener("mousemove", drawEncuesta);
+            canvasEncuesta.addEventListener("mouseup", stopDrawingEncuesta);
+            canvasEncuesta.addEventListener("mouseout", stopDrawingEncuesta);
+            
+            canvasEncuesta.addEventListener("touchstart", function(e) {
+                startDrawingEncuesta(e);
+                e.preventDefault();
+            }, { passive: false });
+            
+            canvasEncuesta.addEventListener("touchmove", function(e) {
+                drawEncuesta(e);
+                e.preventDefault();
+            }, { passive: false });
+            
+            canvasEncuesta.addEventListener("touchend", stopDrawingEncuesta);
+            canvasEncuesta.addEventListener("touchcancel", stopDrawingEncuesta);
+            
+            document.getElementById("toggleEraserEncuesta").addEventListener("click", function() {
+                isErasingEncuesta = !isErasingEncuesta;
+                this.classList.toggle("active");
+                this.innerHTML = isErasingEncuesta ? 
+                    '<i class="fas fa-pen"></i>' : 
+                    '<i class="fas fa-eraser"></i>';
             });
             
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw-index.js')
-                    .then(function(registration) {
-                        console.log('Service Worker Index registrado con éxito:', registration.scope);
-                        registration.update();
-                        setInterval(() => {
-                            registration.update();
-                        }, 60 * 60 * 1000);
-                    }, function(err) {
-                        console.log('Fallo al registrar Service Worker Index:', err);
-                    });
+            document.getElementById("undoEncuesta").addEventListener("click", undoEncuesta);
+            document.getElementById("redoEncuesta").addEventListener("click", redoEncuesta);
+            document.getElementById("clearSignatureEncuesta").addEventListener("click", clearSignatureEncuesta);
+            
+            canvasEncuesta.addEventListener("contextmenu", function(e) { e.preventDefault(); });
+            
+            canvasEncuesta.style.touchAction = "none";
+            canvasEncuesta.style.msTouchAction = "none";
+        }
+
+        function habilitarEncuesta() {
+            // Habilitar todos los campos del formulario
+            const inputs = document.querySelectorAll('#encuesta-form input:not([type="hidden"]), #encuesta-form select, #encuesta-form textarea');
+            inputs.forEach(input => {
+                input.disabled = false;
             });
             
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    navigator.serviceWorker.ready.then(registration => {
-                        registration.update();
+            // Habilitar estrellas
+            const starRatings = document.querySelectorAll('.star-rating');
+            starRatings.forEach(rating => {
+                rating.classList.remove('disabled');
+                const radios = rating.querySelectorAll('input[type="radio"]');
+                radios.forEach(radio => {
+                    radio.disabled = false;
+                });
+            });
+            
+            // Habilitar botones
+            document.getElementById('encuesta-enviar-btn').disabled = false;
+            document.getElementById('encuesta-limpiar-btn').disabled = false;
+            
+            // Habilitar firma
+            canvasEncuesta.style.pointerEvents = 'auto';
+            canvasEncuesta.style.opacity = '1';
+            
+            // Inicializar la firma si no está inicializada
+            if (!canvasEncuesta._initialized) {
+                setTimeout(() => {
+                    initializeCanvasEncuesta();
+                    setupSignatureEventsEncuesta();
+                    verificarFirmaEncuesta();
+                    canvasEncuesta._initialized = true;
+                }, 300);
+            }
+        }
+
+        function bloquearCamposExceptoNombre(bloquear) {
+            // Bloquear todos los campos excepto el nombre
+            const inputs = document.querySelectorAll('#encuesta-form input:not([type="hidden"]):not(#encuesta-nombre), #encuesta-form select, #encuesta-form textarea');
+            inputs.forEach(input => {
+                input.disabled = bloquear;
+            });
+            
+            // Bloquear estrellas
+            const starRatings = document.querySelectorAll('.star-rating');
+            starRatings.forEach(rating => {
+                if (bloquear) {
+                    rating.classList.add('disabled');
+                    const radios = rating.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = true;
                     });
+                } else {
+                    rating.classList.remove('disabled');
+                    const radios = rating.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false;
+                    });
+                }
+            });
+            
+            document.getElementById('encuesta-enviar-btn').disabled = bloquear;
+            // El botón limpiar siempre debe estar habilitado
+            document.getElementById('encuesta-limpiar-btn').disabled = false;
+            
+            // Bloquear firma
+            if (bloquear) {
+                canvasEncuesta.style.pointerEvents = 'none';
+                canvasEncuesta.style.opacity = '0.7';
+            } else {
+                canvasEncuesta.style.pointerEvents = 'auto';
+                canvasEncuesta.style.opacity = '1';
+            }
+        }
+
+        function bloquearEncuesta(bloquear) {
+            const inputs = document.querySelectorAll('#encuesta-form input:not([type="hidden"]), #encuesta-form select, #encuesta-form textarea');
+            inputs.forEach(input => {
+                input.disabled = bloquear;
+            });
+            
+            const starRatings = document.querySelectorAll('.star-rating');
+            starRatings.forEach(rating => {
+                if (bloquear) {
+                    rating.classList.add('disabled');
+                    const radios = rating.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = true;
+                    });
+                } else {
+                    rating.classList.remove('disabled');
+                    const radios = rating.querySelectorAll('input[type="radio"]');
+                    radios.forEach(radio => {
+                        radio.disabled = false;
+                    });
+                }
+            });
+            
+            document.getElementById('encuesta-enviar-btn').disabled = bloquear;
+            // El botón limpiar siempre debe estar habilitado
+            document.getElementById('encuesta-limpiar-btn').disabled = false;
+            
+            if (bloquear) {
+                canvasEncuesta.style.pointerEvents = 'none';
+                canvasEncuesta.style.opacity = '0.7';
+            } else {
+                canvasEncuesta.style.pointerEvents = 'auto';
+                canvasEncuesta.style.opacity = '1';
+            }
+        }
+
+        function mostrarEncuesta() {
+            document.getElementById('encuesta-modal').classList.add('active');
+            
+            // Establecer fecha automática (oculta)
+            const fechaHonduras = getCurrentDateInHonduras();
+            document.getElementById('encuesta-fecha').value = fechaHonduras.format('YYYY-MM-DD HH:mm:ss');
+            
+            // Configurar autocompletado para el nombre
+            if (nombresColaboradores.length === 0) {
+                mostrarCargandoColaboradores(true);
+                cargarNombres().then(() => {
+                    configurarAutocompletadoEncuesta();
+                    verificarProgresoEncuesta();
+                });
+            } else {
+                configurarAutocompletadoEncuesta();
+                verificarProgresoEncuesta();
+            }
+        }
+
+        function cerrarEncuesta() {
+            document.getElementById('encuesta-modal').classList.remove('active');
+            // Guardar progreso al cerrar si no está enviada
+            const enviada = localStorage.getItem(ENCUESTA_ENVIADA_KEY) === 'true';
+            if (!enviada) {
+                guardarProgresoEncuesta();
+            }
+        }
+
+        function verificarProgresoEncuesta() {
+            const enviada = localStorage.getItem(ENCUESTA_ENVIADA_KEY) === 'true';
+            
+            if (enviada) {
+                // Si ya fue enviada, mostrar badge y ocultar botón enviar, mostrar reenviar
+                document.getElementById('encuesta-enviada-badge').style.display = 'flex';
+                document.getElementById('encuesta-enviar-btn').style.display = 'none';
+                document.getElementById('encuesta-reenviar-btn').style.display = 'flex';
+                // El botón limpiar siempre visible
+                document.getElementById('encuesta-limpiar-btn').style.display = 'flex';
+                bloquearEncuesta(true);
+                return;
+            }
+            
+            // Ocultar reenviar, mostrar enviar
+            document.getElementById('encuesta-enviar-btn').style.display = 'flex';
+            document.getElementById('encuesta-reenviar-btn').style.display = 'none';
+            document.getElementById('encuesta-enviada-badge').style.display = 'none';
+            
+            // Verificar si hay progreso guardado
+            const progreso = localStorage.getItem(ENCUESTA_PROGRESO_KEY);
+            if (progreso) {
+                try {
+                    const data = JSON.parse(progreso);
+                    if (data.nombre) {
+                        const colaborador = nombresColaboradoresCompletos.find(c => c.nombre === data.nombre);
+                        if (colaborador) {
+                            document.getElementById('encuesta-nombre').value = data.nombre;
+                            document.getElementById('encuesta-identidad').value = colaborador.identidad;
+                            cargarProgresoEncuesta();
+                            habilitarEncuesta();
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error al verificar progreso:', e);
+                }
+            }
+            
+            // Si no hay progreso válido, mantener todo bloqueado excepto nombre
+            bloquearCamposExceptoNombre(true);
+            document.getElementById('encuesta-nombre').disabled = false;
+        }
+
+        function cargarProgresoEncuesta() {
+            try {
+                const progreso = JSON.parse(localStorage.getItem(ENCUESTA_PROGRESO_KEY));
+                if (!progreso) return;
+                
+                // Cargar selects
+                const selects = ['pregunta_tiempo', 'pregunta_area'];
+                selects.forEach(id => {
+                    if (progreso[id]) {
+                        document.getElementById(id).value = progreso[id];
+                    }
+                });
+                
+                // Cargar radios (estrellas)
+                const radioGroups = [
+                    'clima_1', 'clima_2', 'clima_3', 'clima_4', 'clima_5', 'clima_6',
+                    'super_1', 'super_2', 'super_3', 'super_4', 'super_5', 'super_6', 'super_7', 'super_8',
+                    'coord_1', 'coord_2', 'coord_3', 'coord_4',
+                    'respeto_1', 'respeto_2', 'respeto_3', 'respeto_4'
+                ];
+                radioGroups.forEach(name => {
+                    if (progreso[name]) {
+                        const radio = document.querySelector(`input[name="${name}"][value="${progreso[name]}"]`);
+                        if (radio) radio.checked = true;
+                    }
+                });
+                
+                // Cargar textareas
+                const textareas = ['pregunta_mejorar', 'pregunta_maltrato', 'pregunta_gusta_cambiar'];
+                textareas.forEach(id => {
+                    if (progreso[id]) {
+                        document.getElementById(id).value = progreso[id];
+                    }
+                });
+                
+                // Cargar firma
+                if (progreso.firma) {
+                    const img = new Image();
+                    img.src = progreso.firma;
+                    img.onload = () => {
+                        ctxEncuesta.clearRect(0, 0, canvasEncuesta.width, canvasEncuesta.height);
+                        ctxEncuesta.drawImage(img, 0, 0, canvasEncuesta.width, canvasEncuesta.height);
+                        verificarFirmaEncuesta();
+                    };
+                }
+                
+            } catch (error) {
+                console.error('Error cargando progreso de encuesta:', error);
+            }
+        }
+
+        function guardarProgresoEncuesta() {
+            try {
+                if (localStorage.getItem(ENCUESTA_ENVIADA_KEY) === 'true') {
+                    return;
+                }
+                
+                const progreso = {
+                    nombre: document.getElementById('encuesta-nombre').value,
+                    identidad: document.getElementById('encuesta-identidad').value,
+                    pregunta_tiempo: document.getElementById('pregunta_tiempo').value,
+                    pregunta_area: document.getElementById('pregunta_area').value,
+                    pregunta_mejorar: document.getElementById('pregunta_mejorar').value,
+                    pregunta_maltrato: document.getElementById('pregunta_maltrato').value,
+                    pregunta_gusta_cambiar: document.getElementById('pregunta_gusta_cambiar').value,
+                    firma: canvasEncuesta.toDataURL()
+                };
+                
+                const radioGroups = [
+                    'clima_1', 'clima_2', 'clima_3', 'clima_4', 'clima_5', 'clima_6',
+                    'super_1', 'super_2', 'super_3', 'super_4', 'super_5', 'super_6', 'super_7', 'super_8',
+                    'coord_1', 'coord_2', 'coord_3', 'coord_4',
+                    'respeto_1', 'respeto_2', 'respeto_3', 'respeto_4'
+                ];
+                radioGroups.forEach(name => {
+                    const checked = document.querySelector(`input[name="${name}"]:checked`);
+                    if (checked) {
+                        progreso[name] = checked.value;
+                    }
+                });
+                
+                localStorage.setItem(ENCUESTA_PROGRESO_KEY, JSON.stringify(progreso));
+                
+            } catch (error) {
+                console.error('Error guardando progreso de encuesta:', error);
+            }
+        }
+
+        // Event listener para guardar progreso en cada cambio
+        document.addEventListener('DOMContentLoaded', function() {
+            // Guardar progreso al cambiar cualquier campo de la encuesta
+            document.querySelectorAll('#encuesta-form input, #encuesta-form select, #encuesta-form textarea').forEach(element => {
+                element.addEventListener('change', function() {
+                    if (localStorage.getItem(ENCUESTA_ENVIADA_KEY) !== 'true') {
+                        guardarProgresoEncuesta();
+                    }
+                });
+                element.addEventListener('input', function() {
+                    if (localStorage.getItem(ENCUESTA_ENVIADA_KEY) !== 'true') {
+                        guardarProgresoEncuesta();
+                    }
+                });
+            });
+        });
+
+        function limpiarEncuesta() {
+            // Siempre se puede limpiar, incluso después de enviado
+            Swal.fire({
+                title: '¿Limpiar formulario?',
+                text: 'Se eliminarán todas tus respuestas actuales y se reiniciará el formulario',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, limpiar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Eliminar el estado de enviado y el progreso
+                    localStorage.removeItem(ENCUESTA_ENVIADA_KEY);
+                    localStorage.removeItem(ENCUESTA_PROGRESO_KEY);
+                    
+                    // Resetear el formulario
+                    document.getElementById('encuesta-form').reset();
+                    
+                    // Limpiar firma
+                    clearSignatureEncuesta();
+                    
+                    // Mostrar botón enviar, ocultar reenviar
+                    document.getElementById('encuesta-enviar-btn').style.display = 'flex';
+                    document.getElementById('encuesta-reenviar-btn').style.display = 'none';
+                    document.getElementById('encuesta-enviada-badge').style.display = 'none';
+                    
+                    // Bloquear todo excepto nombre
+                    bloquearCamposExceptoNombre(true);
+                    document.getElementById('encuesta-nombre').disabled = false;
+                    
+                    // Mantener el nombre si estaba seleccionado
+                    const nombreInput = document.getElementById('encuesta-nombre');
+                    const identidadInput = document.getElementById('encuesta-identidad');
+                    if (nombreInput.value) {
+                        // Guardar el nombre y desbloquear al seleccionar
+                        setTimeout(() => {
+                            const nombre = nombreInput.value;
+                            const colaborador = nombresColaboradoresCompletos.find(c => c.nombre === nombre);
+                            if (colaborador) {
+                                identidadInput.value = colaborador.identidad;
+                                habilitarEncuesta();
+                            }
+                        }, 100);
+                    }
+                    
+                    Swal.fire('Formulario limpiado', 'Puedes volver a llenar la encuesta', 'success');
                 }
             });
         }
 
+        function reenviarEncuesta() {
+            Swal.fire({
+                title: '¿Reenviar encuesta?',
+                text: 'Esto enviará nuevamente los datos de la encuesta al servidor',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2C73D2',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, reenviar',
+                cancelButtonText: 'Cancelar'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('overlay').style.display = 'flex';
+                    try {
+                        // Obtener los datos guardados
+                        const progreso = JSON.parse(localStorage.getItem(ENCUESTA_PROGRESO_KEY));
+                        if (!progreso) {
+                            document.getElementById('overlay').style.display = 'none';
+                            Swal.fire('Error', 'No hay datos guardados para reenviar', 'error');
+                            return;
+                        }
+                        
+                        // Reconstruir los datos
+                        const respuestas = {
+                            accion: 'encuesta',
+                            fecha: document.getElementById('encuesta-fecha').value || getCurrentDateInHonduras().format('YYYY-MM-DD HH:mm:ss'),
+                            nombre: progreso.nombre || '',
+                            identidad: progreso.identidad || '',
+                            tiempo: progreso.pregunta_tiempo || '',
+                            area: progreso.pregunta_area || '',
+                            clima_1: progreso.clima_1 || '',
+                            clima_2: progreso.clima_2 || '',
+                            clima_3: progreso.clima_3 || '',
+                            clima_4: progreso.clima_4 || '',
+                            clima_5: progreso.clima_5 || '',
+                            clima_6: progreso.clima_6 || '',
+                            mejorar: progreso.pregunta_mejorar || '',
+                            super_1: progreso.super_1 || '',
+                            super_2: progreso.super_2 || '',
+                            super_3: progreso.super_3 || '',
+                            super_4: progreso.super_4 || '',
+                            super_5: progreso.super_5 || '',
+                            super_6: progreso.super_6 || '',
+                            super_7: progreso.super_7 || '',
+                            super_8: progreso.super_8 || '',
+                            coord_1: progreso.coord_1 || '',
+                            coord_2: progreso.coord_2 || '',
+                            coord_3: progreso.coord_3 || '',
+                            coord_4: progreso.coord_4 || '',
+                            respeto_1: progreso.respeto_1 || '',
+                            respeto_2: progreso.respeto_2 || '',
+                            respeto_3: progreso.respeto_3 || '',
+                            respeto_4: progreso.respeto_4 || '',
+                            maltrato: progreso.pregunta_maltrato || '',
+                            gusta_cambiar: progreso.pregunta_gusta_cambiar || '',
+                            firma: progreso.firma || ''
+                        };
+                        
+                        // Si hay firma, subirla
+                        if (respuestas.firma) {
+                            const codigo = generarCodigo();
+                            const firmaDataUrl = respuestas.firma;
+                            const firmaUrl = await subirFirmaEncuesta(codigo, firmaDataUrl);
+                            if (firmaUrl) {
+                                respuestas.firma = firmaUrl;
+                            }
+                        }
+                        
+                        await fetch(ENCUESTA_SCRIPT_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(respuestas)
+                        });
+                        
+                        document.getElementById('overlay').style.display = 'none';
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Encuesta reenviada!',
+                            text: 'Los datos han sido enviados nuevamente al servidor.',
+                            confirmButtonColor: '#2C73D2'
+                        });
+                        
+                    } catch (error) {
+                        document.getElementById('overlay').style.display = 'none';
+                        console.error('Error al reenviar encuesta:', error);
+                        Swal.fire('Error', 'No se pudo reenviar la encuesta. Intenta de nuevo.', 'error');
+                    }
+                }
+            });
+        }
+
+        async function subirFirmaEncuesta(codigo, firmaDataUrl) {
+            try {
+                const firmaBase64 = firmaDataUrl.split(',')[1];
+                
+                const response = await fetch(ENCUESTA_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        accion: 'uploadFirma',
+                        codigo: codigo,
+                        archivo: firmaBase64,
+                        nombre: `firma_encuesta_${codigo}.png`
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success && result.url) {
+                    return result.url;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error al subir firma:', error);
+                return null;
+            }
+        }
+
+        document.getElementById('encuesta-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (localStorage.getItem(ENCUESTA_ENVIADA_KEY) === 'true') {
+                Swal.fire('Información', 'Esta encuesta ya fue enviada anteriormente', 'info');
+                return;
+            }
+            
+            const nombre = document.getElementById('encuesta-nombre').value.trim();
+            const identidad = document.getElementById('encuesta-identidad').value.trim();
+            
+            if (!nombre) {
+                Swal.fire('Error', 'Selecciona tu nombre', 'error');
+                return;
+            }
+            if (!identidad) {
+                Swal.fire('Error', 'No se pudo obtener tu identidad', 'error');
+                return;
+            }
+            
+            // Validar firma
+            if (isCanvasBlankEncuesta(canvasEncuesta)) {
+                Swal.fire('Error', 'La firma del responsable es obligatoria', 'error');
+                return;
+            }
+            
+            const tiempo = document.getElementById('pregunta_tiempo').value;
+            const area = document.getElementById('pregunta_area').value;
+            
+            if (!tiempo) {
+                Swal.fire('Error', 'Selecciona cuánto tiempo llevas en la organización', 'error');
+                return;
+            }
+            if (!area) {
+                Swal.fire('Error', 'Selecciona tu área de trabajo', 'error');
+                return;
+            }
+            
+            const radioGroups = [
+                'clima_1', 'clima_2', 'clima_3', 'clima_4', 'clima_5', 'clima_6',
+                'super_1', 'super_2', 'super_3', 'super_4', 'super_5', 'super_6', 'super_7', 'super_8',
+                'coord_1', 'coord_2', 'coord_3', 'coord_4',
+                'respeto_1', 'respeto_2', 'respeto_3', 'respeto_4'
+            ];
+            
+            let todasSeleccionadas = true;
+            radioGroups.forEach(name => {
+                const checked = document.querySelector(`input[name="${name}"]:checked`);
+                if (!checked) {
+                    todasSeleccionadas = false;
+                }
+            });
+            
+            if (!todasSeleccionadas) {
+                Swal.fire('Error', 'Por favor responde todas las preguntas con estrellas', 'error');
+                return;
+            }
+            
+            const mejorar = document.getElementById('pregunta_mejorar').value.trim();
+            const maltrato = document.getElementById('pregunta_maltrato').value.trim();
+            const gustaCambiar = document.getElementById('pregunta_gusta_cambiar').value.trim();
+            
+            if (!mejorar || mejorar.length < 3) {
+                Swal.fire('Error', 'Por favor responde la pregunta sobre qué mejorar', 'error');
+                return;
+            }
+            if (!maltrato || maltrato.length < 3) {
+                Swal.fire('Error', 'Por favor responde la pregunta sobre maltrato', 'error');
+                return;
+            }
+            if (!gustaCambiar || gustaCambiar.length < 3) {
+                Swal.fire('Error', 'Por favor responde la pregunta sobre qué te gusta y cambiarías', 'error');
+                return;
+            }
+            
+            const respuestas = {
+                accion: 'encuesta',
+                fecha: document.getElementById('encuesta-fecha').value,
+                nombre: nombre,
+                identidad: identidad,
+                tiempo: tiempo,
+                area: area
+            };
+            
+            radioGroups.forEach(name => {
+                const checked = document.querySelector(`input[name="${name}"]:checked`);
+                respuestas[name] = checked ? checked.value : '';
+            });
+            
+            respuestas.mejorar = mejorar;
+            respuestas.maltrato = maltrato;
+            respuestas.gusta_cambiar = gustaCambiar;
+            
+            const firmaDataUrl = canvasEncuesta.toDataURL("image/png");
+            const codigo = generarCodigo();
+            
+            document.getElementById('overlay').style.display = 'flex';
+            
+            try {
+                const firmaUrl = await subirFirmaEncuesta(codigo, firmaDataUrl);
+                if (firmaUrl) {
+                    respuestas.firma = firmaUrl;
+                }
+                
+                await fetch(ENCUESTA_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(respuestas)
+                });
+                
+                document.getElementById('overlay').style.display = 'none';
+                
+                localStorage.setItem(ENCUESTA_ENVIADA_KEY, 'true');
+                // No borramos el progreso para poder reenviar
+                
+                // Mostrar badge, ocultar enviar, mostrar reenviar
+                document.getElementById('encuesta-enviada-badge').style.display = 'flex';
+                document.getElementById('encuesta-enviar-btn').style.display = 'none';
+                document.getElementById('encuesta-reenviar-btn').style.display = 'flex';
+                
+                bloquearEncuesta(true);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Encuesta enviada!',
+                    text: 'Gracias por tu participación, tus respuestas nos ayudarán a mejorar.',
+                    confirmButtonColor: '#2C73D2'
+                });
+                
+            } catch (error) {
+                document.getElementById('overlay').style.display = 'none';
+                console.error('Error al enviar encuesta:', error);
+                Swal.fire('Error', 'No se pudo enviar la encuesta. Intenta de nuevo.', 'error');
+            }
+        });
+
         // ==================== HISTORIAL LOCAL DE PERMISOS ====================
         const HISTORIAL_PERMISOS_KEY = 'historial_permisos';
 
-        // Guardar un permiso en el historial local
         function guardarPermisoEnHistorial(permiso) {
             try {
                 let historial = JSON.parse(localStorage.getItem(HISTORIAL_PERMISOS_KEY)) || [];
                 
-                // Verificar si ya existe para no duplicar
                 const existe = historial.some(p => p.codigo === permiso.codigo);
                 if (!existe) {
-                    // Agregar al principio (más reciente primero)
                     historial.unshift({
                         codigo: permiso.codigo,
                         fechaSolicitud: permiso.fechaSolicitud || new Date().toISOString(),
@@ -2420,7 +3628,6 @@
                         motivo: permiso.motivo || ''
                     });
                     
-                    // Limitar a 50 registros para no sobrecargar
                     if (historial.length > 50) {
                         historial = historial.slice(0, 50);
                     }
@@ -2432,7 +3639,6 @@
             }
         }
 
-        // Obtener el historial de permisos
         function obtenerHistorialPermisos() {
             try {
                 return JSON.parse(localStorage.getItem(HISTORIAL_PERMISOS_KEY)) || [];
@@ -2442,7 +3648,6 @@
             }
         }
 
-        // Renderizar el historial en el modal
         function renderizarHistorialPermisos() {
             const container = document.getElementById('historial-lista');
             if (!container) return;
@@ -2490,13 +3695,11 @@
             }).join('');
         }
 
-        // Consultar un permiso desde el historial
         async function consultarPermisoDelHistorial(codigo) {
             document.getElementById('consulta-codigo').value = codigo;
             await buscarMiPermiso();
         }
 
-        // Limpiar todo el historial
         function limpiarHistorialPermisos() {
             Swal.fire({
                 title: '¿Limpiar historial?',
@@ -2512,6 +3715,37 @@
                     localStorage.removeItem(HISTORIAL_PERMISOS_KEY);
                     renderizarHistorialPermisos();
                     Swal.fire('Historial limpiado', '', 'success');
+                }
+            });
+        }
+
+        // Cargar nombres al inicio
+        cargarNombres();
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('Nueva versión del Service Worker detectada. Recargando...');
+                window.location.reload();
+            });
+            
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw-index.js')
+                    .then(function(registration) {
+                        console.log('Service Worker Index registrado con éxito:', registration.scope);
+                        registration.update();
+                        setInterval(() => {
+                            registration.update();
+                        }, 60 * 60 * 1000);
+                    }, function(err) {
+                        console.log('Fallo al registrar Service Worker Index:', err);
+                    });
+            });
+            
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.update();
+                    });
                 }
             });
         }
