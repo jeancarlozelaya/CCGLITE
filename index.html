@@ -1105,6 +1105,136 @@
             color: var(--gray-600);
         }
 
+        /* Estilos para previsualización de imágenes */
+        .preview-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preview-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--gray-200);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .preview-image:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .preview-image-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .preview-image-container .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .preview-image-container .remove-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 20px;
+            background: var(--gray-100);
+            border: 2px dashed var(--gray-300);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .file-input-label:hover {
+            border-color: var(--primary);
+            background: var(--gray-200);
+        }
+
+        .file-input-label i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        /* Estilos para firma en permisos */
+        .firma-container-permiso {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            border: 2px solid var(--gray-300);
+            border-radius: 8px;
+            background-color: #fff;
+            min-height: 150px;
+        }
+
+        #firmaCanvasPermiso {
+            width: 100% !important;
+            height: 150px !important;
+            background: white;
+            border: 1px solid #ccc;
+            touch-action: none;
+            -ms-touch-action: none;
+            border-radius: 8px;
+        }
+
+        #firmaCanvasPermiso.signed {
+            border-color: #28A745 !important;
+            border-width: 2px !important;
+        }
+
+        .firma-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .firma-buttons .icon-button {
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .firma-buttons .icon-button.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .firma-buttons .icon-button:hover {
+            background: #e2e6ea;
+        }
+
         @media screen and (max-width: 768px) {
             .menu-container { grid-template-columns: 1fr 1fr; gap: 12px; }
             .menu-item { padding: 15px 10px; min-height: 100px; }
@@ -1367,6 +1497,30 @@
                     <label><i class="fas fa-comment"></i> Motivo del permiso</label>
                     <textarea id="permission-motivo" placeholder="Describe el motivo de tu solicitud..." required></textarea>
                 </div>
+
+                <!-- FIRMA DEL SOLICITANTE -->
+                <div class="form-group">
+                    <label><i class="fas fa-signature"></i> Firma del solicitante <span style="color: var(--secondary);">*</span></label>
+                    <div id="firmaContainerPermiso" class="firma-container-permiso">
+                        <canvas id="firmaCanvasPermiso" width="400" height="150" style="border: 1px solid #ccc; border-radius: 8px; touch-action: none; width: 100%; height: 150px;"></canvas>
+                    </div>
+                    <div class="firma-buttons">
+                        <button type="button" id="toggleEraserPermiso" class="icon-button" title="Borrador">
+                            <i class="fas fa-eraser"></i>
+                        </button>
+                        <button type="button" id="undoPermiso" class="icon-button" title="Deshacer">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button type="button" id="redoPermiso" class="icon-button" title="Rehacer">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button type="button" id="clearSignaturePermiso" class="icon-button" title="Limpiar">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- EVIDENCIA (FOTOS) -->
                 <div class="form-group">
                     <label><i class="fas fa-camera"></i> Evidencia (fotos)</label>
                     <div class="file-input-label" onclick="document.getElementById('permission-fotos').click()">
@@ -1375,6 +1529,7 @@
                     <input type="file" id="permission-fotos" accept="image/*" multiple style="display:none;">
                     <div id="preview-container" class="preview-images"></div>
                 </div>
+
                 <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Enviar solicitud</button>
                 <div class="form-note"><i class="fas fa-shield-alt"></i> Recibirás un código de seguimiento</div>
             </form>
@@ -2325,6 +2480,216 @@
         function mostrarOpcionesPermiso() { document.getElementById('opciones-permiso-modal').classList.add('active'); }
         function cerrarOpcionesPermiso() { document.getElementById('opciones-permiso-modal').classList.remove('active'); }
         
+        // ==================== FUNCIONES DE FIRMA PARA PERMISOS ====================
+        let isDrawingPermiso = false;
+        let isErasingPermiso = false;
+        let lastXPermiso = 0;
+        let lastYPermiso = 0;
+        const canvasPermiso = document.getElementById("firmaCanvasPermiso");
+        const ctxPermiso = canvasPermiso.getContext("2d", { willReadFrequently: true });
+        const undoStackPermiso = [];
+        const redoStackPermiso = [];
+
+        function initializeCanvasPermiso() {
+            const container = canvasPermiso.parentElement;
+            const rect = container.getBoundingClientRect();
+            const width = rect.width > 0 ? rect.width : 400;
+            const height = 150;
+            
+            canvasPermiso.width = width;
+            canvasPermiso.height = height;
+            
+            ctxPermiso.strokeStyle = "#000000";
+            ctxPermiso.lineWidth = 3;
+            ctxPermiso.lineCap = "round";
+            ctxPermiso.lineJoin = "round";
+            
+            ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+            ctxPermiso.fillStyle = "#FFFFFF";
+            ctxPermiso.fillRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+        }
+
+        function getCoordinatesPermiso(e) {
+            const rect = canvasPermiso.getBoundingClientRect();
+            const scaleX = canvasPermiso.width / rect.width;
+            const scaleY = canvasPermiso.height / rect.height;
+            
+            if (e.touches && e.touches.length > 0) {
+                return {
+                    x: (e.touches[0].clientX - rect.left) * scaleX,
+                    y: (e.touches[0].clientY - rect.top) * scaleY
+                };
+            } else if (e.offsetX !== undefined) {
+                return {
+                    x: e.offsetX * scaleX,
+                    y: e.offsetY * scaleY
+                };
+            } else if (e.clientX !== undefined) {
+                return {
+                    x: (e.clientX - rect.left) * scaleX,
+                    y: (e.clientY - rect.top) * scaleY
+                };
+            }
+            return { x: 0, y: 0 };
+        }
+
+        function startDrawingPermiso(e) {
+            e.preventDefault();
+            saveToUndoStackPermiso();
+            isDrawingPermiso = true;
+            const { x, y } = getCoordinatesPermiso(e);
+            lastXPermiso = x;
+            lastYPermiso = y;
+            
+            ctxPermiso.beginPath();
+            ctxPermiso.arc(x, y, ctxPermiso.lineWidth/2, 0, Math.PI * 2);
+            ctxPermiso.fillStyle = isErasingPermiso ? "#FFFFFF" : "#000000";
+            ctxPermiso.fill();
+            ctxPermiso.beginPath();
+            ctxPermiso.moveTo(x, y);
+        }
+
+        function drawPermiso(e) {
+            if (!isDrawingPermiso) return;
+            e.preventDefault();
+            
+            const { x, y } = getCoordinatesPermiso(e);
+            
+            ctxPermiso.beginPath();
+            ctxPermiso.moveTo(lastXPermiso, lastYPermiso);
+            ctxPermiso.lineTo(x, y);
+            ctxPermiso.strokeStyle = isErasingPermiso ? "#FFFFFF" : "#000000";
+            ctxPermiso.lineWidth = isErasingPermiso ? 20 : 3;
+            ctxPermiso.stroke();
+            
+            lastXPermiso = x;
+            lastYPermiso = y;
+        }
+
+        function stopDrawingPermiso() {
+            if (isDrawingPermiso) {
+                isDrawingPermiso = false;
+                verificarFirmaPermiso();
+            }
+        }
+
+        function saveToUndoStackPermiso() {
+            undoStackPermiso.push(canvasPermiso.toDataURL());
+            redoStackPermiso.length = 0;
+            updateButtonStatesPermiso();
+        }
+
+        function undoPermiso() {
+            if (undoStackPermiso.length > 0) {
+                redoStackPermiso.push(canvasPermiso.toDataURL());
+                const lastState = undoStackPermiso.pop();
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => {
+                    ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+                    ctxPermiso.drawImage(img, 0, 0);
+                    verificarFirmaPermiso();
+                };
+                updateButtonStatesPermiso();
+            }
+        }
+
+        function redoPermiso() {
+            if (redoStackPermiso.length > 0) {
+                undoStackPermiso.push(canvasPermiso.toDataURL());
+                const lastState = redoStackPermiso.pop();
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => {
+                    ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+                    ctxPermiso.drawImage(img, 0, 0);
+                    verificarFirmaPermiso();
+                };
+                updateButtonStatesPermiso();
+            }
+        }
+
+        function updateButtonStatesPermiso() {
+            const undoBtn = document.getElementById("undoPermiso");
+            const redoBtn = document.getElementById("redoPermiso");
+            if (undoBtn) undoBtn.style.display = undoStackPermiso.length > 0 ? "inline-flex" : "none";
+            if (redoBtn) redoBtn.style.display = redoStackPermiso.length > 0 ? "inline-flex" : "none";
+        }
+
+        function clearSignaturePermiso() {
+            saveToUndoStackPermiso();
+            ctxPermiso.clearRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+            ctxPermiso.fillStyle = "#FFFFFF";
+            ctxPermiso.fillRect(0, 0, canvasPermiso.width, canvasPermiso.height);
+            verificarFirmaPermiso();
+            updateButtonStatesPermiso();
+        }
+
+        function verificarFirmaPermiso() {
+            const hayFirma = !isCanvasBlankPermiso(canvasPermiso);
+            if (hayFirma) {
+                canvasPermiso.classList.add('signed');
+            } else {
+                canvasPermiso.classList.remove('signed');
+            }
+        }
+
+        function isCanvasBlankPermiso(canvas) {
+            try {
+                const context = canvas.getContext('2d');
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const pixelBuffer = new Uint32Array(imageData.data.buffer);
+                
+                let nonWhitePixels = 0;
+                for (let i = 0; i < pixelBuffer.length; i++) {
+                    if (pixelBuffer[i] !== 0xFFFFFFFF && pixelBuffer[i] !== 0x00000000) {
+                        nonWhitePixels++;
+                    }
+                }
+                return nonWhitePixels <= 50;
+            } catch (error) {
+                console.error('Error al verificar canvas:', error);
+                return true;
+            }
+        }
+
+        function setupSignatureEventsPermiso() {
+            canvasPermiso.addEventListener("mousedown", startDrawingPermiso);
+            canvasPermiso.addEventListener("mousemove", drawPermiso);
+            canvasPermiso.addEventListener("mouseup", stopDrawingPermiso);
+            canvasPermiso.addEventListener("mouseout", stopDrawingPermiso);
+            
+            canvasPermiso.addEventListener("touchstart", function(e) {
+                startDrawingPermiso(e);
+                e.preventDefault();
+            }, { passive: false });
+            
+            canvasPermiso.addEventListener("touchmove", function(e) {
+                drawPermiso(e);
+                e.preventDefault();
+            }, { passive: false });
+            
+            canvasPermiso.addEventListener("touchend", stopDrawingPermiso);
+            canvasPermiso.addEventListener("touchcancel", stopDrawingPermiso);
+            
+            document.getElementById("toggleEraserPermiso").addEventListener("click", function() {
+                isErasingPermiso = !isErasingPermiso;
+                this.classList.toggle("active");
+                this.innerHTML = isErasingPermiso ? 
+                    '<i class="fas fa-pen"></i>' : 
+                    '<i class="fas fa-eraser"></i>';
+            });
+            
+            document.getElementById("undoPermiso").addEventListener("click", undoPermiso);
+            document.getElementById("redoPermiso").addEventListener("click", redoPermiso);
+            document.getElementById("clearSignaturePermiso").addEventListener("click", clearSignaturePermiso);
+            
+            canvasPermiso.addEventListener("contextmenu", function(e) { e.preventDefault(); });
+            
+            canvasPermiso.style.touchAction = "none";
+            canvasPermiso.style.msTouchAction = "none";
+        }
+
         function mostrarSolicitarPermiso() {
             document.getElementById('solicitar-permiso-modal').classList.add('active');
             document.getElementById('permission-form').reset();
@@ -2333,6 +2698,14 @@
             document.getElementById('permission-fecha').value = getCurrentDateInHonduras().format('YYYY-MM-DD');
             document.getElementById('campo-dias').style.display = 'none';
             document.getElementById('campo-horas').style.display = 'none';
+            
+            // Inicializar la firma
+            setTimeout(() => {
+                initializeCanvasPermiso();
+                setupSignatureEventsPermiso();
+                verificarFirmaPermiso();
+                canvasPermiso._initialized = true;
+            }, 300);
             
             if (nombresColaboradores.length === 0) {
                 mostrarCargandoColaboradores(true);
@@ -2364,17 +2737,28 @@
             archivosSeleccionados.forEach((file, idx) => {
                 const reader = new FileReader();
                 reader.onload = ev => {
+                    const container = document.createElement('div');
+                    container.className = 'preview-image-container';
+                    
                     const img = document.createElement('img');
                     img.src = ev.target.result;
                     img.className = 'preview-image';
-                    img.onclick = () => {
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.onclick = (e) => {
+                        e.stopPropagation();
                         archivosSeleccionados.splice(idx, 1);
                         const dt = new DataTransfer();
                         archivosSeleccionados.forEach(f => dt.items.add(f));
                         document.getElementById('permission-fotos').files = dt.files;
-                        preview.removeChild(img);
+                        container.remove();
                     };
-                    preview.appendChild(img);
+                    
+                    container.appendChild(img);
+                    container.appendChild(removeBtn);
+                    preview.appendChild(container);
                 };
                 reader.readAsDataURL(file);
             });
@@ -2420,6 +2804,32 @@
             return urls;
         }
 
+        async function subirFirmaPermiso(codigo, firmaDataUrl) {
+            try {
+                const firmaBase64 = firmaDataUrl.split(',')[1];
+                
+                const response = await fetch(PERMISO_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        accion: 'uploadFirma',
+                        codigo: codigo,
+                        archivo: firmaBase64,
+                        nombre: `firma_${codigo}.png`
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success && result.url) {
+                    return result.url;
+                }
+                return '';
+            } catch (error) {
+                console.error('Error al subir firma:', error);
+                return '';
+            }
+        }
+
         document.getElementById('permission-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -2428,6 +2838,12 @@
             const fecha = document.getElementById('permission-fecha').value;
             const tipo = document.getElementById('permission-tipo').value;
             const motivo = document.getElementById('permission-motivo').value.trim();
+            
+            // Validar firma
+            if (isCanvasBlankPermiso(canvasPermiso)) {
+                Swal.fire('Error', 'La firma del solicitante es obligatoria', 'error');
+                return;
+            }
             
             const colaborador = nombresColaboradoresCompletos.find(c => c.nombre === nombre);
             const identidad = colaborador ? colaborador.identidad : '';
@@ -2462,8 +2878,15 @@
             document.getElementById('overlay').style.display = 'flex';
             
             try {
-                let fotosUrls = [];
+                // Subir firma
+                const firmaDataUrl = canvasPermiso.toDataURL("image/png");
+                let firmaUrl = '';
+                if (firmaDataUrl) {
+                    firmaUrl = await subirFirmaPermiso(codigo, firmaDataUrl);
+                }
                 
+                // Subir fotos
+                let fotosUrls = [];
                 if (archivosSeleccionados.length > 0) {
                     fotosUrls = await subirImagenesALDrive(codigo);
                 }
@@ -2485,7 +2908,8 @@
                         telefono: telefono,
                         motivo: motivo,
                         fotos: fotosUrls.join(';'),
-                        estado: 'Pendiente'
+                        estado: 'Pendiente',
+                        firma: firmaUrl
                     })
                 });
                 
