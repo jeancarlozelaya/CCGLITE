@@ -1,6 +1,6 @@
 // Archivo: sw-index.js
 
-const CACHE_NAME_INDEX = 'pibrisa-index-v8.1.8';
+const CACHE_NAME_INDEX = 'pibrisa-index-v8.1.9';
 const urlsToCacheIndex = [
     './',
     './index.html',
