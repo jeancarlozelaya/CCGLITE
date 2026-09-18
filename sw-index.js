@@ -1,7 +1,7 @@
 // Archivo: sw-index.js
 
 // ⚠️ IMPORTANTE: Cambia esta versión CADA VEZ que hagas cambios
-const CACHE_NAME_INDEX = 'pibrisa-index-v1.0.1'; 
+const CACHE_NAME_INDEX = 'pibrisa-index-v1.0.11'; 
 
 const APP_VERSION = CACHE_NAME_INDEX.replace('pibrisa-index-', '');
 
@@ -14,8 +14,8 @@ const urlsToCacheIndex = [
     './QR.html',
     './Control de Llaves.html',
     
-    './Pag - Primeros Pasos.html',
-    './Grupos de WhatsApp.html',
+    './Primeros Pasos/Pag - Primeros Pasos.html',
+    './Primeros Pasos/Grupos de WhatsApp.html',
    
     './Pag - Reportería.html',
     './Liberación de Responsabilidad.html',
