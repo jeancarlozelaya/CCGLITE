@@ -1186,9 +1186,9 @@
                 return versionGuardada;
             }
 
-            // ESTRATEGIA 3: Leer del archivo sw-index.js del servidor
+            // ESTRATEGIA 3: Leer del archivo sw-index2.js del servidor
             try {
-                const swResponse = await fetch('sw-index.js?t=' + Date.now(), {
+                const swResponse = await fetch('sw-index2.js?t=' + Date.now(), {
                     cache: 'no-store'
                 });
                 if (swResponse.ok) {
@@ -1213,7 +1213,7 @@
         // ============================================
         async function obtenerVersionDisponible() {
             try {
-                const swResponse = await fetch('sw-index.js?t=' + Date.now(), {
+                const swResponse = await fetch('sw-index2.js?t=' + Date.now(), {
                     cache: 'no-store',
                     headers: { 'Cache-Control': 'no-cache' }
                 });
@@ -1735,7 +1735,7 @@
             });
 
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw-index.js')
+                navigator.serviceWorker.register('sw-index2.js')
                     .then(function(registration) {
                         console.log('Service Worker Index registrado con éxito:', registration.scope);
                         swRegistration = registration;
