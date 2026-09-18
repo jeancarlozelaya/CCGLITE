@@ -2952,13 +2952,7 @@ function mostrarListaHistorial(docs) {
         }
         actualizarBadge();
         
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw-index.js')
-                .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
-                .catch(err => console.log('❌ Error SW:', err));
-        }
     });
-
 </script>
 </body>
 </html>
