@@ -1,81 +1,131 @@
 // Archivo: sw-index.js
 
-const CACHE_NAME_INDEX = 'pibrisa-index-v8.3.1';
+// ⚠️ IMPORTANTE: Cambia esta versión CADA VEZ que hagas cambios
+const CACHE_NAME_INDEX = 'pibrisa-index-v1.0.0'; 
+
+const APP_VERSION = CACHE_NAME_INDEX.replace('pibrisa-index-', '');
+
 const urlsToCacheIndex = [
     './',
     './index.html',
     './manifest.json',
-    './Pag - Reportería.html',
-    './Pag - Soporte de Bitácoras.html',
-    './Pag - Primeros Pasos.html',
+    './Imágenes/Icono.png',
+
+    './QR.html',
     './Control de Llaves.html',
-    './Pag - Residuos.html',
-    './Registro de Residuos.html',
-    './Registro de Trazabilidad & Volumen de Residuos.html',  
-    './Bitácora de Elevadores.html',   
-    './Bitácora de Baños de Sótanos.html',   
-    './Liberación.html',   
-    './Datos de Baños de Sótanos.html',   
-    './Datos de Elevadores.html',   
-    'Imágenes/Icono.png',
-
-    // 1. LA IMAGEN DEL PDF (Asegúrate que la ruta sea exacta, mayúsculas y acentos importan)
-    'https://raw.githubusercontent.com/jeancarlozelaya/CCG/refs/heads/main/Im%C3%A1genes/Otros/HojadeLiberaci%C3%B3n.jpg', 
-
-    // 2. LIBRERÍA DEXIE (¡IMPORTANTE PARA QUE NO FALLE OFFLINE!)
-    'https://unpkg.com/dexie/dist/dexie.js',
     
-    // Librerías externas usadas en index.html
+    './Pag - Primeros Pasos.html',
+    './Grupos de WhatsApp.html',
+   
+    './Pag - Reportería.html',
+    './Liberación de Responsabilidad.html',
+    './Control de PEPS de Insumos.html',
+    './Gestión de Residuos/Pag - Residuos.html',
+    './Gestión de Residuos/Registro de Residuos.html',
+
+    './Pag - Gestión y Bienestar.html',
+    
+    'https://raw.githubusercontent.com/jeancarlozelaya/CCG/refs/heads/main/Im%C3%A1genes/Otros/HojadeLiberaci%C3%B3n.jpg', 
+    'https://unpkg.com/dexie/dist/dexie.js',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css',
     'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap',
     'https://cdn.jsdelivr.net/npm/sweetalert2@11',
-    'https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.css',
-    'https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.js'
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+    'https://code.jquery.com/jquery-3.6.0.min.js'
 ];
 
-// 1. Instalación: Cachear recursos estáticos
+// ============================================
+// ESCUCHAR MENSAJES DESDE LA PÁGINA
+// ============================================
+self.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'GET_VERSION') {
+        if (event.ports && event.ports[0]) {
+            event.ports[0].postMessage({
+                type: 'VERSION_INFO',
+                version: APP_VERSION
+            });
+        }
+    }
+    
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
+// ============================================
+// INSTALL - Usa add() individual en lugar de addAll()
+// para que una URL fallida NO tumbe todo el SW
+// ============================================
 self.addEventListener('install', function(event) {
-    console.log('Service Worker Index: Instalando...');
     event.waitUntil(
         caches.open(CACHE_NAME_INDEX)
             .then(function(cache) {
-                console.log('Service Worker Index: Cacheando archivos');
-                return cache.addAll(urlsToCacheIndex);
+                // ✅ Promise.allSettled: si una URL falla, las demás se cachean igual
+                return Promise.allSettled(
+                    urlsToCacheIndex.map(url => {
+                        return cache.add(url).catch(err => {
+                            console.warn('⚠️ No se pudo cachear:', url, '-', err.message);
+                        });
+                    })
+                );
             })
-            .then(() => self.skipWaiting())
+            .then(() => {
+                console.log('✅ Instalación del SW completada. Versión:', APP_VERSION);
+                return self.skipWaiting();
+            })
+            .catch(err => {
+                console.error('❌ Error en install:', err);
+            })
     );
 });
 
-// 2. Activación: Limpiar cachés antiguos
+// ============================================
+// ACTIVATE
+// ============================================
 self.addEventListener('activate', function(event) {
     event.waitUntil(
-        caches.keys().then(function(cacheNames) {
-            return Promise.all(
-                cacheNames.map(function(cacheName) {
-                    if (cacheName !== CACHE_NAME_INDEX && cacheName.startsWith('pibrisa-index')) {
-                        console.log('Service Worker Index: Eliminando caché antiguo', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => self.clients.claim())
+        caches.keys()
+            .then(function(cacheNames) {
+                return Promise.all(
+                    cacheNames.map(function(cacheName) {
+                        if (cacheName !== CACHE_NAME_INDEX && cacheName.startsWith('pibrisa-index')) {
+                            console.log('🗑️ Eliminando caché antigua:', cacheName);
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            })
+            .then(() => self.clients.claim())
+            .then(() => {
+                return self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+                    .then(clients => {
+                        clients.forEach(client => {
+                            client.postMessage({
+                                type: 'SW_ACTIVATED',
+                                version: APP_VERSION
+                            });
+                        });
+                    });
+            })
     );
 });
 
-// 3. Intercepción de peticiones (Estrategia: Cache First, then Network)
+// ============================================
+// FETCH - Estrategia de caché
+// ============================================
 self.addEventListener('fetch', function(event) {
-    // Ignoramos peticiones que no sean GET o esquemas no soportados
     if (event.request.method !== 'GET') return;
-
+    
+    const url = event.request.url;
+    
+    // No interceptar sw-index.js ni version.json
+    if (url.includes('sw-index.js') || url.includes('version.json')) {
+        return;
+    }
+    
     event.respondWith(
-        caches.match(event.request)
-            .then(function(response) {
-                // Si existe en caché, lo devolvemos
-                if (response) {
-                    return response;
-                }
-                // Si no, lo pedimos a internet
-                return fetch(event.request);
-            })
+        caches.match(event.request).then(function(response) {
+            return response || fetch(event.request);
+        })
     );
 });
