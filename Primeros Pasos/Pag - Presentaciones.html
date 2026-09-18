@@ -74,16 +74,11 @@
         }
 
         @media (min-width: 700px) {
-            .menu-container {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 14px;
-            }
+            .menu-container { grid-template-columns: repeat(3, 1fr); gap: 14px; }
         }
 
         @media (min-width: 1000px) {
-            .menu-container {
-                grid-template-columns: repeat(4, 1fr);
-            }
+            .menu-container { grid-template-columns: repeat(4, 1fr); }
         }
 
         .menu-item {
@@ -121,10 +116,9 @@
 
         .menu-item:hover::before { transform: scaleX(1); }
 
-        /* ===== MINIATURA (altura fija pequeña) ===== */
         .preview-thumb {
             width: 100%;
-            height: 90px;                /* ← altura fija pequeña */
+            height: 90px;
             background: linear-gradient(135deg, #eef2f7 0%, #dde4ec 100%);
             display: flex;
             align-items: center;
@@ -161,7 +155,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ===== INFO (compacta) ===== */
         .menu-item .item-info {
             padding: 6px 8px 7px 8px;
             display: flex;
@@ -200,13 +193,16 @@
             margin: 0 auto 15px auto;
         }
 
+        /* ============================================
+           VISOR PDF.js
+           ============================================ */
         #viewer-container {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%;
             height: 100%;
-            background: #1a1a1a;
+            background: #2b2b2b;
             z-index: 2000;
             flex-direction: column;
         }
@@ -216,22 +212,23 @@
         .viewer-header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            padding: 12px 15px;
+            padding: 10px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: var(--shadow-md);
             z-index: 10;
+            gap: 8px;
+            flex-shrink: 0;
         }
 
         .viewer-header .title {
-            font-size: 0.95em;
+            font-size: 0.9em;
             font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             flex: 1;
-            margin: 0 10px;
             text-align: center;
         }
 
@@ -249,7 +246,6 @@
             font-size: 1em;
             transition: var(--transition);
             flex-shrink: 0;
-            text-decoration: none;
         }
 
         .viewer-btn:hover {
@@ -257,13 +253,72 @@
             transform: scale(1.05);
         }
 
-        #pdf-viewer {
-            flex: 1;
-            width: 100%;
-            border: none;
-            background: #525659;
+        .viewer-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
 
+        .viewer-btn:disabled:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: none;
+        }
+
+        .viewer-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .zoom-indicator {
+            font-size: 0.72em;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 8px;
+            border-radius: 20px;
+            white-space: nowrap;
+            min-width: 42px;
+            text-align: center;
+        }
+
+        /* ===== ÁREA DE SCROLL ===== */
+        #pdf-pages-wrapper {
+            flex: 1;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #2b2b2b;
+            position: relative;
+        }
+
+        /* Contenedor de todas las páginas */
+        #pdf-scroll-content {
+            display: block;
+            padding: 15px 10px 30px 10px;
+            min-width: 100%;
+        }
+
+        .pdf-page-wrapper {
+            display: block;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            margin: 0 auto 15px auto;
+            overflow: hidden;
+            width: fit-content;
+            /* ✅ Transición suave al cambiar el tamaño del canvas */
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pdf-page-wrapper canvas {
+            display: block;
+            vertical-align: top;
+            /* ✅ Transición suave del canvas (ancho, alto, sombra) */
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                        height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: width, height;
+        }
+
+        /* Loader principal */
         .viewer-loading {
             position: absolute;
             top: 50%;
@@ -272,11 +327,17 @@
             color: white;
             text-align: center;
             z-index: 5;
-            pointer-events: none;
             transition: opacity 0.4s;
+            background: rgba(0,0,0,0.7);
+            padding: 25px 35px;
+            border-radius: 12px;
         }
 
-        .viewer-loading.hidden { opacity: 0; }
+        .viewer-loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
 
         .viewer-loading .spinner {
             width: 44px;
@@ -288,40 +349,10 @@
             margin: 0 auto 12px auto;
         }
 
-        .mobile-fallback {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            color: white;
-            text-align: center;
-            padding: 30px;
+        .viewer-loading p {
+            font-size: 0.85em;
+            margin: 0;
         }
-
-        .mobile-fallback i {
-            font-size: 4em;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .mobile-fallback h3 { margin-bottom: 10px; }
-        .mobile-fallback p { color: #ccc; margin-bottom: 20px; max-width: 400px; }
-
-        .mobile-fallback a {
-            background: var(--primary);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .mobile-fallback a:hover { background: var(--primary-dark); }
 
         @media screen and (max-width: 480px) {
             .app-container { padding: 15px; }
@@ -329,6 +360,10 @@
             .menu-container { gap: 10px; }
             .preview-thumb { height: 80px; }
             .menu-item p { font-size: 0.7em; }
+            .viewer-header .title { font-size: 0.78em; }
+            .viewer-btn { width: 34px; height: 34px; font-size: 0.9em; }
+            #pdf-scroll-content { padding: 10px 5px 20px 5px; }
+            .pdf-page-wrapper { margin-bottom: 10px; }
         }
     </style>
 </head>
@@ -353,26 +388,25 @@
                 <i class="fas fa-times"></i>
             </button>
             <div class="title" id="viewer-title">Presentación</div>
-            <div style="width: 38px;"></div>
+            <div class="viewer-controls">
+                <button class="viewer-btn" id="btn-zoom-out" onclick="cambiarZoom(-1)" title="Reducir">
+                    <i class="fas fa-search-minus"></i>
+                </button>
+                <span class="zoom-indicator" id="zoom-indicator">100%</span>
+                <button class="viewer-btn" id="btn-zoom-in" onclick="cambiarZoom(1)" title="Ampliar">
+                    <i class="fas fa-search-plus"></i>
+                </button>
+            </div>
         </div>
 
-        <div style="position: relative; flex: 1; display: flex;">
+        <div style="position: relative; flex: 1; overflow: hidden; display: flex; flex-direction: column;">
             <div class="viewer-loading" id="viewer-loading">
                 <div class="spinner"></div>
                 <p>Cargando presentación...</p>
             </div>
-            <iframe id="pdf-viewer" src=""
-                allow="autoplay"
-                referrerpolicy="no-referrer"></iframe>
-        </div>
-
-        <div class="mobile-fallback" id="mobile-fallback">
-            <i class="fas fa-file-pdf"></i>
-            <h3>Vista previa no disponible</h3>
-            <p>Tu navegador móvil no puede mostrar esta presentación embebida. Ábrela directamente para verla.</p>
-            <a id="fallback-link" href="#" target="_blank" rel="noopener">
-                <i class="fas fa-external-link-alt"></i> Abrir presentación
-            </a>
+            <div id="pdf-pages-wrapper">
+                <div id="pdf-scroll-content"></div>
+            </div>
         </div>
     </div>
 
@@ -384,6 +418,18 @@
         const GITHUB_REPO = 'CCG';
         const CARPETA_PDFS = 'Presentaciones';
 
+        // Niveles de zoom (más graduales, sin saltos bruscos)
+        const ZOOM_LEVELS = [0.5, 0.65, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+        const ZOOM_DEFAULT_INDEX = 4;   // = 1.0 (100%)
+        let zoomIndex = ZOOM_DEFAULT_INDEX;
+        let zoomActual = ZOOM_LEVELS[zoomIndex];
+
+        // Estado del visor
+        let pdfActual = null;
+        let paginasRenderizadas = [];   // [{ canvas, wrapper, aspectRatio }]
+        let anchoBaseRender = 0;         // ancho base (px) de render a 100%
+
+        // Configurar worker de pdf.js
         if (window.pdfjsLib) {
             pdfjsLib.GlobalWorkerOptions.workerSrc =
                 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -410,8 +456,7 @@
                     .filter(item => item.type === 'file' && item.name.toLowerCase().endsWith('.pdf'))
                     .map(item => ({
                         nombre: item.name,
-                        rawUrl: item.download_url,
-                        visorUrl: item.download_url
+                        rawUrl: item.download_url
                     }));
 
                 console.log(`✅ ${pdfs.length} PDF(s) encontrados:`, pdfs.map(p => p.nombre));
@@ -512,55 +557,238 @@
         }
 
         // ============================================
-        // 👁️ VISOR CON GOOGLE DOCS VIEWER
+        // 📐 ANCHO DISPONIBLE
         // ============================================
-        function abrirPresentacion(pdf, titulo) {
+        function obtenerAnchoDisponible() {
+            const wrapper = document.getElementById('pdf-pages-wrapper');
+            let ancho = wrapper.clientWidth;
+            if (!ancho || ancho < 100) {
+                ancho = window.innerWidth;
+            }
+            return Math.max(ancho - 20, 240);
+        }
+
+        // ============================================
+        // 👁️ ABRIR PRESENTACIÓN
+        // ============================================
+        async function abrirPresentacion(pdf, titulo) {
             const viewer = document.getElementById('viewer-container');
-            const iframe = document.getElementById('pdf-viewer');
-            const fallback = document.getElementById('mobile-fallback');
             const title = document.getElementById('viewer-title');
-            const fallbackLink = document.getElementById('fallback-link');
             const loading = document.getElementById('viewer-loading');
+            const scrollContent = document.getElementById('pdf-scroll-content');
+            const scrollWrapper = document.getElementById('pdf-pages-wrapper');
 
             title.textContent = titulo;
-            fallbackLink.href = pdf.visorUrl;
+            scrollContent.innerHTML = '';
+            scrollWrapper.scrollTop = 0;
+            scrollWrapper.scrollLeft = 0;
 
-            const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-            if (esMovil) {
-                iframe.style.display = 'none';
-                fallback.style.display = 'flex';
-                loading.style.display = 'none';
-            } else {
-                iframe.style.display = 'block';
-                fallback.style.display = 'none';
-                loading.style.display = 'block';
-                loading.classList.remove('hidden');
-
-                const urlCodificada = encodeURIComponent(pdf.visorUrl);
-                const googleViewerUrl = `https://docs.google.com/viewer?url=${urlCodificada}&embedded=true`;
-
-                console.log('📄 Cargando visor:', googleViewerUrl);
-                iframe.src = googleViewerUrl;
-
-                iframe.onload = () => {
-                    setTimeout(() => loading.classList.add('hidden'), 800);
-                };
-
-                setTimeout(() => loading.classList.add('hidden'), 5000);
-            }
+            loading.classList.remove('hidden');
+            loading.style.display = 'block';
 
             viewer.classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            // Resetear zoom
+            zoomIndex = ZOOM_DEFAULT_INDEX;
+            zoomActual = ZOOM_LEVELS[zoomIndex];
+            actualizarUIZoom();
+
+            paginasRenderizadas = [];
+
+            try {
+                const loadingTask = pdfjsLib.getDocument(pdf.rawUrl);
+                pdfActual = await loadingTask.promise;
+
+                console.log(`📖 PDF cargado: ${pdfActual.numPages} páginas`);
+
+                // Ancho base para renderizar a 100%
+                anchoBaseRender = obtenerAnchoDisponible();
+
+                // Renderizar todas las páginas
+                for (let num = 1; num <= pdfActual.numPages; num++) {
+                    await renderizarPagina(num);
+                }
+
+                // Aplicar el zoom inicial (que es 100%, así que no cambia nada)
+                aplicarZoomATodas();
+
+                loading.classList.add('hidden');
+                setTimeout(() => { loading.style.display = 'none'; }, 400);
+
+            } catch (error) {
+                console.error('❌ Error al cargar PDF:', error);
+                scrollContent.innerHTML = `
+                    <div style="color: white; text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3em; margin-bottom: 15px; opacity: 0.7;"></i>
+                        <p>No se pudo cargar la presentación.</p>
+                        <small style="opacity: 0.7;">${error.message}</small>
+                    </div>`;
+                loading.classList.add('hidden');
+                setTimeout(() => { loading.style.display = 'none'; }, 400);
+            }
         }
 
+        // ============================================
+        // 🖼️ RENDERIZAR UNA PÁGINA
+        // ============================================
+        async function renderizarPagina(numPagina) {
+            const scrollContent = document.getElementById('pdf-scroll-content');
+
+            const page = await pdfActual.getPage(numPagina);
+
+            // Renderizar a resolución fija de 100% (ancho base)
+            const viewportOriginal = page.getViewport({ scale: 1 });
+            const escalaBase = anchoBaseRender / viewportOriginal.width;
+            const viewport = page.getViewport({ scale: escalaBase });
+
+            const anchoCSS = Math.floor(viewport.width);
+            const altoCSS = Math.floor(viewport.height);
+            const aspectRatio = altoCSS / anchoCSS;
+
+            const pageWrapper = document.createElement('div');
+            pageWrapper.className = 'pdf-page-wrapper';
+
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            const outputScale = window.devicePixelRatio || 1;
+
+            canvas.width = Math.floor(anchoCSS * outputScale);
+            canvas.height = Math.floor(altoCSS * outputScale);
+            // 🎯 El tamaño en pantalla lo controlamos con style.width / style.height
+            //    (empezamos al 100%)
+            canvas.style.width = anchoCSS + 'px';
+            canvas.style.height = altoCSS + 'px';
+            canvas.style.display = 'block';
+
+            pageWrapper.style.width = anchoCSS + 'px';
+
+            pageWrapper.appendChild(canvas);
+            scrollContent.appendChild(pageWrapper);
+
+            const transform = outputScale !== 1
+                ? [outputScale, 0, 0, outputScale, 0, 0]
+                : null;
+
+            await page.render({
+                canvasContext: context,
+                transform: transform,
+                viewport: viewport
+            }).promise;
+
+            paginasRenderizadas.push({
+                canvas,
+                wrapper: pageWrapper,
+                anchoBase: anchoCSS,
+                altoBase: altoCSS,
+                aspectRatio
+            });
+        }
+
+        // ============================================
+        // 🎯 APLICAR ZOOM CAMBIANDO EL ANCHO/ALTO DE CADA CANVAS
+        //    (sin re-renderizar, sin parpadeo, sin perder layout)
+        // ============================================
+        function aplicarZoomATodas() {
+            paginasRenderizadas.forEach(p => {
+                const nuevoAncho = Math.round(p.anchoBase * zoomActual);
+                const nuevoAlto = Math.round(nuevoAncho * p.aspectRatio);
+
+                p.canvas.style.width = nuevoAncho + 'px';
+                p.canvas.style.height = nuevoAlto + 'px';
+                p.wrapper.style.width = nuevoAncho + 'px';
+            });
+        }
+
+        // ============================================
+        // 🔍 ZOOM
+        // ============================================
+        function actualizarUIZoom() {
+            const btnMenos = document.getElementById('btn-zoom-out');
+            const btnMas = document.getElementById('btn-zoom-in');
+            const indicator = document.getElementById('zoom-indicator');
+
+            if (btnMenos) btnMenos.disabled = zoomIndex === 0;
+            if (btnMas) btnMas.disabled = zoomIndex === ZOOM_LEVELS.length - 1;
+            if (indicator) indicator.textContent = Math.round(zoomActual * 100) + '%';
+        }
+
+        function cambiarZoom(direccion) {
+            const nuevoIndex = zoomIndex + direccion;
+            if (nuevoIndex < 0 || nuevoIndex >= ZOOM_LEVELS.length) return;
+
+            const scrollWrapper = document.getElementById('pdf-pages-wrapper');
+
+            // 📌 Detectar en qué página está el usuario y su posición relativa
+            const rectWrapper = scrollWrapper.getBoundingClientRect();
+            const puntoY = rectWrapper.top + 100;  // punto de referencia dentro del viewport
+
+            let paginaActiva = null;
+            let offsetRelativo = 0;
+
+            for (const p of paginasRenderizadas) {
+                const rectP = p.wrapper.getBoundingClientRect();
+                if (rectP.top <= puntoY && rectP.bottom >= puntoY) {
+                    paginaActiva = p;
+                    offsetRelativo = (puntoY - rectP.top) / rectP.height;
+                    break;
+                }
+            }
+
+            // Si no encontramos página activa, tomamos la primera visible
+            if (!paginaActiva && paginasRenderizadas.length > 0) {
+                paginaActiva = paginasRenderizadas[0];
+                offsetRelativo = 0;
+            }
+
+            // Guardar ancho de scroll actual para compensar el cambio de layout
+            const anchoContenidoAntes = scrollWrapper.scrollWidth;
+            const anchoViewport = rectWrapper.width;
+            const centroXAntes = scrollWrapper.scrollLeft + anchoViewport / 2;
+            const propX = anchoContenidoAntes > 0 ? centroXAntes / anchoContenidoAntes : 0.5;
+
+            // Cambiar el zoom
+            zoomIndex = nuevoIndex;
+            zoomActual = ZOOM_LEVELS[zoomIndex];
+            actualizarUIZoom();
+
+            // Aplicar el zoom a todos los canvas
+            aplicarZoomATodas();
+
+            // 🎯 Restaurar la posición después de que el navegador recalcule el layout
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (paginaActiva) {
+                        // Mantener la misma página visible y el mismo offset dentro de ella
+                        const rectP = paginaActiva.wrapper.getBoundingClientRect();
+                        const nuevoPuntoY = rectP.top + offsetRelativo * rectP.height;
+                        const deltaY = nuevoPuntoY - puntoY;
+                        scrollWrapper.scrollTop += deltaY;
+                    }
+
+                    // Restaurar posición horizontal proporcional
+                    const anchoContenidoDespues = scrollWrapper.scrollWidth;
+                    if (anchoContenidoDespues > 0) {
+                        scrollWrapper.scrollLeft = propX * anchoContenidoDespues - anchoViewport / 2;
+                    }
+                });
+            });
+        }
+
+        // ============================================
+        // ❌ CERRAR VISOR
+        // ============================================
         function cerrarVisor() {
             const viewer = document.getElementById('viewer-container');
-            const iframe = document.getElementById('pdf-viewer');
-            const loading = document.getElementById('viewer-loading');
+            const scrollContent = document.getElementById('pdf-scroll-content');
             viewer.classList.remove('active');
-            iframe.src = '';
-            loading.classList.remove('hidden');
+            scrollContent.innerHTML = '';
+            paginasRenderizadas = [];
+            if (pdfActual) {
+                pdfActual.destroy();
+                pdfActual = null;
+            }
             document.body.style.overflow = '';
         }
 
