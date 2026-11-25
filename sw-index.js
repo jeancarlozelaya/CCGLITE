@@ -1,13 +1,14 @@
 // Archivo: sw-index.js
 
 // ⚠️ IMPORTANTE: Cambia esta versión CADA VEZ que hagas cambios
-const CACHE_NAME_INDEX = 'pibrisa-index-v1.0.1'; 
+const CACHE_NAME_INDEX = 'pibrisa-index-v1.0.2'; 
 
 const APP_VERSION = CACHE_NAME_INDEX.replace('pibrisa-index-', '');
 
 const urlsToCacheIndex = [
     './',
     './index.html',
+    './login.html',
     './manifest.json',
     './Imágenes/Icono.png',
 
