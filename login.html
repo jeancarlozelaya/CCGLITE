@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PIBRISA - Iniciar Sesión</title>
+    <link rel="icon" href="Imágenes/Icono.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary: #2C73D2;
+            --primary-dark: #1A56B2;
+            --success: #28A745;
+            --danger: #e74c3c;
+            --dark: #343A40;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --gray-600: #6C757D;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .swal2-container {
+            z-index: 300000 !important;
+        }
+
+        .d-none-auth {
+            display: none !important;
+        }
+
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+            padding: 32px 24px;
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .auth-logo-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            background: rgba(44, 115, 210, 0.12);
+            width: 74px;
+            height: 74px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .auth-title {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .auth-subtitle {
+            color: var(--gray-600);
+            font-size: 0.88rem;
+            margin-top: 4px;
+        }
+
+        .auth-section-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            margin: 18px 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 1.5px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .auth-field {
+            margin-bottom: 14px;
+        }
+
+        .auth-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .auth-label .req {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+
+        .auth-input-wrap {
+            position: relative;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1.5px solid var(--gray-300);
+            border-radius: 10px;
+            font-size: 0.94rem;
+            font-family: inherit;
+            transition: var(--transition);
+            background: #fff;
+            color: var(--dark);
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 115, 210, 0.15);
+        }
+
+        .auth-input.is-error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+        }
+
+        .auth-input.is-ok {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+        }
+
+        .auth-toggle-pass {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 1rem;
+        }
+
+        .auth-hint {
+            font-size: 0.76rem;
+            color: var(--gray-600);
+            margin-top: 5px;
+        }
+
+        .auth-feedback {
+            display: none;
+            font-size: 0.76rem;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .auth-feedback.show {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .auth-feedback.err { color: var(--danger); }
+        .auth-feedback.ok { color: var(--success); }
+        .auth-feedback.warn { color: #d39e00; }
+
+        .auth-badge-user {
+            background: rgba(44, 115, 210, 0.08);
+            border: 1px solid rgba(44, 115, 210, 0.2);
+            border-radius: 10px;
+            padding: 11px 13px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .auth-badge-user i {
+            font-size: 1.45rem;
+            color: var(--primary);
+        }
+
+        .auth-badge-name {
+            font-weight: 700;
+            font-size: 0.94rem;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .auth-badge-id {
+            font-size: 0.76rem;
+            color: var(--gray-600);
+            font-family: monospace;
+        }
+
+        .auth-alert {
+            background: rgba(44, 115, 210, 0.09);
+            color: var(--primary-dark);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.81rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+        }
+
+        .auth-alert i {
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 13px 20px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.96rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .auth-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(44, 115, 210, 0.3);
+        }
+
+        .auth-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div id="pantallaLogin" class="auth-wrapper d-none-auth">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon"><i class="fas fa-user-lock"></i></div>
+                <h1 class="auth-title">PIBRISA</h1>
+                <p class="auth-subtitle">Acceso de Colaboradores Activos</p>
+            </div>
+
+            <!-- PASO 1: INGRESAR IDENTIDAD -->
+            <form id="formPasoIdentidad" onsubmit="verificarIdentidadLogin(event)">
+                <div class="auth-field">
+                    <label class="auth-label" for="loginIdentidadInput">Número de Identidad</label>
+                    <input
+                        type="text"
+                        id="loginIdentidadInput"
+                        class="auth-input"
+                        placeholder="0000-0000-00000"
+                        maxlength="15"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        oninput="formatearIdentidadInput(this); limpiarFeedbackIdentidad()"
+                        required
+                    >
+                    <div class="auth-hint">Formato: XXXX-XXXX-XXXXX (13 dígitos numéricos)</div>
+                    <div class="auth-feedback err" id="errIdentidad"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                </div>
+                <button type="submit" class="auth-btn" id="btnVerificarIdentidad">
+                    <i class="fas fa-arrow-right"></i> Continuar
+                </button>
+            </form>
+
+            <!-- PASO 2A: PRIMER INGRESO (ACTUALIZAR DATOS + CREAR CONTRASEÑA) -->
+            <form id="formPasoRegistro" class="d-none-auth" onsubmit="registrarPrimeraPassword(event)" novalidate>
+                <div class="auth-badge-user">
+                    <i class="fas fa-user-check"></i>
+                    <div>
+                        <div class="auth-badge-name" id="regNombreColab">-</div>
+                        <div class="auth-badge-id" id="regIdentidadColab">-</div>
+                    </div>
+                </div>
+
+                <div class="auth-alert">
+                    <i class="fas fa-info-circle"></i>
+                    <div>Es tu primer ingreso. Verifica o actualiza tus datos personales y crea tu contraseña.</div>
+                </div>
+
+                <div class="auth-section-title">
+                    <i class="fas fa-address-card"></i> Tus Datos Personales
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="regFechaNacimiento">Fecha de Nacimiento <span class="req">*</span></label>
+                    <input
+                        type="date"
+                        id="regFechaNacimiento"
+                        class="auth-input"
+                        onchange="validarFechaCampo(this)"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="regMovil">Móvil Personal <span class="req">*</span></label>
+                    <input
+                        type="tel"
+                        id="regMovil"
+                        class="auth-input"
+                        placeholder="0000-0000"
+                        maxlength="9"
+                        inputmode="numeric"
+                        oninput="formatearTelefonoInput(this); validarTelefonoCampo(this)"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="regContactoEmergencia">Contacto de Emergencia <span class="req">*</span></label>
+                    <input
+                        type="text"
+                        id="regContactoEmergencia"
+                        class="auth-input"
+                        placeholder="Nombre completo"
+                        style="text-transform: uppercase;"
+                        oninput="validarContactoCampo(this)"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="regMovilEmergencia">Móvil de Emergencia <span class="req">*</span></label>
+                    <input
+                        type="tel"
+                        id="regMovilEmergencia"
+                        class="auth-input"
+                        placeholder="0000-0000"
+                        maxlength="9"
+                        inputmode="numeric"
+                        oninput="formatearTelefonoInput(this); validarTelefonoCampo(this)"
+                        required
+                    >
+                </div>
+
+                <div class="auth-section-title">
+                    <i class="fas fa-key"></i> Crea tu Contraseña
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="regPassNueva">Nueva Contraseña (mín. 6 caracteres) <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input
+                            type="password"
+                            id="regPassNueva"
+                            class="auth-input"
+                            placeholder="Crea tu contraseña"
+                            autocomplete="new-password"
+                            oninput="actualizarFortalezaPass('regPassNueva', 'regStrength'); verificarCoincidenciaPass('regPassNueva', 'regPassConfirm', 'errRegConfirm', 'okRegConfirm')"
+                            required
+                        >
+                        <button type="button" class="auth-toggle-pass" onclick="togglePassAuth('regPassNueva', this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                    <div class="auth-feedback" id="regStrength"></div>
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="regPassConfirm">Confirmar Contraseña <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input
+                            type="password"
+                            id="regPassConfirm"
+                            class="auth-input"
+                            placeholder="Repite tu contraseña"
+                            autocomplete="new-password"
+                            oninput="verificarCoincidenciaPass('regPassNueva', 'regPassConfirm', 'errRegConfirm', 'okRegConfirm')"
+                            required
+                        >
+                        <button type="button" class="auth-toggle-pass" onclick="togglePassAuth('regPassConfirm', this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                    <div class="auth-feedback err" id="errRegConfirm"><i class="fas fa-exclamation-circle"></i> <span></span></div>
+                    <div class="auth-feedback ok" id="okRegConfirm"><i class="fas fa-check-circle"></i> Las contraseñas coinciden</div>
+                </div>
+
+                <button type="submit" class="auth-btn" id="btnRegistrarPassword">
+                    <i class="fas fa-save"></i> Guardar y Entrar
+                </button>
+            </form>
+
+            <!-- PASO 2B: LOGIN NORMAL CON CONTRASEÑA -->
+            <form id="formPasoPassword" class="d-none-auth" onsubmit="iniciarSesionColaborador(event)">
+                <div class="auth-badge-user">
+                    <i class="fas fa-user-circle"></i>
+                    <div>
+                        <div class="auth-badge-name" id="loginNombreColab">-</div>
+                        <div class="auth-badge-id" id="loginIdentidadColab">-</div>
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="loginPassInput">Contraseña</label>
+                    <div class="auth-input-wrap">
+                        <input
+                            type="password"
+                            id="loginPassInput"
+                            class="auth-input"
+                            placeholder="Tu contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <button type="button" class="auth-toggle-pass" onclick="togglePassAuth('loginPassInput', this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn" id="btnLoginColaborador">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+            </form>
+
+            <!-- PASO 2C: COMPLETAR DATOS FALTANTES (SI YA TENÍA CONTRASEÑA) -->
+            <form id="formPasoCompletarDatos" class="d-none-auth" onsubmit="guardarDatosFaltantes(event)" novalidate>
+                <div class="auth-badge-user">
+                    <i class="fas fa-user-edit"></i>
+                    <div>
+                        <div class="auth-badge-name" id="compNombreColab">-</div>
+                        <div class="auth-badge-id" id="compIdentidadColab">-</div>
+                    </div>
+                </div>
+
+                <div class="auth-alert">
+                    <i class="fas fa-info-circle"></i>
+                    <div>Verifica y completa tus datos personales para continuar.</div>
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="compFechaNacimiento">Fecha de Nacimiento <span class="req">*</span></label>
+                    <input
+                        type="date"
+                        id="compFechaNacimiento"
+                        class="auth-input"
+                        onchange="validarFechaCampo(this)"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="compMovil">Móvil Personal <span class="req">*</span></label>
+                    <input
+                        type="tel"
+                        id="compMovil"
+                        class="auth-input"
+                        placeholder="0000-0000"
+                        maxlength="9"
+                        inputmode="numeric"
+                        oninput="formatearTelefonoInput(this); validarTelefonoCampo(this)"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="compContactoEmergencia">Contacto de Emergencia <span class="req">*</span></label>
+                    <input
+                        type="text"
+                        id="compContactoEmergencia"
+                        class="auth-input"
+                        placeholder="Nombre completo"
+                        style="text-transform: uppercase;"
+                        oninput="validarContactoCampo(this)"
+                        required
+                    >
+                </div>
+
+                <div class="auth-field">
+                    <label class="auth-label" for="compMovilEmergencia">Móvil de Emergencia <span class="req">*</span></label>
+                    <input
+                        type="tel"
+                        id="compMovilEmergencia"
+                        class="auth-input"
+                        placeholder="0000-0000"
+                        maxlength="9"
+                        inputmode="numeric"
+                        oninput="formatearTelefonoInput(this); validarTelefonoCampo(this)"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="auth-btn" id="btnGuardarDatosFaltantes">
+                    <i class="fas fa-save"></i> Guardar Datos y Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const AUTH_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxf0zTffPZmzQsm9US7Igfldx2LRzuhuoBu5brSKKMyny2SIYQ6HHdVNWTqg3t0nl4dwQ/exec";
+        const DB_AUTH_NAME = "PibrisaAuthDB";
+        const DB_AUTH_VERSION = 1;
+        const STORE_AUTH = "sesion";
+        const SESSION_KEY = "colaborador_activo";
+        const FALLBACK_LS_KEY = "pibrisa_sesion_guardada";
+        const AUTH_ERROR_KEY = "pibrisa_auth_error";
+        let dbAuth = null;
+
+        const authState = {
+            identidad: null,
+            nombre: null,
+            sessionToken: null,
+            identidadPendiente: null,
+            nombrePendiente: null
+        };
+
+        function abrirDBAuth() {
+            return new Promise((resolve) => {
+                if (!("indexedDB" in window)) return resolve(null);
+                try {
+                    const req = indexedDB.open(DB_AUTH_NAME, DB_AUTH_VERSION);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains(STORE_AUTH)) {
+                            db.createObjectStore(STORE_AUTH, { keyPath: "key" });
+                        }
+                    };
+                    req.onsuccess = (e) => { dbAuth = e.target.result; resolve(dbAuth); };
+                    req.onerror = () => resolve(null);
+                } catch (err) {
+                    resolve(null);
+                }
+            });
+        }
+
+        function guardarSesionAuth(datos) {
+            return new Promise((resolve) => {
+                try { localStorage.setItem(FALLBACK_LS_KEY, JSON.stringify(datos)); } catch (e) {}
+                if (!dbAuth) return resolve(true);
+                try {
+                    const tx = dbAuth.transaction([STORE_AUTH], "readwrite");
+                    const req = tx.objectStore(STORE_AUTH).put({ key: SESSION_KEY, datos, ts: Date.now() });
+                    req.onsuccess = () => resolve(true);
+                    req.onerror = () => resolve(false);
+                } catch (e) { resolve(false); }
+            });
+        }
+
+        function obtenerSesionAuth() {
+            return new Promise((resolve) => {
+                const leerLS = () => {
+                    try {
+                        const raw = localStorage.getItem(FALLBACK_LS_KEY);
+                        return raw ? JSON.parse(raw) : null;
+                    } catch (e) { return null; }
+                };
+                if (!dbAuth) return resolve(leerLS());
+                try {
+                    const tx = dbAuth.transaction([STORE_AUTH], "readonly");
+                    const req = tx.objectStore(STORE_AUTH).get(SESSION_KEY);
+                    req.onsuccess = () => {
+                        if (req.result && req.result.datos) return resolve(req.result.datos);
+                        resolve(leerLS());
+                    };
+                    req.onerror = () => resolve(leerLS());
+                } catch (e) { resolve(leerLS()); }
+            });
+        }
+
+        async function apiAuth(payload, timeoutMs = 20000) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const resp = await fetch(AUTH_SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                    signal: controller.signal,
+                    redirect: "follow"
+                });
+                if (!resp.ok) throw new Error("Error HTTP " + resp.status);
+                const texto = await resp.text();
+                if (!texto) throw new Error("Respuesta vacía del servidor.");
+                if (texto.trim().startsWith("<")) throw new Error("Revisa la configuración del script de Google.");
+                const json = JSON.parse(texto);
+                if (json.status === "error") {
+                    throw new Error(json.message || "Error de autenticación");
+                }
+                return json.data;
+            } catch (err) {
+                if (err.name === "AbortError") throw new Error("Tiempo de espera agotado. Verifica tu conexión.");
+                if (err.message && err.message.includes("Failed to fetch")) {
+                    throw new Error("No se pudo conectar al servidor. Verifica tu internet.");
+                }
+                throw err;
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        function formatearIdentidadInput(input) {
+            const digits = input.value.replace(/\D/g, "").slice(0, 13);
+            let formatted = digits;
+            if (digits.length > 8) {
+                formatted = digits.slice(0, 4) + "-" + digits.slice(4, 8) + "-" + digits.slice(8);
+            } else if (digits.length > 4) {
+                formatted = digits.slice(0, 4) + "-" + digits.slice(4);
+            }
+            input.value = formatted;
+        }
+
+        function formatearTelefonoInput(input) {
+            if (!input) return;
+            let valor = input.value.replace(/\D/g, "").slice(0, 8);
+            if (valor.length > 4) {
+                valor = valor.slice(0, 4) + "-" + valor.slice(4, 8);
+            }
+            input.value = valor;
+        }
+
+        function identidadValida(val) {
+            return /^\d{4}-\d{4}-\d{5}$/.test(String(val || "").trim());
+        }
+
+        function validarFechaCampo(input) {
+            if (!input) return false;
+            input.classList.remove("is-ok", "is-error");
+            const val = input.value;
+            let ok = false;
+            if (val) {
+                const fecha = new Date(val);
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                ok = !isNaN(fecha.getTime()) && fecha <= hoy;
+            }
+            input.classList.add(ok ? "is-ok" : "is-error");
+            return ok;
+        }
+
+        function validarTelefonoCampo(input) {
+            if (!input) return false;
+            input.classList.remove("is-ok", "is-error");
+            const ok = /^\d{4}-\d{4}$/.test(input.value);
+            input.classList.add(ok ? "is-ok" : "is-error");
+            return ok;
+        }
+
+        function validarContactoCampo(input) {
+            if (!input) return false;
+            input.classList.remove("is-ok", "is-error");
+            const ok = !!(input.value && input.value.trim().length >= 3);
+            input.classList.add(ok ? "is-ok" : "is-error");
+            return ok;
+        }
+
+        function limpiarFeedbackIdentidad() {
+            document.getElementById("loginIdentidadInput").classList.remove("is-error");
+            document.getElementById("errIdentidad").classList.remove("show");
+        }
+
+        function togglePassAuth(inputId, btn) {
+            const el = document.getElementById(inputId);
+            if (!el) return;
+            if (el.type === "password") {
+                el.type = "text";
+                btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                el.type = "password";
+                btn.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        }
+
+        function actualizarFortalezaPass(passId, feedbackId) {
+            const pass = document.getElementById(passId).value;
+            const el = document.getElementById(feedbackId);
+            if (!el) return;
+            if (!pass) {
+                el.className = "auth-feedback";
+                el.innerHTML = "";
+                return;
+            }
+            let pts = 0;
+            if (pass.length >= 6) pts++;
+            if (pass.length >= 10) pts++;
+            if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) pts++;
+            if (/\d/.test(pass)) pts++;
+            if (/[^A-Za-z0-9]/.test(pass)) pts++;
+
+            el.classList.add("show");
+            el.classList.remove("err", "warn", "ok");
+            if (pass.length < 6 || pts <= 2) {
+                el.classList.add("err");
+                el.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Contraseña débil (mínimo 6 caracteres)';
+            } else if (pts === 3) {
+                el.classList.add("warn");
+                el.innerHTML = '<i class="fas fa-info-circle"></i> Contraseña aceptable';
+            } else {
+                el.classList.add("ok");
+                el.innerHTML = '<i class="fas fa-check-circle"></i> Contraseña segura';
+            }
+        }
+
+        function verificarCoincidenciaPass(p1Id, p2Id, errId, okId) {
+            const p1 = document.getElementById(p1Id).value;
+            const p2 = document.getElementById(p2Id).value;
+            const input2 = document.getElementById(p2Id);
+            const errEl = document.getElementById(errId);
+            const okEl = document.getElementById(okId);
+
+            if (!p2) {
+                input2.classList.remove("is-error", "is-ok");
+                errEl.classList.remove("show");
+                okEl.classList.remove("show");
+                return;
+            }
+            if (p1 === p2) {
+                input2.classList.add("is-ok");
+                input2.classList.remove("is-error");
+                errEl.classList.remove("show");
+                okEl.classList.add("show");
+            } else {
+                input2.classList.add("is-error");
+                input2.classList.remove("is-ok");
+                errEl.querySelector("span").textContent = "Las contraseñas no coinciden";
+                errEl.classList.add("show");
+                okEl.classList.remove("show");
+            }
+        }
+
+        function precargarCamposDatos(prefijo, datos) {
+            const d = datos || {};
+            const fechaEl = document.getElementById(prefijo + "FechaNacimiento");
+            const movilEl = document.getElementById(prefijo + "Movil");
+            const contactoEl = document.getElementById(prefijo + "ContactoEmergencia");
+            const movilEmEl = document.getElementById(prefijo + "MovilEmergencia");
+
+            fechaEl.value = d.fechaNacimiento || "";
+            movilEl.value = d.movil || "";
+            contactoEl.value = d.contactoEmergencia || "";
+            movilEmEl.value = d.movilEmergencia || "";
+
+            [fechaEl, movilEl, contactoEl, movilEmEl].forEach(el => el.classList.remove("is-ok", "is-error"));
+            if (fechaEl.value) validarFechaCampo(fechaEl);
+            if (movilEl.value) validarTelefonoCampo(movilEl);
+            if (contactoEl.value) validarContactoCampo(contactoEl);
+            if (movilEmEl.value) validarTelefonoCampo(movilEmEl);
+        }
+
+        async function verificarIdentidadLogin(e) {
+            e.preventDefault();
+            const input = document.getElementById("loginIdentidadInput");
+            const identidad = input.value.trim();
+            if (!identidadValida(identidad)) {
+                input.classList.add("is-error");
+                const err = document.getElementById("errIdentidad");
+                err.querySelector("span").textContent = "Ingresa los 13 dígitos (XXXX-XXXX-XXXXX)";
+                err.classList.add("show");
+                return;
+            }
+
+            const btn = document.getElementById("btnVerificarIdentidad");
+            const htmlOrig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+
+            try {
+                const res = await apiAuth({ action: "verificarIdentidad", identidad });
+                authState.identidadPendiente = res.identidad;
+                authState.nombrePendiente = res.nombre;
+
+                document.getElementById("formPasoIdentidad").classList.add("d-none-auth");
+                if (res.requiereRegistro) {
+                    document.getElementById("regNombreColab").textContent = res.nombre;
+                    document.getElementById("regIdentidadColab").textContent = res.identidad;
+                    precargarCamposDatos("reg", res.datos);
+                    document.getElementById("regPassNueva").value = "";
+                    document.getElementById("regPassConfirm").value = "";
+                    document.getElementById("regStrength").className = "auth-feedback";
+                    document.getElementById("errRegConfirm").classList.remove("show");
+                    document.getElementById("okRegConfirm").classList.remove("show");
+                    document.getElementById("formPasoRegistro").classList.remove("d-none-auth");
+                } else {
+                    document.getElementById("loginNombreColab").textContent = res.nombre;
+                    document.getElementById("loginIdentidadColab").textContent = res.identidad;
+                    document.getElementById("loginPassInput").value = "";
+                    document.getElementById("formPasoPassword").classList.remove("d-none-auth");
+                    setTimeout(() => document.getElementById("loginPassInput").focus(), 100);
+                }
+            } catch (err) {
+                Swal.fire("Acceso denegado", err.message, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = htmlOrig;
+            }
+        }
+
+        async function registrarPrimeraPassword(e) {
+            e.preventDefault();
+
+            const fechaOk = validarFechaCampo(document.getElementById("regFechaNacimiento"));
+            const movilOk = validarTelefonoCampo(document.getElementById("regMovil"));
+            const contactoOk = validarContactoCampo(document.getElementById("regContactoEmergencia"));
+            const movilEmOk = validarTelefonoCampo(document.getElementById("regMovilEmergencia"));
+
+            if (!fechaOk || !movilOk || !contactoOk || !movilEmOk) {
+                return Swal.fire("Campos incompletos", "Completa correctamente todos tus datos personales obligatorios.", "warning");
+            }
+
+            const pass = document.getElementById("regPassNueva").value;
+            const confirm = document.getElementById("regPassConfirm").value;
+
+            if (pass.length < 6) {
+                return Swal.fire("Contraseña muy corta", "Debe tener al menos 6 caracteres.", "warning");
+            }
+            if (pass !== confirm) {
+                return Swal.fire("No coinciden", "Verifica que ambas contraseñas sean iguales.", "warning");
+            }
+
+            const btn = document.getElementById("btnRegistrarPassword");
+            const htmlOrig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+            try {
+                const res = await apiAuth({
+                    action: "registrarPassword",
+                    identidad: authState.identidadPendiente,
+                    fechaNacimiento: document.getElementById("regFechaNacimiento").value,
+                    movil: document.getElementById("regMovil").value,
+                    contactoEmergencia: document.getElementById("regContactoEmergencia").value.trim().toUpperCase(),
+                    movilEmergencia: document.getElementById("regMovilEmergencia").value,
+                    password: pass,
+                    confirmarPassword: confirm
+                });
+
+                await guardarSesionAuth({
+                    identidad: res.identidad,
+                    nombre: res.nombre,
+                    sessionToken: res.sessionToken
+                });
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "¡Bienvenido(a)!",
+                    text: "Tus datos y contraseña han sido guardados.",
+                    timer: 1400,
+                    showConfirmButton: false
+                });
+                window.location.replace("index.html");
+            } catch (err) {
+                Swal.fire("Error", err.message, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = htmlOrig;
+            }
+        }
+
+        async function iniciarSesionColaborador(e) {
+            e.preventDefault();
+            const password = document.getElementById("loginPassInput").value;
+            if (!password) return;
+
+            const btn = document.getElementById("btnLoginColaborador");
+            const htmlOrig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ingresando...';
+
+            try {
+                const res = await apiAuth({
+                    action: "login",
+                    identidad: authState.identidadPendiente,
+                    password: password
+                });
+
+                document.getElementById("loginPassInput").value = "";
+
+                if (res.datosCompletos === false) {
+                    authState.identidad = res.identidad;
+                    authState.nombre = res.nombre;
+                    authState.sessionToken = res.sessionToken;
+                    document.getElementById("formPasoPassword").classList.add("d-none-auth");
+                    document.getElementById("compNombreColab").textContent = res.nombre;
+                    document.getElementById("compIdentidadColab").textContent = res.identidad;
+                    precargarCamposDatos("comp", res.datos);
+                    document.getElementById("formPasoCompletarDatos").classList.remove("d-none-auth");
+                    return;
+                }
+
+                await guardarSesionAuth({
+                    identidad: res.identidad,
+                    nombre: res.nombre,
+                    sessionToken: res.sessionToken
+                });
+
+                window.location.replace("index.html");
+            } catch (err) {
+                Swal.fire("Error de acceso", err.message, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = htmlOrig;
+            }
+        }
+
+        async function guardarDatosFaltantes(e) {
+            e.preventDefault();
+
+            const fechaOk = validarFechaCampo(document.getElementById("compFechaNacimiento"));
+            const movilOk = validarTelefonoCampo(document.getElementById("compMovil"));
+            const contactoOk = validarContactoCampo(document.getElementById("compContactoEmergencia"));
+            const movilEmOk = validarTelefonoCampo(document.getElementById("compMovilEmergencia"));
+
+            if (!fechaOk || !movilOk || !contactoOk || !movilEmOk) {
+                return Swal.fire("Campos incompletos", "Completa correctamente todos tus datos personales obligatorios.", "warning");
+            }
+
+            const btn = document.getElementById("btnGuardarDatosFaltantes");
+            const htmlOrig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+            try {
+                const res = await apiAuth({
+                    action: "actualizarDatos",
+                    identidad: authState.identidad,
+                    sessionToken: authState.sessionToken,
+                    fechaNacimiento: document.getElementById("compFechaNacimiento").value,
+                    movil: document.getElementById("compMovil").value,
+                    contactoEmergencia: document.getElementById("compContactoEmergencia").value.trim().toUpperCase(),
+                    movilEmergencia: document.getElementById("compMovilEmergencia").value
+                });
+
+                await guardarSesionAuth({
+                    identidad: res.identidad,
+                    nombre: res.nombre,
+                    sessionToken: authState.sessionToken
+                });
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "¡Datos actualizados!",
+                    timer: 1300,
+                    showConfirmButton: false
+                });
+                window.location.replace("index.html");
+            } catch (err) {
+                Swal.fire("Error", err.message, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = htmlOrig;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await abrirDBAuth();
+            const sesion = await obtenerSesionAuth();
+            if (sesion && sesion.identidad && sesion.sessionToken) {
+                window.location.replace("index.html");
+                return;
+            }
+
+            document.getElementById("pantallaLogin").classList.remove("d-none-auth");
+
+            try {
+                const errMsg = sessionStorage.getItem(AUTH_ERROR_KEY);
+                if (errMsg) {
+                    sessionStorage.removeItem(AUTH_ERROR_KEY);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Acceso bloqueado",
+                        text: errMsg,
+                        confirmButtonText: "Entendido"
+                    });
+                }
+            } catch (e) {}
+        });
+
+        document.addEventListener("contextmenu", function(e) {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
