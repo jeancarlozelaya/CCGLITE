@@ -54,6 +54,10 @@
             user-select: none;
         }
 
+        .d-none-auth {
+            display: none !important;
+        }
+
         #install-button {
             display: none;
             padding: 12px 24px;
@@ -693,15 +697,6 @@
             text-align: center;
         }
 
-        .creator-info img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border: 3px solid var(--primary);
-        }
-
         .creator-info h3 {
             margin: 0 0 5px 0;
             color: var(--primary);
@@ -742,9 +737,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* ============================================ */
-        /* ESTILOS PARA PLANIFICACIÓN Y MODAL DE ARCHIVOS */
-        /* ============================================ */
         .file-list-modal {
             position: fixed;
             top: 0;
@@ -939,163 +931,314 @@
     </style>
 </head>
 
-<button id="install-button">
-  <i class="fas fa-download"></i> Instalar App
-</button>
-
 <body>
-    <div class="header">
-        <button class="update-button" id="update-button" onclick="abrirModalActualizacion()" title="Verificar actualizaciones">
-            <i class="fas fa-sync-alt"></i>
+    <div id="appMain" class="d-none-auth">
+        <button id="install-button">
+            <i class="fas fa-download"></i> Instalar App
         </button>
-        Menú Principal
-    </div>
-    
-    <div class="app-container">
-        <div class="menu-container">
-            <div class="menu-item folder-item" onclick="window.location.href='Primeros Pasos/Pag - Primeros Pasos.html';">
-                <span><i class="fas fa-folder"></i></span>
-                <p>Primeros Pasos</p>
-            </div>
 
-            <div class="menu-item folder-item" onclick="window.location.href='Pag - Reportería.html';">
-                <span><i class="fas fa-folder"></i></span>
-                <p>Reportería</p>
-            </div>
-            
-            <div class="separator"></div>
-
-            <div class="menu-item folder-item" onclick="window.location.href='Pag - Gestión y Bienestar.html';">
-                <span><i class="fas fa-folder"></i></span>
-                <p>Gestión y Bienestar</p>
-            </div>  
-
-            <div class="menu-item" onclick="window.location.href='Registro de Participación.html';">
-                <span><i class="fa-solid fa-graduation-cap"></i></span>
-                <p>Registro de Participación</p>
-            </div>
-
-            <div class="separator"></div>
-
-            <div class="menu-item" onclick="window.location.href='Control de Llaves.html';">
-                <span><i class="fa-solid fa-key"></i></span>
-                <p>Control de Llaves</p>
-            </div>       
-            
-
-            <div class="menu-item" onclick="cargarPlanificacion()">
-                <span><i class="fas fa-calendar-alt"></i></span>
-                <p>Planificación Semana <span id="week-display" style="font-size: inherit;">#</span></p>
-            </div>
-            
-            <div class="separator"></div>
-            
-            <div class="menu-item" onclick="mostrarInfo()">
-                <span><i class="fas fa-info-circle"></i></span>
-                <p>Acerca de</p>
-            </div>
-        </div>
-    </div>
-
-
-    <div id="qr-icon" onclick="window.location.href='QR.html';">
-        <i class="fas fa-qrcode"></i>
-    </div>
-
-    <div id="notification-icon" onclick="mostrarNotificaciones()">
-        <i class="fas fa-bell"></i>
-        <span id="notification-badge" class="notification-badge"></span>
-    </div>
-
-    <div id="notification-modal" class="notification-modal">
-        <div class="notification-modal-content">
-            <div class="notification-header">
-                <h2>Notificaciones 
-                    <button class="refresh-button" onclick="actualizarNotificaciones()">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </h2>
-                <button class="close-modal" onclick="cerrarNotificaciones()">&times;</button>
-            </div>
-            <ul class="notification-list" id="notification-list"></ul>
-        </div>
-    </div>
-
-    <div id="info-modal" class="info-modal">
-        <div class="info-modal-content">
-            <div class="info-header">
-                <h2>Información de la Aplicación</h2>
-                <button class="close-modal" onclick="cerrarInfo()">&times;</button>
-            </div>
-            <div class="creator-info">
-                <div style="background-color: #2C73D2; color: white; width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; font-size: 2.5em;">
-                    JZ
-                </div>
-                <h3>Jeancarlo Zelaya</h3>
-                <p>Ingeniero Industrial</p>
-                <p><a>Jz.92@live.com</a></p>
-                <p>Desarrollador de la APP</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- MODAL DE LISTA DE ARCHIVOS (PLANIFICACIÓN)   -->
-    <!-- ============================================ -->
-    <div id="file-list-modal" class="file-list-modal">
-        <div class="file-list-modal-content">
-            <div class="file-list-header">
-                <h2 id="file-modal-title">Planificación</h2>
-                <button class="close-modal" onclick="cerrarFileList()">&times;</button>
-            </div>
-            <div id="file-list-container"></div>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- OVERLAY DE CARGA (usado por Planificación)   -->
-    <!-- ============================================ -->
-    <div id="overlay">
-        <div class="spinner"></div>
-        <div id="loadingMessage">
-            <p><strong>Por favor espera un momento...</strong></p>
-        </div>
-    </div>
-
-    <div id="update-modal" class="update-modal">
-        <div class="update-modal-content">
-            <button class="update-close-modal" onclick="cerrarModalActualizacion()">&times;</button>
-            <div class="update-icon" id="update-icon">
+        <div class="header">
+            <button class="update-button" id="update-button" onclick="abrirModalActualizacion()" title="Verificar actualizaciones">
                 <i class="fas fa-sync-alt"></i>
-            </div>
-            <h2 id="update-title">Verificando Actualizaciones</h2>
-            
-            <div class="version-info">
-                <div class="version-row">
-                    <span class="version-label">Versión actual:</span>
-                    <span class="version-value" id="current-version">Detectando...</span>
+            </button>
+            Menú Principal
+        </div>
+        
+        <div class="app-container">
+            <div class="menu-container">
+                <div class="menu-item folder-item" onclick="window.location.href='Primeros Pasos/Pag - Primeros Pasos.html';">
+                    <span><i class="fas fa-folder"></i></span>
+                    <p>Primeros Pasos</p>
                 </div>
-                <div class="version-row">
-                    <span class="version-label">Versión disponible:</span>
-                    <span class="version-value" id="available-version">Verificando...</span>
+
+                <div class="menu-item folder-item" onclick="window.location.href='Pag - Reportería.html';">
+                    <span><i class="fas fa-folder"></i></span>
+                    <p>Reportería</p>
                 </div>
-            </div>
+                
+                <div class="separator"></div>
 
-            <div class="status-message" id="update-status"></div>
+                <div class="menu-item folder-item" onclick="window.location.href='Pag - Gestión y Bienestar.html';">
+                    <span><i class="fas fa-folder"></i></span>
+                    <p>Gestión y Bienestar</p>
+                </div>  
 
-            <div class="update-buttons">
-                <button class="btn-update btn-confirm" id="btn-confirm-update" onclick="forzarActualizacion()" disabled>
-                    <i class="fas fa-download"></i> Actualizar
-                </button>
+                <div class="menu-item" onclick="window.location.href='Registro de Participación.html';">
+                    <span><i class="fa-solid fa-graduation-cap"></i></span>
+                    <p>Registro de Participación</p>
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="menu-item" onclick="window.location.href='Control de Llaves.html';">
+                    <span><i class="fa-solid fa-key"></i></span>
+                    <p>Control de Llaves</p>
+                </div>       
+                
+                <div class="menu-item" onclick="cargarPlanificacion()">
+                    <span><i class="fas fa-calendar-alt"></i></span>
+                    <p>Planificación Semana <span id="week-display" style="font-size: inherit;">#</span></p>
+                </div>
+                
+                <div class="separator"></div>
+                
+                <div class="menu-item" onclick="mostrarInfo()">
+                    <span><i class="fas fa-info-circle"></i></span>
+                    <p>Acerca de</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <footer>
-        JZ © <span id="current-year"></span> - Sistema de Gestión
-    </footer>
+        <div id="qr-icon" onclick="window.location.href='QR.html';">
+            <i class="fas fa-qrcode"></i>
+        </div>
+
+        <div id="notification-icon" onclick="mostrarNotificaciones()">
+            <i class="fas fa-bell"></i>
+            <span id="notification-badge" class="notification-badge"></span>
+        </div>
+
+        <div id="notification-modal" class="notification-modal">
+            <div class="notification-modal-content">
+                <div class="notification-header">
+                    <h2>Notificaciones 
+                        <button class="refresh-button" onclick="actualizarNotificaciones()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </h2>
+                    <button class="close-modal" onclick="cerrarNotificaciones()">&times;</button>
+                </div>
+                <ul class="notification-list" id="notification-list"></ul>
+            </div>
+        </div>
+
+        <div id="info-modal" class="info-modal">
+            <div class="info-modal-content">
+                <div class="info-header">
+                    <h2>Información de la Aplicación</h2>
+                    <button class="close-modal" onclick="cerrarInfo()">&times;</button>
+                </div>
+                <div class="creator-info">
+                    <div style="background-color: #2C73D2; color: white; width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; font-size: 2.5em;">
+                        JZ
+                    </div>
+                    <h3>Jeancarlo Zelaya</h3>
+                    <p>Ingeniero Industrial</p>
+                    <p><a>Jz.92@live.com</a></p>
+                    <p>Desarrollador de la APP</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="file-list-modal" class="file-list-modal">
+            <div class="file-list-modal-content">
+                <div class="file-list-header">
+                    <h2 id="file-modal-title">Planificación</h2>
+                    <button class="close-modal" onclick="cerrarFileList()">&times;</button>
+                </div>
+                <div id="file-list-container"></div>
+            </div>
+        </div>
+
+        <div id="overlay">
+            <div class="spinner"></div>
+            <div id="loadingMessage">
+                <p><strong>Por favor espera un momento...</strong></p>
+            </div>
+        </div>
+
+        <div id="update-modal" class="update-modal">
+            <div class="update-modal-content">
+                <button class="update-close-modal" onclick="cerrarModalActualizacion()">&times;</button>
+                <div class="update-icon" id="update-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h2 id="update-title">Verificando Actualizaciones</h2>
+                
+                <div class="version-info">
+                    <div class="version-row">
+                        <span class="version-label">Versión actual:</span>
+                        <span class="version-value" id="current-version">Detectando...</span>
+                    </div>
+                    <div class="version-row">
+                        <span class="version-label">Versión disponible:</span>
+                        <span class="version-value" id="available-version">Verificando...</span>
+                    </div>
+                </div>
+
+                <div class="status-message" id="update-status"></div>
+
+                <div class="update-buttons">
+                    <button class="btn-update btn-confirm" id="btn-confirm-update" onclick="forzarActualizacion()" disabled>
+                        <i class="fas fa-download"></i> Actualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            JZ © <span id="current-year"></span> - Sistema de Gestión
+        </footer>
+    </div>
 
     <script>
+        // ============================================
+        // GUARDIA SILENCIOSO DE SESIÓN (OPTIMIZADO)
+        // ============================================
+        const AUTH_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxf0zTffPZmzQsm9US7Igfldx2LRzuhuoBu5brSKKMyny2SIYQ6HHdVNWTqg3t0nl4dwQ/exec";
+        const DB_AUTH_NAME = "PibrisaAuthDB";
+        const DB_AUTH_VERSION = 1;
+        const STORE_AUTH = "sesion";
+        const SESSION_KEY = "colaborador_activo";
+        const FALLBACK_LS_KEY = "pibrisa_sesion_guardada";
+        const AUTH_ERROR_KEY = "pibrisa_auth_error";
+        const INTERVALO_VALIDACION_MS = 10 * 60 * 1000; // 10 minutos (solo si está visible)
+        const COOLDOWN_VISIBILIDAD_MS = 15 * 1000;     // 15 seg entre validaciones al volver a la app
+        let dbAuth = null;
+
+        const sesionActual = {
+            identidad: null,
+            sessionToken: null,
+            validando: false,
+            ultimaValidacionTs: 0
+        };
+
+        function abrirDBAuth() {
+            return new Promise((resolve) => {
+                if (!("indexedDB" in window)) return resolve(null);
+                try {
+                    const req = indexedDB.open(DB_AUTH_NAME, DB_AUTH_VERSION);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains(STORE_AUTH)) {
+                            db.createObjectStore(STORE_AUTH, { keyPath: "key" });
+                        }
+                    };
+                    req.onsuccess = (e) => { dbAuth = e.target.result; resolve(dbAuth); };
+                    req.onerror = () => resolve(null);
+                } catch (err) {
+                    resolve(null);
+                }
+            });
+        }
+
+        function obtenerSesionAuth() {
+            return new Promise((resolve) => {
+                const leerLS = () => {
+                    try {
+                        const raw = localStorage.getItem(FALLBACK_LS_KEY);
+                        return raw ? JSON.parse(raw) : null;
+                    } catch (e) { return null; }
+                };
+                if (!dbAuth) return resolve(leerLS());
+                try {
+                    const tx = dbAuth.transaction([STORE_AUTH], "readonly");
+                    const req = tx.objectStore(STORE_AUTH).get(SESSION_KEY);
+                    req.onsuccess = () => {
+                        if (req.result && req.result.datos) return resolve(req.result.datos);
+                        resolve(leerLS());
+                    };
+                    req.onerror = () => resolve(leerLS());
+                } catch (e) { resolve(leerLS()); }
+            });
+        }
+
+        function borrarSesionAuth() {
+            return new Promise((resolve) => {
+                try { localStorage.removeItem(FALLBACK_LS_KEY); } catch (e) {}
+                if (!dbAuth) return resolve();
+                try {
+                    const tx = dbAuth.transaction([STORE_AUTH], "readwrite");
+                    const req = tx.objectStore(STORE_AUTH).delete(SESSION_KEY);
+                    req.onsuccess = () => resolve();
+                    req.onerror = () => resolve();
+                } catch (e) { resolve(); }
+            });
+        }
+
+        async function apiValidarSesion(payload) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 15000);
+            try {
+                const resp = await fetch(AUTH_SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                    signal: controller.signal,
+                    redirect: "follow"
+                });
+                if (!resp.ok) throw new Error("Error HTTP " + resp.status);
+                const texto = await resp.text();
+                if (!texto || texto.trim().startsWith("<")) throw new Error("Respuesta inválida.");
+                const json = JSON.parse(texto);
+                if (json.status === "error") {
+                    const err = new Error(json.message || "Acceso bloqueado.");
+                    err.esRechazoServidor = true;
+                    throw err;
+                }
+                return json.data;
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        async function expulsarALogin(mensaje) {
+            await borrarSesionAuth();
+            if (mensaje) {
+                try { sessionStorage.setItem(AUTH_ERROR_KEY, mensaje); } catch (e) {}
+            }
+            window.location.replace("login.html");
+        }
+
+        async function validarSesionSilenciosa(forzar = false) {
+            if (!sesionActual.identidad || !sesionActual.sessionToken || sesionActual.validando) return;
+            if (!forzar && (Date.now() - sesionActual.ultimaValidacionTs < COOLDOWN_VISIBILIDAD_MS)) return;
+
+            sesionActual.validando = true;
+            try {
+                await apiValidarSesion({
+                    action: "validarSesion",
+                    identidad: sesionActual.identidad,
+                    sessionToken: sesionActual.sessionToken
+                });
+                sesionActual.ultimaValidacionTs = Date.now();
+            } catch (err) {
+                if (err.esRechazoServidor) {
+                    await expulsarALogin(err.message);
+                }
+            } finally {
+                sesionActual.validando = false;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await abrirDBAuth();
+            const sesion = await obtenerSesionAuth();
+
+            if (!sesion || !sesion.identidad || !sesion.sessionToken) {
+                window.location.replace("login.html");
+                return;
+            }
+
+            sesionActual.identidad = sesion.identidad;
+            sesionActual.sessionToken = sesion.sessionToken;
+
+            // Mostrar menú al instante y validar en segundo plano
+            document.getElementById("appMain").classList.remove("d-none-auth");
+            validarSesionSilenciosa(true);
+        });
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible" && sesionActual.identidad && sesionActual.sessionToken) {
+                validarSesionSilenciosa(false);
+            }
+        });
+
+        setInterval(() => {
+            if (document.visibilityState === "visible" && sesionActual.identidad && sesionActual.sessionToken) {
+                validarSesionSilenciosa(true);
+            }
+        }, INTERVALO_VALIDACION_MS);
+
         // ============================================
         // AÑO EN FOOTER
         // ============================================
@@ -1119,9 +1262,6 @@
         // ============================================
         // ⚙️ CONFIGURACIÓN DE NOTIFICACIONES
         // ============================================
-        // ⚠️ IMPORTANTE: Si SCRIPT_URL está vacío (""), las notificaciones
-        // se desactivan COMPLETAMENTE y no aparecerá el ícono de campana.
-        // Cuando quieras activarlas, pon la URL del script de Google.
         const SCRIPT_URL = "";
         const NOTIFICACIONES_ACTIVAS = SCRIPT_URL.trim() !== "";
 
@@ -1133,17 +1273,12 @@
         let versionActual = 'Desconocida';
         let versionDisponible = 'Desconocida';
 
-        // ============================================
-        // OBTENER VERSIÓN ACTUAL (3 estrategias en cascada)
-        // ============================================
         async function obtenerVersionActual() {
-            // ESTRATEGIA 1: Preguntar al SW activo
             if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
                 try {
                     const versionDesdeSW = await new Promise((resolve) => {
                         const messageChannel = new MessageChannel();
                         let respondido = false;
-                        
                         messageChannel.port1.onmessage = (event) => {
                             respondido = true;
                             if (event.data && event.data.type === 'VERSION_INFO') {
@@ -1152,89 +1287,59 @@
                                 resolve(null);
                             }
                         };
-                        
                         try {
                             navigator.serviceWorker.controller.postMessage(
                                 { type: 'GET_VERSION' },
                                 [messageChannel.port2]
                             );
                         } catch (e) {
-                            console.log('Error al enviar mensaje al SW:', e);
                             resolve(null);
                             return;
                         }
-                        
-                        setTimeout(() => {
-                            if (!respondido) resolve(null);
-                        }, 1200);
+                        setTimeout(() => { if (!respondido) resolve(null); }, 1200);
                     });
 
                     if (versionDesdeSW) {
-                        console.log('✅ Versión obtenida del SW:', versionDesdeSW);
                         localStorage.setItem('pibrisa_version_actual', versionDesdeSW);
                         return versionDesdeSW;
                     }
-                } catch (e) {
-                    console.log('Estrategia 1 falló:', e);
-                }
+                } catch (e) {}
             }
 
-            // ESTRATEGIA 2: Leer de localStorage
             const versionGuardada = localStorage.getItem('pibrisa_version_actual');
-            if (versionGuardada) {
-                console.log('📦 Versión obtenida de localStorage:', versionGuardada);
-                return versionGuardada;
-            }
+            if (versionGuardada) return versionGuardada;
 
-            // ESTRATEGIA 3: Leer del archivo sw-index.js del servidor
             try {
-                const swResponse = await fetch('sw-index.js?t=' + Date.now(), {
-                    cache: 'no-store'
-                });
+                const swResponse = await fetch('sw-index.js?t=' + Date.now(), { cache: 'no-store' });
                 if (swResponse.ok) {
                     const swText = await swResponse.text();
                     const versionMatch = swText.match(/CACHE_NAME_INDEX\s*=\s*['"]pibrisa-index-([^'"]+)['"]/);
                     if (versionMatch) {
                         const version = versionMatch[1];
-                        console.log('🌐 Versión obtenida del servidor:', version);
                         localStorage.setItem('pibrisa_version_actual', version);
                         return version;
                     }
                 }
-            } catch (e) {
-                console.log('Estrategia 3 falló:', e);
-            }
+            } catch (e) {}
 
             return 'Desconocida';
         }
 
-        // ============================================
-        // OBTENER VERSIÓN DISPONIBLE (lee del servidor)
-        // ============================================
         async function obtenerVersionDisponible() {
             try {
                 const swResponse = await fetch('sw-index.js?t=' + Date.now(), {
                     cache: 'no-store',
                     headers: { 'Cache-Control': 'no-cache' }
                 });
-                
                 if (swResponse.ok) {
                     const swText = await swResponse.text();
                     const versionMatch = swText.match(/CACHE_NAME_INDEX\s*=\s*['"]pibrisa-index-([^'"]+)['"]/);
-                    if (versionMatch) {
-                        return versionMatch[1];
-                    }
+                    if (versionMatch) return versionMatch[1];
                 }
-            } catch (e) {
-                console.log('No se pudo obtener versión del SW:', e);
-            }
-            
+            } catch (e) {}
             return versionActual;
         }
 
-        // ============================================
-        // ABRIR MODAL DE ACTUALIZACIÓN
-        // ============================================
         async function abrirModalActualizacion() {
             const modal = document.getElementById('update-modal');
             const updateIcon = document.getElementById('update-icon');
@@ -1256,36 +1361,22 @@
             btnConfirm.disabled = true;
             nuevaVersionDisponible = false;
 
-            // 🔥 IMPORTANTE: Siempre leer la versión DISPONIBLE del servidor
-            // (no confiar en el localStorage que puede estar desactualizado)
             versionDisponible = await obtenerVersionDisponible();
-            
-            // Leer la versión ACTUAL (la que está instalada/cacheada localmente)
             versionActual = await obtenerVersionActual();
             
             currentVersionEl.textContent = versionActual || 'Desconocida';
             availableVersionEl.textContent = versionDisponible || 'Desconocida';
 
-            // Forzar verificación de update del SW
             if (swRegistration && swRegistration.active) {
-                try {
-                    await swRegistration.update();
-                } catch (e) {
-                    console.log('Info: no se pudo forzar update:', e.message);
-                }
+                try { await swRegistration.update(); } catch (e) {}
             }
 
             await new Promise(resolve => setTimeout(resolve, 1200));
 
             const hayNuevaVersionSW = await verificarNuevaVersionSW();
-
-            // Limpiar prefijo 'v' para comparar
             const vActual = (versionActual || '').replace(/^v/, '').trim();
             const vDisponible = (versionDisponible || '').replace(/^v/, '').trim();
 
-            // Es "nueva versión" si:
-            // - Hay un SW esperando, O
-            // - La versión del servidor es DIFERENTE a la local
             const hayNuevaVersion = hayNuevaVersionSW || 
                                     (vDisponible !== vActual && 
                                      vDisponible !== '' && 
@@ -1311,25 +1402,15 @@
             }
         }
 
-        // ============================================
-        // VERIFICAR SI HAY NUEVA VERSIÓN DE SW ESPERANDO
-        // ============================================
         async function verificarNuevaVersionSW() {
             if (!swRegistration) return false;
-            
-            if (swRegistration.waiting) {
-                return true;
-            }
-            
+            if (swRegistration.waiting) return true;
             if (swRegistration.installing) {
                 return new Promise((resolve) => {
                     const worker = swRegistration.installing;
                     const checkState = () => {
-                        if (worker.state === 'installed' || worker.state === 'activated') {
-                            resolve(true);
-                        }
+                        if (worker.state === 'installed' || worker.state === 'activated') resolve(true);
                     };
-                    
                     worker.addEventListener('statechange', checkState);
                     setTimeout(() => {
                         worker.removeEventListener('statechange', checkState);
@@ -1337,20 +1418,13 @@
                     }, 3000);
                 });
             }
-            
             return false;
         }
 
-        // ============================================
-        // CERRAR MODAL
-        // ============================================
         function cerrarModalActualizacion() {
             document.getElementById('update-modal').classList.remove('active');
         }
 
-        // ============================================
-        // FORZAR ACTUALIZACIÓN (con unregister + register)
-        // ============================================
         async function forzarActualizacion() {
             const btnConfirm = document.getElementById('btn-confirm-update');
             const statusEl = document.getElementById('update-status');
@@ -1360,66 +1434,35 @@
             statusEl.textContent = 'Limpiando caché y descargando nueva versión...';
 
             try {
-                // 1. Limpiar todas las cachés
                 if ('caches' in window) {
                     const cacheNames = await caches.keys();
-                    await Promise.all(
-                        cacheNames.map(cacheName => {
-                            console.log('Eliminando caché:', cacheName);
-                            return caches.delete(cacheName);
-                        })
-                    );
+                    await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
                     statusEl.textContent = 'Caché limpiada. Aplicando actualización...';
                 }
-
-                // 2. Si hay SW esperando, activarlo
                 if (swRegistration && swRegistration.waiting) {
                     try {
                         swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
                         statusEl.textContent = 'Service Worker actualizado. Recargando...';
                         await new Promise(resolve => setTimeout(resolve, 1000));
-                    } catch (e) {
-                        console.log('Error al activar SW en espera:', e);
-                    }
+                    } catch (e) {}
                 }
-
-                // 3. Desregistrar TODOS los Service Workers (solución agresiva)
                 if ('serviceWorker' in navigator) {
                     statusEl.textContent = 'Reinstalando Service Worker...';
                     const registrations = await navigator.serviceWorker.getRegistrations();
                     for (let reg of registrations) {
                         await reg.unregister();
-                        console.log('SW desregistrado:', reg.scope);
                     }
                     await new Promise(resolve => setTimeout(resolve, 500));
                 }
-
-                // 4. Recargar forzando bypass total del caché
                 statusEl.textContent = 'Recargando aplicación...';
                 await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Truco: agregar un parámetro a la URL para forzar recarga limpia
                 const url = new URL(window.location.href);
                 url.searchParams.set('_t', Date.now());
                 window.location.replace(url.toString());
-
             } catch (error) {
-                console.error('Error durante la actualización:', error);
                 statusEl.textContent = 'Recargando aplicación...';
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+                setTimeout(() => { window.location.reload(); }, 1500);
             }
-        }
-
-        // ============================================
-        // FUNCIONES GENERALES
-        // ============================================
-        function openInIframe(url) {
-            document.getElementById('iframe').src = url;
-            document.getElementById('iframe-container').style.display = 'block';
-            document.querySelector('.app-container').style.display = 'none';
-            document.querySelector('footer').style.display = 'none';
         }
 
         function mostrarInfo() {
@@ -1441,7 +1484,7 @@
             installButton.style.display = 'block';
             installButton.addEventListener('click', () => {
                 deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
+                deferredPrompt.userChoice.then(() => {
                     deferredPrompt = null;
                     installButton.style.display = 'none';
                 });
@@ -1449,46 +1492,28 @@
         });
 
         // ============================================
-        // NOTIFICACIONES (solo se activan si SCRIPT_URL tiene valor)
+        // NOTIFICACIONES
         // ============================================
         const NOTIFICACIONES_VISTAS_KEY = `notificacionesVistas_${window.location.pathname}`;
         let notificacionesCache = null;
         let ultimaActualizacion = null;
 
         async function obtenerNotificaciones() {
-            // ✅ Si las notificaciones están desactivadas, no hacer nada
-            if (!NOTIFICACIONES_ACTIVAS) {
-                return [];
-            }
-
+            if (!NOTIFICACIONES_ACTIVAS) return [];
             const ahora = Date.now();
             if (notificacionesCache && ultimaActualizacion && (ahora - ultimaActualizacion < 30000)) {
                 return notificacionesCache;
             }
-
             try {
                 const response = await fetch(SCRIPT_URL);
-                
-                // Verificar que la respuesta sea OK
-                if (!response.ok) {
-                    console.warn('Notificaciones: respuesta no OK', response.status);
-                    return [];
-                }
-                
-                // Verificar que el content-type sea JSON
+                if (!response.ok) return [];
                 const contentType = response.headers.get('content-type') || '';
-                if (!contentType.includes('application/json')) {
-                    console.warn('Notificaciones: respuesta no es JSON (desactivadas silenciosamente)');
-                    return [];
-                }
-                
+                if (!contentType.includes('application/json')) return [];
                 const notificaciones = await response.json();
                 notificacionesCache = notificaciones;
                 ultimaActualizacion = ahora;
                 return notificaciones;
             } catch (error) {
-                // Silencioso: no llenar la consola de errores
-                console.warn('Notificaciones no disponibles (silencioso):', error.message);
                 return [];
             }
         }
@@ -1519,7 +1544,6 @@
             const notificationList = document.getElementById("notification-list");
             notificationList.innerHTML = "";
 
-            const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
             const badge = document.getElementById("notification-badge");
             badge.style.display = "none";
 
@@ -1531,23 +1555,12 @@
             } else {
                 notificaciones.forEach((notificacion) => {
                     const [fecha, hora, mensaje] = notificacion;
-                    const notifNormalizada = JSON.stringify({
-                        fecha: fecha?.trim(),
-                        hora: hora?.trim(),
-                        mensaje: mensaje?.trim()
-                    });
-                    const esVista = notificacionesVistas.includes(notifNormalizada);
-
                     if (fecha && hora && mensaje) {
                         const horaFormateada = formatearHora(hora);
                         const mensajeFormateado = mensaje.replace(/\n/g, "<br>");
-
                         const li = document.createElement("li");
                         li.className = "notification-item";
-                        li.innerHTML = `
-                            <strong>${fecha} ${horaFormateada}</strong>
-                            <p>${mensajeFormateado}</p>
-                        `;
+                        li.innerHTML = `<strong>${fecha} ${horaFormateada}</strong><p>${mensajeFormateado}</p>`;
                         notificationList.appendChild(li);
                     }
                 });
@@ -1570,22 +1583,19 @@
             if (!NOTIFICACIONES_ACTIVAS) return;
             notificacionesCache = null;
             ultimaActualizacion = null;
-            const notificaciones = await obtenerNotificaciones();
+            await obtenerNotificaciones();
             verificarNotificaciones();
             mostrarNotificaciones();
         }
 
         function cerrarNotificaciones() {
-            const modal = document.getElementById("notification-modal");
-            modal.classList.remove('active');
+            document.getElementById("notification-modal").classList.remove('active');
         }
 
         async function verificarNotificaciones() {
             if (!NOTIFICACIONES_ACTIVAS) return;
-            
             const notificaciones = await obtenerNotificaciones();
             const notificacionesVistas = JSON.parse(localStorage.getItem(NOTIFICACIONES_VISTAS_KEY)) || [];
-            
             let contadorNoVistas = 0;
 
             notificaciones.forEach(notificacion => {
@@ -1594,10 +1604,7 @@
                     hora: notificacion[1]?.trim(),
                     mensaje: notificacion[2]?.trim()
                 });
-
-                if (!notificacionesVistas.includes(notifNormalizada)) {
-                    contadorNoVistas++;
-                }
+                if (!notificacionesVistas.includes(notifNormalizada)) contadorNoVistas++;
             });
 
             const badge = document.getElementById("notification-badge");
@@ -1605,17 +1612,10 @@
             badge.style.display = contadorNoVistas > 0 ? "block" : "none";
         }
 
-        // ✅ Solo activar el sistema de notificaciones si está configurado
         if (NOTIFICACIONES_ACTIVAS) {
             setInterval(verificarNotificaciones, 10000);
             window.addEventListener("load", verificarNotificaciones);
         } else {
-            // Ocultar el ícono de campana si las notificaciones están desactivadas
-            document.addEventListener('DOMContentLoaded', () => {
-                const bell = document.getElementById('notification-icon');
-                if (bell) bell.style.display = 'none';
-            });
-            // Por si ya cargó el DOM
             const bell = document.getElementById('notification-icon');
             if (bell) bell.style.display = 'none';
         }
@@ -1651,7 +1651,6 @@
                 }
             } catch (error) {
                 document.getElementById('overlay').style.display = 'none';
-                console.error(error);
                 Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
             }
         }
@@ -1703,33 +1702,23 @@
         // REGISTRO DEL SERVICE WORKER
         // ============================================
         if ('serviceWorker' in navigator) {
-            // Escuchar mensajes del SW
             navigator.serviceWorker.addEventListener('message', (event) => {
                 if (event.data && event.data.type === 'SW_ACTIVATED') {
-                    console.log('🎉 SW activado con versión:', event.data.version);
                     localStorage.setItem('pibrisa_version_actual', event.data.version);
                     versionActual = event.data.version;
                 }
                 if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
-                    console.log('Nueva versión disponible:', event.data.version);
                     nuevaVersionDisponible = true;
                     versionDisponible = event.data.version;
                     const updateBtn = document.getElementById('update-button');
-                    if (updateBtn) {
-                        updateBtn.classList.add('has-update');
-                    }
+                    if (updateBtn) updateBtn.classList.add('has-update');
                 }
             });
 
-            // Detectar cambio de controlador
             navigator.serviceWorker.addEventListener('controllerchange', async () => {
-                console.log('Nueva versión del Service Worker detectada.');
                 nuevaVersionDisponible = true;
                 const updateBtn = document.getElementById('update-button');
-                if (updateBtn) {
-                    updateBtn.classList.add('has-update');
-                }
-                
+                if (updateBtn) updateBtn.classList.add('has-update');
                 const nuevaV = await obtenerVersionActual();
                 localStorage.setItem('pibrisa_version_actual', nuevaV);
             });
@@ -1737,35 +1726,14 @@
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('sw-index.js')
                     .then(function(registration) {
-                        console.log('Service Worker Index registrado con éxito:', registration.scope);
                         swRegistration = registration;
-
-                        // Obtener versión inicial
-                        obtenerVersionActual().then(v => {
-                            versionActual = v;
-                            console.log('Versión actual:', versionActual);
-                        });
-
-                        // Verificar actualizaciones al cargar (silenciando errores)
-                        registration.update().catch(e => {
-                            console.log('ℹ️ Verificación de update (info):', e.message);
-                        });
-                        
-                        // Verificar cada hora
-                        setInterval(() => {
-                            registration.update().catch(e => {
-                                console.log('ℹ️ Verificación periódica (info):', e.message);
-                            });
-                        }, 60 * 60 * 1000);
-
-                        // Detectar nueva versión instalándose
+                        obtenerVersionActual().then(v => { versionActual = v; });
+                        registration.update().catch(() => {});
+                        setInterval(() => { registration.update().catch(() => {}); }, 60 * 60 * 1000);
                         registration.addEventListener('updatefound', () => {
-                            console.log('¡Nueva versión del Service Worker encontrada!');
                             const newWorker = registration.installing;
-                            
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('Nueva versión instalada y esperando activación');
                                     nuevaVersionDisponible = true;
                                     const updateBtn = document.getElementById('update-button');
                                     if (updateBtn) {
@@ -1775,20 +1743,14 @@
                                 }
                             });
                         });
-                        
-                    }, function(err) {
-                        console.log('Fallo al registrar Service Worker Index:', err);
-                    });
+                    }, function() {});
             });
             
-            // Verificar cuando la página recupera foco
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible') {
                     navigator.serviceWorker.ready.then(registration => {
                         swRegistration = registration;
-                        registration.update().catch(e => {
-                            console.log('ℹ️ Update al recuperar foco (info):', e.message);
-                        });
+                        registration.update().catch(() => {});
                     });
                 }
             });
@@ -1798,29 +1760,17 @@
         // CERRAR MODALES AL HACER CLIC FUERA
         // ============================================
         document.getElementById('update-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarModalActualizacion();
-            }
+            if (e.target === this) cerrarModalActualizacion();
         });
-
         document.getElementById('notification-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarNotificaciones();
-            }
+            if (e.target === this) cerrarNotificaciones();
         });
-
         document.getElementById('info-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarInfo();
-            }
+            if (e.target === this) cerrarInfo();
         });
-
         document.getElementById('file-list-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarFileList();
-            }
+            if (e.target === this) cerrarFileList();
         });
-
     </script>
 </body>
 </html>
